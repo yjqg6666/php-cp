@@ -28,10 +28,11 @@ phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 step 1 move the pool.ini file to /etc/ and modify it as you need.
 
 step 2 start the pool_server process：
-···./pool_server start
-···support "start" "stop" "restart" "reload"
+```./pool_server start
+```support "start" "stop" "restart" "reload"
 
 step 3 modify you php script:
+```
 <?php
 $db = new PDO(xxxxx);
 => $db = new pdo_connect_pool(xxxx);
@@ -41,3 +42,4 @@ $redis = new Redis();
 
 tips:use $db($redis)->release() to release the connection  as early as you can;
 ?>
+```
