@@ -193,7 +193,6 @@ static int cli_real_recv() {
         if (ret < 0) {
             zend_error(E_ERROR, "fifo read Error: %s [%d]", strerror(errno), errno);
         }
-        printf("fuck %d,fuck %d", event.pid, cpPid);
     } while (event.pid != cpPid); //有可能有脏数据  读出来
 
     zval *ret_value;
