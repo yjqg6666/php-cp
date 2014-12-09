@@ -362,8 +362,9 @@ static int cpReactor_client_release(int fd) {
             if (CPGS->workers[conn->worker_id].request >= CP_MAX_REQUEST) {
                 CPGS->workers[conn->worker_id].request = 0;
                 CPGS->workers[conn->worker_id].run = 0;
+//                cpLog("%p ,worker %d,max %d,num %d",CPGS->WaitList,conn->worker_id,CPGS->worker_max,CPGS->worker_num);
             }
-            if (CPGS->WaitList && CPGC.use_wait_queue && conn->worker_id > CPGS->worker_max) {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
+            if (CPGS->WaitList && CPGC.use_wait_queue && conn->worker_id <= CPGS->worker_max) {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
                 cpConnection *wait_conn = &(CPGS->conlist[CPGS->WaitList->fd]); //等待队列的连接
                 wait_conn->worker_id = conn->worker_id;
                 wait_conn->release = CP_FD_NRELEASED;

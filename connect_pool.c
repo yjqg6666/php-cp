@@ -39,6 +39,8 @@ static void pdo_proxy_connect(zval *args, int reconnect);
 static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 
+#define CP_VERSION "2.3"
+
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                         ({         \
                         zval send_zval;\
@@ -75,6 +77,7 @@ const zend_function_entry cp_functions[] = {
     PHP_FE(pool_server_create, NULL)
     PHP_FE(pool_server_shutdown, NULL)
     PHP_FE(pool_server_reload, NULL)
+    PHP_FE(pool_server_version, NULL)
     PHP_FE(get_disable_list, NULL)
     PHP_FE(set_disable_list, NULL)
     PHP_FE(shit_pdo_warning_function, NULL)
@@ -141,7 +144,7 @@ zend_module_entry connect_pool_module_entry = {
     PHP_RINIT(connect_pool), //RINIT
     PHP_RSHUTDOWN(connect_pool), //RSHUTDOWN
     PHP_MINFO(connect_pool),
-    "1.0",
+    CP_VERSION,
     STANDARD_MODULE_PROPERTIES
 };
 
@@ -191,7 +194,7 @@ PHP_MSHUTDOWN_FUNCTION(connect_pool) {
 PHP_MINFO_FUNCTION(connect_pool) {
     php_info_print_table_start();
     php_info_print_table_header(2, "connect_poll support", "enabled");
-    php_info_print_table_row(2, "Version", "2.1");
+    php_info_print_table_row(2, "Version", CP_VERSION);
     php_info_print_table_row(2, "Author", "郭新华");
     php_info_print_table_row(2, "email", "woshiguo35@sina.com");
     php_info_print_table_end();
@@ -312,6 +315,11 @@ PHP_FUNCTION(pool_server_reload) {
         RETURN_TRUE;
     }
 }
+
+PHP_FUNCTION(pool_server_version) {
+    RETURN_STRING(CP_VERSION,1);
+}
+
 
 PHP_FUNCTION(pool_server_shutdown) {
     long pid;

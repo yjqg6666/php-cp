@@ -41,13 +41,16 @@ static int cpWorker_loop(int worker_id) {
         if (CPGS->workers[worker_id].pre_len) {
             len = CPGS->workers[worker_id].pre_len;
             CPGS->workers[worker_id].pre_len = 0;
+            CPWG.clientPid = CPGS->workers[worker_id].pre_pid;
         } else {
             ret = cpFifoRead(pipe_fd_read, &event, event_len);
             if (!CPGS->workers[worker_id].run) {
                 CPGS->workers[worker_id].pre_len = event.len; //啊~~我要挂了,赶紧存起来 下次再用
+                CPGS->workers[worker_id].pre_pid = event.pid;
                 break;
             }
             len = event.len;
+            CPWG.clientPid = event.pid;
         }
         if (sm_obj->mem == NULL) {
             if ((sm_obj->mem = shmat(sm_obj->shmid, NULL, 0)) < 0) {
@@ -58,7 +61,6 @@ static int cpWorker_loop(int worker_id) {
             cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
         }
         php_msgpack_unserialize(ret_value, sm_obj->mem, len);
-        CPWG.clientPid = event.pid;
         worker_onReceive(ret_value);
     }
     return SUCCESS;

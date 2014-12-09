@@ -20,7 +20,6 @@ phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 - 2.想象一个这样的业务：请求过来连了一次redis，又去连了mysql，之后去调用其他的rpc请求，而某种原因导致请求非常慢，那么之前的tcp连接就会一直占用。
 - 3.现有开源产品（Atlas,TDDL等）需要单独部署集群，在架构上引入了外部依赖，经过中间网络转发效率变低，没法同时支持redis和pdo。
 
-
 ## 技术特性
 
 - 1.在model框架里面做集成，每次fetchAll（set/get）后执行release方法，释放所占用的连接，防止因为脚本卡住导致的连接占用过高问题。
@@ -31,6 +30,7 @@ phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 - 6.做了大量优化，虽然请求经过连接池进程转发，但是基本无qps损耗。
 - 7.支持连接用光的排队机制。
 - 8.框架简单整合后（修改new 方法），现有业务一行代码都不用改即可用上连接池。
+- 9.如果您用swoole_http_server 可以用task进程来做连接池，但是如果你的现有业务在用fpm，可以直接用本扩展。
 
 ## Example
 step 1 move the pool.ini file to /etc/ and modify it as you need.

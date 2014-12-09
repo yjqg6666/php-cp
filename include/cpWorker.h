@@ -19,6 +19,7 @@ extern "C" {
         pid_t pid;
         int pipe_fd_write;
         int pre_len;
+        pid_t pre_pid;
         
         int fd;//当前worker服务于哪个fd
         

@@ -20,6 +20,7 @@ extern "C" {
 #define CP_REACTOR_TIMEO_USEC    0
 #define CP_MAX_FDS               (1024*10) //最大fd值,暂不支持扩容
 #define CP_MAX_REQUEST           20000
+//    #define CP_MAX_REQUEST           1000
 #define CP_MAX_WORKER            100
 #define CP_MIN_WORKER            2
 #define CP_IDEL_TIME             2

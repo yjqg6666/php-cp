@@ -144,6 +144,7 @@ PHP_MINFO_FUNCTION(connect_pool);
 PHP_FUNCTION(pool_server_create);
 PHP_FUNCTION(pool_server_shutdown);
 PHP_FUNCTION(pool_server_reload);
+PHP_FUNCTION(pool_server_version);
 
 PHP_FUNCTION(get_disable_list);
 PHP_FUNCTION(set_disable_list);
