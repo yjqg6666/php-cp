@@ -22,6 +22,7 @@ extern "C" {
         pid_t pre_pid;
         
         int fd;//当前worker服务于哪个fd
+        int CPid;//当前worker服务于哪个pid
         
         uint8_t  run;
         cpShareMemory sm_obj;

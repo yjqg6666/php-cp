@@ -59,7 +59,6 @@ void swLog_free(void) {
     fclose(cp_log_fn);
 }
 
-
 CPINLINE int cpWrite(int fd, void *buf, int count) {
     int nwritten = 0, totlen = 0;
     while (totlen != count) {
@@ -94,9 +93,9 @@ CPINLINE int cpFifoRead(int pipe_fd_read, void *buf, int len) {
                 break;
             }
         }
-//        else {
-//            cpLog("worker fifo recive error %d,len %d\n", errno, n);
-//        }
+        //        else {
+        //            cpLog("worker fifo recive error %d,len %d\n", errno, n);
+        //        }
     } while ((n < 0 && errno == EINTR) || n > 0);
     return total;
 }
@@ -112,10 +111,10 @@ CPINLINE int cpNetRead(int fd, void *buf, int len) {
             }
         } else if (n == 0) {
             return 0;
-        } 
-//        else {
-//            cpLog("worker recive error %d,len %d\n", errno, n);
-//        }
+        }
+        //        else {
+        //            cpLog("worker recive error %d,len %d\n", errno, n);
+        //        }
     } while ((n < 0 && errno == EINTR) || n > 0);
     return total;
 }
@@ -170,7 +169,6 @@ CPINLINE void swSetBlock(int sock) {
     }
 }
 
-
 CPINLINE int cpSetTimeout(int sock, double timeout) {
     int ret;
     struct timeval timeo;
@@ -193,7 +191,7 @@ CPINLINE int cpCreateFifo(char *file) {
     umask(0);
     if (access(file, F_OK) == -1) {
         res = mkfifo(file, 0666);
-        if (res != 0) {
+        if (res != 0 && errno != EEXIST) {//&&避免 worker和client一起创建导致的exist错误
             cpLog("Could not create fifo %s Error: %s[%d]", file, strerror(errno), errno);
             return -1;
         }

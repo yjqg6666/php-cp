@@ -53,6 +53,8 @@ extern "C" {
 #define CP_FD_WAITING          1
 
 #define CP_START_SLEEP           usleep(50000);
+    
+    typedef volatile int8_t volatile_int8;
 
     typedef struct _cpIdelList {
         struct _cpIdelList *next;
@@ -136,7 +138,7 @@ extern "C" {
         uint32_t *workerfd2clientfd_list; //workerfd和客户端fd的对应关系
 
         cpWorker *workers;
-        uint8_t *workers_status;
+        volatile_int8 *workers_status;
         pthread_spinlock_t *spin_lock;
 
         cpWaitList *WaitList; //获得失败的wait队列

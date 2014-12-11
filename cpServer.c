@@ -121,7 +121,7 @@ int cpServer_create() {
         return FAILURE;
     }
 
-    CPGS->workers_status = (uint8_t*) cp_mmap_calloc(sizeof (uint8_t) * CP_GROUP_LEN);
+    CPGS->workers_status = (volatile_int8*) cp_mmap_calloc(sizeof (volatile_int8) * CP_GROUP_LEN);
     if (CPGS->workers_status == NULL) {
         cpLog("alloc for worker_status fail");
         return FAILURE;
@@ -237,7 +237,7 @@ static int cpServer_master_onAccept(int fd) {
             close(conn_fd);
             return SUCCESS;
         }
-//        swSetNonBlock(conn_fd);
+        //        swSetNonBlock(conn_fd);
 
         int flag = 1;
         setsockopt(conn_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof (flag));
@@ -286,13 +286,14 @@ static int cpServer_master_onAccept(int fd) {
     return SUCCESS;
 }
 
-CPINLINE static int MasterSend2Client(int fd, int worker_id) {
+CPINLINE static int MasterSend2Client(int fd, int worker_id, int CPid) {
     CPGS->workers[worker_id].fd = fd;
     cpMasterInfo info;
     int sizeinfo = sizeof (info);
     info.worker_id = CPGC.group_id * CP_GROUP_LEN + worker_id;
     info.semid = CPGS->workers[worker_id].sm_obj.shmid;
     info.max = CPGC.max_read_len;
+    CPGS->workers[worker_id].CPid = CPid;
     return cpWrite(fd, &info, sizeinfo);
 }
 
@@ -362,7 +363,7 @@ static int cpReactor_client_release(int fd) {
             if (CPGS->workers[conn->worker_id].request >= CP_MAX_REQUEST) {
                 CPGS->workers[conn->worker_id].request = 0;
                 CPGS->workers[conn->worker_id].run = 0;
-//                cpLog("%p ,worker %d,max %d,num %d",CPGS->WaitList,conn->worker_id,CPGS->worker_max,CPGS->worker_num);
+                //                cpLog("%p ,worker %d,max %d,num %d",CPGS->WaitList,conn->worker_id,CPGS->worker_max,CPGS->worker_num);
             }
             if (CPGS->WaitList && CPGC.use_wait_queue && conn->worker_id <= CPGS->worker_max) {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
                 cpConnection *wait_conn = &(CPGS->conlist[CPGS->WaitList->fd]); //等待队列的连接
@@ -376,7 +377,8 @@ static int cpReactor_client_release(int fd) {
                 } else {
                     CPGS->WaitList = CPGS->WaitTail = NULL;
                 }
-                if (MasterSend2Client(wait_conn->fd, wait_conn->worker_id) < 0) {
+                cpTcpEvent *wait_event = (cpTcpEvent*) tmp->data;
+                if (MasterSend2Client(wait_conn->fd, wait_conn->worker_id, wait_event->ClientPid) < 0) {
                     cpLog("Write in cpReactor_client_release. Error: %s [%d]", strerror(errno), errno);
                 }
                 efree(tmp);
@@ -436,7 +438,7 @@ static int cpReactor_client_close(int fd) {//长连接 相当于mshutdown
 }
 
 static int cpReactor_client_receive(int fd) {
-    int n, ret;
+    int n;
     int event_size = sizeof (cpTcpEvent);
     char data[event_size];
     //非ET模式会持续通知
@@ -459,12 +461,7 @@ static int cpReactor_client_receive(int fd) {
                 return cpWrite(fd, tmp, strlen(tmp));
             }
         }
-        return MasterSend2Client(fd, conn->worker_id);
-        //处理数据失败，数据将丢失
-        if (ret < 0) {
-            cpLog("cpReactor_client_receive fail.errno=%d", errno);
-        }
-        return ret;
+        return MasterSend2Client(fd, conn->worker_id, event->ClientPid);
     } else if (n == 0) {
 close_fd:
         return cpReactor_client_close(fd);

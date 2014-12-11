@@ -43,7 +43,12 @@ static int cpWorker_loop(int worker_id) {
             CPGS->workers[worker_id].pre_len = 0;
             CPWG.clientPid = CPGS->workers[worker_id].pre_pid;
         } else {
-            ret = cpFifoRead(pipe_fd_read, &event, event_len);
+            do {
+                ret = cpFifoRead(pipe_fd_read, &event, event_len);
+                if (ret < 0) {
+                    cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
+                }
+            } while (event.pid != CPGS->workers[worker_id].CPid); //有可能有脏数据  读出来
             if (!CPGS->workers[worker_id].run) {
                 CPGS->workers[worker_id].pre_len = event.len; //啊~~我要挂了,赶紧存起来 下次再用
                 CPGS->workers[worker_id].pre_pid = event.pid;
@@ -195,7 +200,7 @@ int cpWorker_manager_loop() {
                     if (CPGS->workers[i].run == 0) {
                         cpLog("restart worker!worker index %d,worker id %d,exit code %d\n", i, pid, WEXITSTATUS(worker_exit_code));
                     } else {
-                        cpLog("worker exit!worker index %d,worker id %d,exit code %d\n", i, pid, WEXITSTATUS(worker_exit_code));
+                        cpLog("worker exit!worker index %d,worker id %d,exit code %d,times %d,pre_len %d\n", i, pid, WEXITSTATUS(worker_exit_code), CPGS->workers[i].request, CPGS->workers[i].pre_len);
                     }
                     cpShareMemory *sm_obj = &(CPGS->workers[i].sm_obj);
                     sm_obj->mem = NULL;

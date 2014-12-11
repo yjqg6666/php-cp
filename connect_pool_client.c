@@ -36,6 +36,7 @@ static int *workerid2writefd = NULL;
 static int *workerid2readfd = NULL;
 static void **semid2attbuf = NULL;
 static int cpPid = 0;
+#define CP_GET_PID if(cpPid==0)cpPid=getpid()
 
 static int php_pdo_connect_pool_close(cpClient *cli) {
     char str[100] = {0};
@@ -53,7 +54,6 @@ static int get_writefd(int worker_id) {
         if (workerid2writefd == NULL) {
             zend_error(E_ERROR, "calloc Error: %s [%d]", strerror(errno), errno);
         }
-        cpPid = getpid();
     }
     int pipe_fd_write;
     if (workerid2writefd[worker_id] == 0) {
@@ -162,6 +162,7 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data) {
     if (cli->released == CP_FD_RELEASED) {
         cpTcpEvent event;
         event.type = CP_TCPEVENT_GET;
+        event.ClientPid = cpPid;
         int ret = cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
         if (ret < 0) {
             zend_error(E_ERROR, "send failed in GET. Error:%d", errno);
@@ -330,6 +331,7 @@ PHP_METHOD(pdo_connect_pool, __construct) {
         ZVAL_NULL(object);
         return;
     }
+    CP_GET_PID;
     zval *pass_data;
     MAKE_STD_ZVAL(pass_data);
     array_init(pass_data);
@@ -463,6 +465,7 @@ PHP_METHOD(redis_connect_pool, __construct) {
         }
     }
     //    cpQueueSignalSet(CP_SIG_EVENT, HandleRecv);
+    CP_GET_PID;
     MAKE_STD_ZVAL(pool_port);
     ZVAL_LONG(pool_port, port);
     zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), zres TSRMLS_CC);
