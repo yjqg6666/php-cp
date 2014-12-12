@@ -5,7 +5,7 @@ Provide local connection pool like java
 
 ## Requirement
 
-- PHP 5.3 +
+- PHP 5.3 +(no zts 编译php时不要加 --enable-maintainer-zts)
 - linux 2.6+
 - pdo and redis extension install
 
@@ -51,3 +51,5 @@ $redis = new Redis();
 tips:use $db($redis)->release() to release the connection  as early as you can;
 ?>
 ```
+## 联系我
+http://weibo.com/u/2661945152
