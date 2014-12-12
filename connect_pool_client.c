@@ -92,7 +92,7 @@ static int get_readfd(int worker_id) {
     return pipe_fd_read;
 }
 
-static void* get_attach_buf(int worker_id) {
+static void* get_attach_buf(int worker_id,int semid) {
     if (semid2attbuf == NULL) {
         semid2attbuf = (void **) calloc(CP_GROUP_NUM*CP_GROUP_LEN, sizeof (void*));
         if (semid2attbuf == NULL) {
@@ -101,7 +101,7 @@ static void* get_attach_buf(int worker_id) {
     }
     void* buf = NULL;
     if (semid2attbuf[worker_id] == 0) {
-        if ((buf = shmat(info.semid, NULL, 0)) < 0) {
+        if ((buf = shmat(semid, NULL, 0)) < 0) {
             zend_error(E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
         }
         semid2attbuf[worker_id] = buf;
@@ -116,7 +116,7 @@ CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int ma
     int pipe_fd_write = get_writefd(worker_id);
     instead_smart dest;
     dest.len = 0;
-    dest.addr = get_attach_buf(worker_id);
+    dest.addr = get_attach_buf(worker_id,semid);
     dest.max = max;
     dest.exceed = '0';
     php_msgpack_serialize(&dest, ret_value);
@@ -157,7 +157,7 @@ int connect_pool_perisent(cpClient** cli, zval* zres, int port) {
     return 1;
 }
 
-CPINLINE int cli_real_send(cpClient *cli, zval *send_data) {
+CPINLINE int cli_real_send(cpClient *cli, zval *send_data,cpMasterInfo *info) {
     int ret = 0;
     if (cli->released == CP_FD_RELEASED) {
         cpTcpEvent event;
@@ -167,9 +167,9 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data) {
         if (ret < 0) {
             zend_error(E_ERROR, "send failed in GET. Error:%d", errno);
         }
-        int n = cpClient_recv(cli, &info, sizeof (info), 1);
+        int n = cpClient_recv(cli, info, sizeof (cpMasterInfo), 1);
         if (n > 0) {
-            ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info.worker_id, info.max, info.semid);
+            ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->semid);
             if (ret == SUCCESS) {
                 cli->released = CP_FD_NRELEASED;
             }
@@ -180,13 +180,13 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data) {
             zend_error(E_ERROR, "connect_pool: recv failed. Error: %s [%d]", strerror(errno), errno);
         }
     } else {
-        ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info.worker_id, info.max, info.semid);
+        ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->semid);
     }
     return ret;
 }
 
-static int cli_real_recv() {
-    int pipe_fd_read = get_readfd(info.worker_id);
+static int cli_real_recv(cpMasterInfo *info) {
+    int pipe_fd_read = get_readfd(info->worker_id);
     cpWorkerInfo event;
     int ret = 0;
     do {
@@ -198,7 +198,7 @@ static int cli_real_recv() {
 
     zval *ret_value;
     ALLOC_INIT_ZVAL(ret_value);
-    php_msgpack_unserialize(ret_value, get_attach_buf(info.worker_id), event.len);
+    php_msgpack_unserialize(ret_value, get_attach_buf(info->worker_id,info->semid), event.len);
     RecvData.type = event.type;
     RecvData.ret_value = ret_value;
     return SUCCESS;
@@ -238,11 +238,11 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call) {
     add_assoc_string(pass_data, "method_type", "PDOStatement", 1);
     add_assoc_string(pass_data, "type", "pdo", 1);
 
-    int ret = cli_real_send(cli, pass_data);
+    int ret = cli_real_send(cli, pass_data,&pdo_info);
     if (ret < 0) {
         zend_error(E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
-    cli_real_recv();
+    cli_real_recv(&pdo_info);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION) {
         zend_throw_exception(php_pdo_get_exception(), Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
@@ -291,12 +291,12 @@ PHP_METHOD(pdo_connect_pool, __call) {
     add_assoc_string(pass_data, "method_type", "others", 1);
     add_assoc_string(pass_data, "type", "pdo", 1);
 
-    int ret = cli_real_send(cli, pass_data);
+    int ret = cli_real_send(cli, pass_data,&pdo_info);
     if (ret < 0) {
         zend_error(E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
 
-    cli_real_recv();
+    cli_real_recv(&pdo_info);
     if (RecvData.type == CP_SIGEVENT_PDO) {//返回一个模拟pdo类
         object_init_ex(return_value, pdo_connect_pool_PDOStatement_class_entry_ptr);
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("cli"), *zres TSRMLS_CC);
@@ -381,11 +381,11 @@ PHP_METHOD(pdo_connect_pool, __construct) {
     zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("con_args"), pass_data TSRMLS_CC); //用于重连
 
     //    cpQueueSignalSet(CP_SIG_EVENT, HandleRecv);
-    ret = cli_real_send(cli, pass_data);
+    ret = cli_real_send(cli, pass_data,&pdo_info);
     if (ret < 0) {
         zend_error(E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
-    cli_real_recv();
+    cli_real_recv(&pdo_info);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION) {
         zend_throw_exception(php_pdo_get_exception(), Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
     }
@@ -565,12 +565,12 @@ PHP_METHOD(redis_connect_pool, select) {
     add_assoc_string(z_args, "db", db, 1);
     add_assoc_zval(pass_data, "args", z_args);
 
-    int ret = cli_real_send(cli, pass_data);
+    int ret = cli_real_send(cli, pass_data,&redis_info);
     if (ret < 0) {
         zend_error(E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
 
-    cli_real_recv();
+    cli_real_recv(&redis_info);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION) {
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
@@ -635,12 +635,12 @@ PHP_METHOD(redis_connect_pool, __call) {
         add_assoc_string(pass_data, "data_source", source_char, 1);
     }
 
-    int ret = cli_real_send(cli, pass_data);
+    int ret = cli_real_send(cli, pass_data,&redis_info);
     if (ret < 0) {
         zend_error(E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
 
-    cli_real_recv();
+    cli_real_recv(&redis_info);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION) {
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);

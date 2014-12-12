@@ -28,7 +28,8 @@ static int warning_gone_away = 0;
 cpServerG ConProxyG;
 cpServerGS *ConProxyGS;
 cpWorkerG ConProxyWG;
-cpMasterInfo info;
+cpMasterInfo pdo_info;
+cpMasterInfo redis_info;
 
 extern sapi_module_struct sapi_module;
 

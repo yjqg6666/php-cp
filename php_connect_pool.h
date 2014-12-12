@@ -179,7 +179,8 @@ CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int pid, int max, int
 extern cpServerG ConProxyG;
 extern cpServerGS *ConProxyGS;
 extern cpWorkerG ConProxyWG;
-extern cpMasterInfo info;
+extern cpMasterInfo pdo_info;
+extern cpMasterInfo redis_info;
 extern FILE *cp_log_fn;
 extern char * cpArgv0;
 
