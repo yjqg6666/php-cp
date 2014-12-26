@@ -23,14 +23,15 @@ static char bufpid[SW_PID_BUFFER_SIZE];
 FILE *pid_fn = NULL;
 int cp_error;
 FILE *cp_log_fn = NULL;
-char *cpArgv0 = NULL;
 
 int cpLog_init(char *logfile) {
     cp_log_fn = fopen(logfile, "a+");
-    if (cp_log_fn == NULL) {
+    if (cp_log_fn == NULL)
+    {
         return FAILURE;
     }
-    if (setvbuf(cp_log_fn, bufr, _IOLBF, SW_LOG_BUFFER_SIZE) < 0) {
+    if (setvbuf(cp_log_fn, bufr, _IOLBF, SW_LOG_BUFFER_SIZE) < 0)
+    {
         return FAILURE;
     }
     return SUCCESS;
@@ -40,11 +41,13 @@ int pid_init() {
     char pid_name[512] = {0};
     sprintf(pid_name, "%s%s.pid", PID_FILE_PATH, CPGC.title);
     pid_fn = fopen(pid_name, "w+");
-    if (pid_fn == NULL) {
+    if (pid_fn == NULL)
+    {
         cpLog("create pid file error");
         return FAILURE;
     }
-    if (setvbuf(pid_fn, bufpid, _IONBF, SW_PID_BUFFER_SIZE) < 0) {
+    if (setvbuf(pid_fn, bufpid, _IONBF, SW_PID_BUFFER_SIZE) < 0)
+    {
         return FAILURE;
     }
     return SUCCESS;
@@ -61,20 +64,31 @@ void swLog_free(void) {
 
 CPINLINE int cpWrite(int fd, void *buf, int count) {
     int nwritten = 0, totlen = 0;
-    while (totlen != count) {
+    while (totlen != count)
+    {
         nwritten = write(fd, buf, count - totlen);
-        if (nwritten > 0) {
+        if (nwritten > 0)
+        {
             totlen += nwritten;
             buf += nwritten;
-        } else if (nwritten == 0) {
+        }
+        else if (nwritten == 0)
+        {
             return totlen;
-        } else {
-            if (errno == EINTR) {
+        }
+        else
+        {
+            if (errno == EINTR)
+            {
                 continue;
-            } else if (errno == EAGAIN) {
+            }
+            else if (errno == EAGAIN)
+            {
                 usleep(1);
                 continue;
-            } else {
+            }
+            else
+            {
                 return -1;
             }
         }
@@ -85,11 +99,14 @@ CPINLINE int cpWrite(int fd, void *buf, int count) {
 
 CPINLINE int cpFifoRead(int pipe_fd_read, void *buf, int len) {
     int n, total = 0;
-    do {
+    do
+    {
         n = read(pipe_fd_read, buf + total, len);
-        if (n > 0) {
+        if (n > 0)
+        {
             total += n;
-            if (total == len) {
+            if (total == len)
+            {
                 break;
             }
         }
@@ -102,14 +119,19 @@ CPINLINE int cpFifoRead(int pipe_fd_read, void *buf, int len) {
 
 CPINLINE int cpNetRead(int fd, void *buf, int len) {
     int n, total = 0;
-    do {
+    do
+    {
         n = recv(fd, buf + total, len, MSG_WAITALL);
-        if (n > 0) {
+        if (n > 0)
+        {
             total += n;
-            if (total == len) {
+            if (total == len)
+            {
                 break;
             }
-        } else if (n == 0) {
+        }
+        else if (n == 0)
+        {
             return 0;
         }
         //        else {
@@ -119,52 +141,85 @@ CPINLINE int cpNetRead(int fd, void *buf, int len) {
     return total;
 }
 
-void cpSettitle(char *title) {
+void cpSettitle(char *title_name) {
 
     assert(MAX_TITLE_LENGTH > strlen(title) + 5);
+    
+    char title[MAX_TITLE_LENGTH + 5] = {0};
+    strcat(title, "pool_");
+    strcat(title, title_name);
+    
+#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 4
 
-    int tlen = strlen(title);
-    char buffer[MAX_TITLE_LENGTH];
+    zval *name_ptr,name;
+    name_ptr = &name;
+    ZVAL_STRING(name_ptr, title, 0);
+    zval *retval;
+    zval **args[1];
+    args[0] = &name_ptr;
 
-    memset(buffer, 0, MAX_TITLE_LENGTH);
-    if (tlen >= (MAX_TITLE_LENGTH - 1)) tlen = (MAX_TITLE_LENGTH - 1);
-    memcpy(buffer, title, tlen);
-    snprintf(cpArgv0, MAX_TITLE_LENGTH, "pool_%s", buffer);
+    zval *function;
+    MAKE_STD_ZVAL(function);
+    ZVAL_STRING(function, "cli_set_process_title", 1);
+
+    if (call_user_function_ex(EG(function_table), NULL, function, &retval, 1, args, 0, NULL TSRMLS_CC) == FAILURE)
+    {
+        return;
+    }
+
+    zval_ptr_dtor(&function);
+    if (retval)
+    {
+        zval_ptr_dtor(&retval);
+    }
+
+#else
+    bzero(sapi_module.executable_location, MAX_TITLE_LENGTH);
+    memcpy(sapi_module.executable_location, title, strlen(title));
+#endif
 }
 
 //将套接字设置为非阻塞方式
 
 CPINLINE void swSetNonBlock(int sock) {
     int opts, ret;
-    do {
+    do
+    {
         opts = fcntl(sock, F_GETFL);
     } while (opts < 0 && errno == EINTR);
-    if (opts < 0) {
+    if (opts < 0)
+    {
         cpLog("fcntl(sock,GETFL) fail");
     }
     opts = opts | O_NONBLOCK;
-    do {
+    do
+    {
         ret = fcntl(sock, F_SETFL, opts);
     } while (ret < 0 && errno == EINTR);
-    if (ret < 0) {
+    if (ret < 0)
+    {
         cpLog("fcntl(sock,SETFL,opts) fail");
     }
 }
 
 CPINLINE void swSetBlock(int sock) {
     int opts, ret;
-    do {
+    do
+    {
         opts = fcntl(sock, F_GETFL);
     } while (opts < 0 && errno == EINTR);
 
-    if (opts < 0) {
+    if (opts < 0)
+    {
         cpLog("fcntl(sock,GETFL) fail");
     }
     opts = opts & ~O_NONBLOCK;
-    do {
+    do
+    {
         ret = fcntl(sock, F_SETFL, opts);
     } while (ret < 0 && errno == EINTR);
-    if (ret < 0) {
+    if (ret < 0)
+    {
         cpLog("fcntl(sock,SETFL,opts) fail");
     }
 }
@@ -175,11 +230,13 @@ CPINLINE int cpSetTimeout(int sock, double timeout) {
     timeo.tv_sec = (int) timeout;
     timeo.tv_usec = (int) ((timeout - timeo.tv_sec) * 1000 * 1000);
     ret = setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (void *) &timeo, sizeof (timeo));
-    if (ret < 0) {
+    if (ret < 0)
+    {
         return FAILURE;
     }
     ret = setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (void *) &timeo, sizeof (timeo));
-    if (ret < 0) {
+    if (ret < 0)
+    {
         return FAILURE;
     }
     return SUCCESS;
@@ -189,15 +246,18 @@ CPINLINE int cpCreateFifo(char *file) {
     int pipe_fd;
     int res;
     umask(0);
-    if (access(file, F_OK) == -1) {
+    if (access(file, F_OK) == -1)
+    {
         res = mkfifo(file, 0666);
-        if (res != 0 && errno != EEXIST) {//&&避免 worker和client一起创建导致的exist错误
+        if (res != 0 && errno != EEXIST)
+        {//&&避免 worker和client一起创建导致的exist错误
             cpLog("Could not create fifo %s Error: %s[%d]", file, strerror(errno), errno);
             return -1;
         }
     }
     pipe_fd = open(file, CP_PIPE_MOD);
-    if (pipe_fd == -1) {
+    if (pipe_fd == -1)
+    {
         cpLog("Could not open fifo %s Error: %s[%d]", file, strerror(errno), errno);
         return -1;
     }
@@ -211,7 +271,8 @@ void swSingalNone() {
     sigset_t mask;
     sigfillset(&mask);
     int ret = pthread_sigmask(SIG_BLOCK, &mask, NULL);
-    if (ret < 0) {
+    if (ret < 0)
+    {
         cpLog("pthread_sigmask fail: %s", strerror(ret));
     }
 }
@@ -227,7 +288,8 @@ zval * cpGetConfig(char *filename) {
     args[0] = &file;
     args[1] = &section;
 
-    if (call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 2, args, 0, NULL TSRMLS_CC) != SUCCESS) {
+    if (call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 2, args, 0, NULL TSRMLS_CC) != SUCCESS)
+    {
         zval_ptr_dtor(&file);
         zval_ptr_dtor(&section);
         return NULL;
@@ -240,14 +302,18 @@ zval * cpGetConfig(char *filename) {
 cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask) {
     struct sigaction act, oact;
     act.sa_handler = func;
-    if (mask) {
+    if (mask)
+    {
         sigfillset(&act.sa_mask);
-    } else {
+    }
+    else
+    {
         sigemptyset(&act.sa_mask);
     }
     act.sa_flags = 0;
     //        act.sa_flags = SA_SIGINFO;
-    if (sigaction(sig, &act, &oact) < 0) {
+    if (sigaction(sig, &act, &oact) < 0)
+    {
         return NULL;
     }
     return oact.sa_handler;
@@ -259,7 +325,8 @@ int cpQueueSignalSet(int sig, cpQueueFunc func) {
 
     act.sa_sigaction = func;
     act.sa_flags = SA_SIGINFO;
-    if (sigaction(sig, &act, &oact) < 0) {
+    if (sigaction(sig, &act, &oact) < 0)
+    {
         cpLog("sigaction error %d", errno);
         return FAILURE;
     }
@@ -276,7 +343,8 @@ int cpQueueSignalSet(int sig, cpQueueFunc func) {
 
 int clock_gettime(clock_id_t which_clock, struct timespec *t) {
     // be more careful in a multithreaded environement
-    if (!orwl_timestart) {
+    if (!orwl_timestart)
+    {
         mach_timebase_info_data_t tb = {0};
         mach_timebase_info(&tb);
         orwl_timebase = tb.numer;

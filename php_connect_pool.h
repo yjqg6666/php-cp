@@ -74,6 +74,10 @@ typedef unsigned long int uint64_t;
 
 #include "msgpack/php_msgpack.h"
 
+#ifdef ZTS
+#include "TSRM.h"
+#endif
+
 /**
  * PHP5.2
  */
@@ -99,9 +103,6 @@ extern zend_module_entry connect_pool_module_entry;
 #define PHP_CONNECT_POOL_API
 #endif
 
-#ifdef ZTS
-#include "TSRM.h"
-#endif
 #define CP_CHECK_RETURN(s)  if(s<0){RETURN_FALSE;}else{RETURN_TRUE;}return
 #define CP_SIG_EVENT       (SIGRTMIN+1)
 
@@ -182,6 +183,5 @@ extern cpWorkerG ConProxyWG;
 extern cpMasterInfo pdo_info;
 extern cpMasterInfo redis_info;
 extern FILE *cp_log_fn;
-extern char * cpArgv0;
 
 #endif	/* PHP_CON_PROXY_H */

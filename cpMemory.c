@@ -25,10 +25,12 @@ void *cp_mmap_calloc(int size) {
     flag |= MAP_ANONYMOUS;
 #else
     char *mapfile = NULL;
-    if (mapfile == NULL) {
+    if (mapfile == NULL)
+    {
         mapfile = "/dev/zero";
     }
-    if ((tmpfd = open(mapfile, O_RDWR)) < 0) {
+    if ((tmpfd = open(mapfile, O_RDWR)) < 0)
+    {
         return NULL;
     }
     strncpy(object->mapfile, mapfile, SW_SHM_MMAP_FILE_LEN);
@@ -44,7 +46,9 @@ void *cp_mmap_calloc(int size) {
     {
         cpLog("mmap fail. Error: %s[%d]", strerror(errno), errno);
         return NULL;
-    } else {
+    }
+    else
+    {
         bzero(mem, size);
         return mem;
     }
@@ -55,10 +59,12 @@ int cpShareMemory_sysv_create(cpShareMemory *object, int size, int key) {
     void *mem = NULL;
     bzero(object, sizeof (cpShareMemory));
 
-    if (key == 0) {
+    if (key == 0)
+    {
         key = IPC_PRIVATE;
     }
-    if ((shmid = shmget(key, size, SHM_R | SHM_W | IPC_CREAT | 0666)) < 0) {
+    if ((shmid = shmget(key, size, SHM_R | SHM_W | IPC_CREAT | 0666)) < 0)
+    {
         cpLog("shmget Error: %s[%d]", strerror(errno), errno);
         return 0;
     }
@@ -71,7 +77,8 @@ int cpShareMemory_sysv_create(cpShareMemory *object, int size, int key) {
 
 int cpShareMemory_sysv_free(cpShareMemory *object, int rm) {
     int ret = shmdt(object->mem);
-    if (rm == 1) {
+    if (rm == 1)
+    {
         shmctl(object->shmid, IPC_RMID, NULL);
     }
     object->mem = NULL;

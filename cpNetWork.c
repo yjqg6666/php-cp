@@ -23,24 +23,27 @@ int cpEpoll_add(int epfd, int fd, int fdtype) {
     e.data.fd = fd;
     e.events = fdtype;
     ret = epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &e);
-    if (ret < 0) {
+    if (ret < 0)
+    {
         cpLog("add event fail. Error: %s[%d]", strerror(errno), errno);
         return FAILURE;
     }
     return SUCCESS;
 }
 
-int cpEpoll_del(int epfd,int fd) {
+int cpEpoll_del(int epfd, int fd) {
     struct epoll_event e;
     int ret;
     e.data.fd = fd;
 
-    if (fd <= 0) {
+    if (fd <= 0)
+    {
         return FAILURE;
     }
     //	e.events = EPOLLIN | EPOLLET | EPOLLOUT;
     ret = epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &e);
-    if (ret < 0) {
+    if (ret < 0)
+    {
         cpLog("epoll remove fd[=%d] fail. Error: %s[%d]", fd, strerror(errno), errno);
         return SUCCESS;
     }
@@ -50,7 +53,8 @@ int cpEpoll_del(int epfd,int fd) {
 }
 
 CPINLINE int cpReactor_error() {
-    switch (errno) {
+    switch (errno)
+    {
         case EINTR:
             return SUCCESS;
     }
@@ -61,45 +65,55 @@ int cpEpoll_wait(epoll_wait_handle *handles, struct timeval *timeo, int epfd) {
     int i, n, ret, usec;
     //    int pack_size = sizeof (uint32_t)*8;
 
-    if (timeo == NULL) {
+    if (timeo == NULL)
+    {
         usec = CP_MAX_UINT;
-    } else {
+    }
+    else
+    {
         usec = timeo->tv_sec * 1000 + timeo->tv_usec / 1000;
     }
 
-//    uint8_t *run;
-//    if (CPGL.process_type == CP_PROCESS_WORKER) {
-//        run = &CPGS->workers[CPWG.id].run;
-//    } else {
-//        run = &CPGL.running;
-//    }
+    //    uint8_t *run;
+    //    if (CPGL.process_type == CP_PROCESS_WORKER) {
+    //        run = &CPGS->workers[CPWG.id].run;
+    //    } else {
+    //        run = &CPGL.running;
+    //    }
     struct epoll_event events[CP_REACTOR_MAXEVENTS];
 
-    while (CPGS->running) {
+    while (CPGS->running)
+    {
         n = epoll_wait(epfd, events, CP_REACTOR_MAXEVENTS, usec);
-        for (i = 0; i < n; i++) {
+        for (i = 0; i < n; i++)
+        {
             //取出事件
             //            ev.fd = object->events[i].data.u64;
             //            ev.type = object->events[i].data.u64 >> pack_size;
 
-//            if (events[i].events & EPOLLPRI) {
-//                char buf[1];
-//                ret = handles[EPOLLPRI](events[i].data.fd);
-//                recv(events[i].data.fd, buf, 1, MSG_OOB);
-//                if (ret < 0) {
-//                    cpLog("epoll [EPOLLPRI] handle failed. fd=%d. Error: %s[%d]", events[i].data.fd,
-//                            strerror(errno), errno);
-//                }
-//            }
-            if (events[i].events & EPOLLIN) {
+            //            if (events[i].events & EPOLLPRI) {
+            //                char buf[1];
+            //                ret = handles[EPOLLPRI](events[i].data.fd);
+            //                recv(events[i].data.fd, buf, 1, MSG_OOB);
+            //                if (ret < 0) {
+            //                    cpLog("epoll [EPOLLPRI] handle failed. fd=%d. Error: %s[%d]", events[i].data.fd,
+            //                            strerror(errno), errno);
+            //                }
+            //            }
+            if (events[i].events & EPOLLIN)
+            {
                 ret = handles[EPOLLIN](events[i].data.fd);
-                if (ret < 0) {
+                if (ret < 0)
+                {
                     cpLog("epoll [EPOLLIN] handle failed. fd=%d. Error: %s[%d]", events[i].data.fd,
                             strerror(errno), errno);
                 }
-            } else if (events[i].events & EPOLLOUT) {
+            }
+            else if (events[i].events & EPOLLOUT)
+            {
                 ret = handles[EPOLLIN](events[i].data.fd);
-                if (ret < 0) {
+                if (ret < 0)
+                {
                     cpLog("epoll [EPOLLOUT] handle failed. fd=%d. Error: %s[%d]", events[i].data.fd,
                             strerror(errno), errno);
                 }
@@ -110,16 +124,20 @@ int cpEpoll_wait(epoll_wait_handle *handles, struct timeval *timeo, int epfd) {
             else if ((events[i].events & (EPOLLERR | EPOLLHUP)))
 #endif
             {
-                if (events[i].data.fd > 0) {
+                if (events[i].data.fd > 0)
+                {
                     ret = handles[EPOLL_CLOSE](events[i].data.fd);
-                    if (ret < 0) {
+                    if (ret < 0)
+                    {
                         cpLog("epoll [EPOLLRDHUP] handle failed. fd=%d. Error: %s[%d]", events[i].data.fd, strerror(errno), errno);
                     }
                 }
             }
         }
-        if (n < 0) {
-            if (cpReactor_error() < 0) {
+        if (n < 0)
+        {
+            if (cpReactor_error() < 0)
+            {
                 cpLog("Epoll[#%d] Error: %s[%d]", events[i].data.fd, strerror(errno), errno);
                 return FAILURE;
             }

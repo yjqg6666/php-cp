@@ -20,7 +20,8 @@ int cpClient_close(cpClient *cli) {
     int ret, fd = cli->sock;
     cli->sock = 0;
     ret = close(fd);
-    if (ret < 0) {
+    if (ret < 0)
+    {
         cpLog("client close fail. Error: %s[%d]", strerror(errno), errno);
     }
     return ret;
@@ -52,17 +53,23 @@ int cpClient_send(int sock, char *data, int length, int flag) {
     assert(data != NULL);
 
     //总超时，for循环中计时
-    while (written < length) {
+    while (written < length)
+    {
         n = send(sock, data, length - written, flag);
-        if (n < 0) {
+        if (n < 0)
+        {
             //中断
-            if (errno == EINTR) {
+            if (errno == EINTR)
+            {
                 continue;
             }//让出
-            else if (errno == EAGAIN) {
+            else if (errno == EAGAIN)
+            {
                 usleep(1);
                 continue;
-            } else {
+            }
+            else
+            {
                 return SUCCESS;
             }
         }
@@ -79,7 +86,8 @@ int cpClient_create(cpClient *cli) {
     int flag = 1;
     setsockopt(cli->sock, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof (flag));
 
-    if (cli->sock < 0) {
+    if (cli->sock < 0)
+    {
         return FAILURE;
     }
     return SUCCESS;
@@ -89,14 +97,19 @@ static int swClient_inet_addr(struct sockaddr_in *sin, char *string) {
     struct in_addr tmp;
     struct hostent *host_entry;
 
-    if (inet_aton(string, &tmp)) {
+    if (inet_aton(string, &tmp))
+    {
         sin->sin_addr.s_addr = tmp.s_addr;
-    } else {
-        if (!(host_entry = gethostbyname(string))) {
+    }
+    else
+    {
+        if (!(host_entry = gethostbyname(string)))
+        {
             cpLog("Host lookup failed. Error: %s[%d] ", strerror(errno), errno);
             return SUCCESS;
         }
-        if (host_entry->h_addrtype != AF_INET) {
+        if (host_entry->h_addrtype != AF_INET)
+        {
             cpLog("Host lookup failed: Non AF_INET domain returned on AF_INET socket");
             return 0;
         }
@@ -110,23 +123,30 @@ int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int no
     cli->serv_addr.sin_family = AF_INET;
     cli->serv_addr.sin_port = htons(port);
 
-    if (swClient_inet_addr(&cli->serv_addr, host) < 0) {
+    if (swClient_inet_addr(&cli->serv_addr, host) < 0)
+    {
         return SUCCESS;
     }
 
     cli->timeout = timeout;
 
-    if (nonblock == 1) {
+    if (nonblock == 1)
+    {
         swSetNonBlock(cli->sock);
-    } else {
+    }
+    else
+    {
         cpSetTimeout(cli->sock, timeout);
     }
 
     //    int count = 0;
-    while (1) {
+    while (1)
+    {
         ret = connect(cli->sock, (struct sockaddr *) (&cli->serv_addr), sizeof (cli->serv_addr));
-        if (ret < 0) {
-            if (errno == EINTR) {
+        if (ret < 0)
+        {
+            if (errno == EINTR)
+            {
                 continue;
             }
             //            if (++count <= 15) {//防止重启代理导致的con refused
@@ -136,7 +156,8 @@ int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int no
         }
         break;
     }
-    if (ret >= 0) {
+    if (ret >= 0)
+    {
         cli->released = CP_FD_RELEASED;
     }
     return ret;
