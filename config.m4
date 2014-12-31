@@ -64,6 +64,7 @@ if test "$PHP_CONNECT_POOL" != "no"; then
                     cpMemory.c \
                     cpNetWork.c \
                     cpClientNet.c \
+                    cpPingWorker.c \
                     msgpack/msgpack.c \
                     msgpack/msgpack_pack.c\
                     msgpack/msgpack_unpack.c\

@@ -15,18 +15,24 @@ extern "C" {
 #define CP_CPU_NUM               (int)sysconf(_SC_NPROCESSORS_ONLN)/2==0?1:(int)sysconf(_SC_NPROCESSORS_ONLN)/2
 #define CP_BACKLOG               512
 #define CP_PIPES_NUM             (CP_WORKER_NUM/CP_WRITER_NUM + 1) //每个写线程pipes数组大小
-#define CP_PORT                  6253
+#define CP_PORT_PDO              6253
+#define CP_PORT_REDIS            6254
 #define CP_REACTOR_TIMEO_SEC     3
 #define CP_REACTOR_TIMEO_USEC    0
 #define CP_MAX_FDS               (1024*10) //最大fd值,暂不支持扩容
 #define CP_MAX_REQUEST           20000
-//    #define CP_MAX_REQUEST           1000
+    //    #define CP_MAX_REQUEST           1000
 #define CP_MAX_WORKER            100
 #define CP_MIN_WORKER            2
 #define CP_IDEL_TIME             2
 #define CP_RECYCLE_NUM           2
 #define CP_DEF_MAX_READ_LEN      (1024*1024*5)
 #define CP_MAX_READ_LEN          (1024*1024*20)
+
+#define CP_PING_MEM_LEN          1024*1024
+#define CP_PING_DIS_LEN          409600  //disable list mem
+#define CP_PING_PRO_LEN          409600  //probaly disable
+#define CP_PING_MD5_LEN          32        //conf md5 value
 
 #define CPGC                     ConProxyG.conf
 #define CPGL                     ConProxyG
@@ -53,7 +59,7 @@ extern "C" {
 #define CP_FD_WAITING          1
 
 #define CP_START_SLEEP           usleep(50000);
-    
+
     typedef volatile int8_t volatile_int8;
 
     typedef struct _cpIdelList {
@@ -76,6 +82,14 @@ extern "C" {
         uint16_t recycle_num;
         uint16_t port;
 
+        //连续失败多少次算失效
+        uint16_t ser_fail_hits;
+
+        //连续成功多少次恢复
+        uint16_t ser_success_hits;
+
+        //最多可以剔除多少个结点,防止网络抖动等,导致的全部踢掉
+        uint16_t max_fail_num;
 
         uint8_t idel_time;
         uint8_t use_wait_queue;
@@ -111,8 +125,6 @@ extern "C" {
 
         cpConfig conf;
         int epfd;
-        //        swAllocator *memory_pool;
-        //        swReactor *main_reactor;
     } cpServerG;
 
     typedef struct _cpConnection {
@@ -138,6 +150,7 @@ extern "C" {
         uint32_t *workerfd2clientfd_list; //workerfd和客户端fd的对应关系
 
         cpWorker *workers;
+        cpWorker *ping_workers;
         volatile_int8 *workers_status;
         pthread_spinlock_t *spin_lock;
 
@@ -153,6 +166,7 @@ extern "C" {
         int id; //Current Proccess Worker's id 0,1,2,3...n
         int clientPid;
         uint64_t max_read_len;
+        int warning_gone_away;
     } cpWorkerG;
 
     void cpServer_init(zval *conf, char *title, char *ini_file, int group_id);

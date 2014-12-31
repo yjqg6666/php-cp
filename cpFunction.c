@@ -144,14 +144,14 @@ CPINLINE int cpNetRead(int fd, void *buf, int len) {
 void cpSettitle(char *title_name) {
 
     assert(MAX_TITLE_LENGTH > strlen(title) + 5);
-    
+
     char title[MAX_TITLE_LENGTH + 5] = {0};
     strcat(title, "pool_");
     strcat(title, title_name);
-    
+
 #if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 4
 
-    zval *name_ptr,name;
+    zval *name_ptr, name;
     name_ptr = &name;
     ZVAL_STRING(name_ptr, title, 0);
     zval *retval;
@@ -297,6 +297,54 @@ zval * cpGetConfig(char *filename) {
     zval_ptr_dtor(&file);
     zval_ptr_dtor(&section);
     return retval;
+}
+
+CPINLINE zval * cpMD5(zval *arr) {//pass in array , out md5 zval
+    smart_str ser_data = {0};
+    cp_serialize(&ser_data, arr);
+
+    zval fun_name, **args[1], *retval, *str;
+    ZVAL_STRING(&fun_name, "md5", 0);
+
+    MAKE_STD_ZVAL(str);
+    ZVAL_STRINGL(str, ser_data.c, ser_data.len, 1);
+    args[0] = &str;
+
+    if (call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 1, args, 0, NULL TSRMLS_CC) != SUCCESS)
+    {
+        zval_ptr_dtor(&str);
+        return NULL;
+    }
+    zval_ptr_dtor(&str);
+    smart_str_free(&ser_data);
+    return retval;
+}
+
+CPINLINE void cp_serialize(smart_str *ser_data, zval *array) {
+    //    struct timeval start, end;
+    //    gettimeofday(&start, NULL);
+
+    php_serialize_data_t var_hash;
+    PHP_VAR_SERIALIZE_INIT(var_hash);
+    php_var_serialize(ser_data, &array, &var_hash TSRMLS_CC);
+    PHP_VAR_SERIALIZE_DESTROY(var_hash);
+
+    //    gettimeofday(&end, NULL);
+    //    int timeuse = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
+    //    printf("ser time: %d us\n", timeuse);
+}
+
+CPINLINE zval * cp_unserialize(char *data, int len) {
+    zval *unser_value;
+    ALLOC_INIT_ZVAL(unser_value);
+    php_unserialize_data_t var_hash;
+    PHP_VAR_UNSERIALIZE_INIT(var_hash);
+    if (php_var_unserialize(&unser_value, (const unsigned char **) &data, (unsigned char *) data + len - 1, &var_hash TSRMLS_CC) != 1)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "unser data is corrupted");
+    }
+    PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
+    return unser_value;
 }
 
 cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask) {

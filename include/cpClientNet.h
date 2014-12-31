@@ -17,9 +17,12 @@ typedef struct _cpClient
         int released;
         int port;
 	double timeout;
+        char *pingid2attbuf;
         
         struct sockaddr_in serv_addr;
 	struct sockaddr_in remote_addr;
+        
+        cpMasterInfo info;
         
 } cpClient;
 

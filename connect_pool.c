@@ -23,13 +23,10 @@
 static HashTable pdo_object_table;
 static HashTable redis_object_table;
 static zval* pdo_stmt = NULL;
-static int warning_gone_away = 0;
 
 cpServerG ConProxyG;
 cpServerGS *ConProxyGS;
 cpWorkerG ConProxyWG;
-cpMasterInfo pdo_info;
-cpMasterInfo redis_info;
 
 extern sapi_module_struct sapi_module;
 
@@ -39,6 +36,7 @@ static void pdo_dispatch(zval *args);
 static void pdo_proxy_connect(zval *args, int reconnect);
 static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
+static void cp_add_fail_into_mem(zval *conf);
 
 #define CP_VERSION "2.4"
 
@@ -74,7 +72,6 @@ const zend_function_entry cp_functions[] = {
     PHP_FE(pool_server_reload, NULL)
     PHP_FE(pool_server_version, NULL)
     PHP_FE(get_disable_list, NULL)
-    PHP_FE(set_disable_list, NULL)
     PHP_FE(shit_pdo_warning_function, NULL)
     PHP_FE(redis_connect, NULL)
     PHP_FE(client_close, NULL)
@@ -164,7 +161,12 @@ PHP_MINIT_FUNCTION(connect_pool) {
     zend_hash_init(&pdo_object_table, 50, NULL, ZVAL_PTR_DTOR, 1);
     zend_hash_init(&redis_object_table, 50, NULL, ZVAL_PTR_DTOR, 1);
 
+    REGISTER_LONG_CONSTANT("CP_DEFAULT_PDO_PORT", CP_PORT_PDO, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("CP_DEFAULT_REDIS_PORT", CP_PORT_REDIS, CONST_CS | CONST_PERSISTENT);
+
     bzero(&ConProxyG, sizeof (ConProxyG));
+    bzero(&ConProxyWG, sizeof (ConProxyWG));
+
     return SUCCESS;
 }
 /* }}} */
@@ -249,15 +251,8 @@ PHP_FUNCTION(shit_pdo_warning_function) {
     char *p = strstr(errstr, "server has gone away");
     if (p)
     {
-        warning_gone_away = 1;
+        ConProxyWG.warning_gone_away = 1;
     }
-
-}
-
-PHP_FUNCTION(get_disable_list) {
-}
-
-PHP_FUNCTION(set_disable_list) {
 
 }
 
@@ -352,33 +347,6 @@ PHP_FUNCTION(pool_server_shutdown) {
     {
         RETURN_TRUE;
     }
-}
-
-void cp_serialize(smart_str *ser_data, zval *array) {
-    //    struct timeval start, end;
-    //    gettimeofday(&start, NULL);
-
-    php_serialize_data_t var_hash;
-    PHP_VAR_SERIALIZE_INIT(var_hash);
-    php_var_serialize(ser_data, &array, &var_hash TSRMLS_CC);
-    PHP_VAR_SERIALIZE_DESTROY(var_hash);
-
-    //    gettimeofday(&end, NULL);
-    //    int timeuse = 1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec;
-    //    printf("ser time: %d us\n", timeuse);
-}
-
-zval * cp_unserialize(char *data, int len) {
-    zval *unser_value;
-    ALLOC_INIT_ZVAL(unser_value);
-    php_unserialize_data_t var_hash;
-    PHP_VAR_UNSERIALIZE_INIT(var_hash);
-    if (php_var_unserialize(&unser_value, (const unsigned char **) &data, (unsigned char *) data + len - 1, &var_hash TSRMLS_CC) != 1)
-    {
-        php_error_docref(NULL TSRMLS_CC, E_ERROR, "unser data is corrupted");
-    }
-    PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
-    return unser_value;
 }
 
 CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type) {
@@ -480,6 +448,7 @@ static void pdo_proxy_connect(zval *args, int reconnect) {
                 zval_ptr_dtor(&ret_pdo_obj);
             if (EG(exception))
             {
+                cp_add_fail_into_mem(args);
                 zval *str;
                 CP_SEND_EXCEPTION(&str, 0);
                 zval_ptr_dtor(&new_obj);
@@ -550,7 +519,7 @@ static void pdo_proxy_pdo(zval *args) {
                 CP_INTERNAL_ERROR_SEND("PDO no method!");
             }
             zval * ret_value = NULL;
-            warning_gone_away = 0;
+            ConProxyWG.warning_gone_away = 0;
             if (cp_call_user_function(object, *method, &ret_value, args) == FAILURE)
             {
                 CP_INTERNAL_ERROR_SEND("call pdo method error!");
@@ -593,7 +562,7 @@ static void pdo_proxy_pdo(zval *args) {
                     }
                     else
                     {//pdo
-                        if (warning_gone_away)
+                        if (ConProxyWG.warning_gone_away)
                         {//restart mysql will trigger this warning
                             zend_hash_del(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
                             CP_INTERNAL_ERROR_SEND("Server has gone away");
@@ -879,4 +848,8 @@ int worker_onReceive(zval *unser_value) {
     }
     zval_ptr_dtor(&unser_value);
     return 0;
+}
+
+static void cp_add_fail_into_mem(zval *conf) {
+
 }

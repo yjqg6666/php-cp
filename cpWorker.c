@@ -272,3 +272,13 @@ int cpWorker_manager_loop() {
     }
     return SUCCESS;
 }
+
+CPINLINE int cpCreate_worker_mem(int worker_id) {
+    cpShareMemory *sm_obj = &(CPGS->workers[worker_id].sm_obj);
+    if (!cpShareMemory_sysv_create(sm_obj, CPGC.max_read_len, 0x3526 + CPGC.port * CP_GROUP_LEN + worker_id))
+    {//todo check <1000
+        cpLog("create sys v shm. Error: %s [%d]", strerror(errno), errno);
+        return FAILURE;
+    }
+    return SUCCESS;
+}

@@ -123,13 +123,14 @@ extern zend_module_entry connect_pool_module_entry;
 #define CP_PROCESS_MASTER      1
 #define CP_PROCESS_WORKER      2
 #define CP_PROCESS_MANAGER     3
+#define CP_PROCESS_PING        4
 
 #define CP_PIPE_MOD O_RDWR
 #define CP_TYPE_SIZE sizeof(uint8_t)
 
 #define CP_GROUP_LEN 1000 //
 #define CP_GROUP_NUM 100 //the max group num of proxy process . todo  check it
- 
+
 extern int le_cli_connect_pool;
 
 extern zend_class_entry *redis_connect_pool_class_entry_ptr;
@@ -148,7 +149,6 @@ PHP_FUNCTION(pool_server_reload);
 PHP_FUNCTION(pool_server_version);
 
 PHP_FUNCTION(get_disable_list);
-PHP_FUNCTION(set_disable_list);
 PHP_FUNCTION(shit_pdo_warning_function);
 
 PHP_FUNCTION(client_close);
@@ -180,8 +180,6 @@ CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int pid, int max, int
 extern cpServerG ConProxyG;
 extern cpServerGS *ConProxyGS;
 extern cpWorkerG ConProxyWG;
-extern cpMasterInfo pdo_info;
-extern cpMasterInfo redis_info;
 extern FILE *cp_log_fn;
 
 #endif	/* PHP_CON_PROXY_H */

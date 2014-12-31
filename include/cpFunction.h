@@ -64,6 +64,7 @@ extern "C" {
     int cpQueueSignalSet(int sig, cpQueueFunc func);
     void cpSettitle(char *title);
     zval * cpGetConfig(char *filename);
+    zval * cpMD5(zval *arr);
 
 
 

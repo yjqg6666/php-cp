@@ -24,7 +24,6 @@ int static cpReactor_client_close(int fd);
 static int cpReactor_client_receive(int fd);
 static int cpReactor_client_release(int fd);
 static void insert_into_used();
-CPINLINE int cpCreate_worker_mem(int worker_id);
 
 void cpServer_init(zval *conf, char *title, char *ini_file, int group_id) {
     CPGS = (cpServerGS*) cp_mmap_calloc(sizeof (cpServerGS));
@@ -47,6 +46,10 @@ void cpServer_init(zval *conf, char *title, char *ini_file, int group_id) {
 
     CPGS->worker_max = CP_MAX_WORKER;
     CPGC.worker_min = CP_MIN_WORKER;
+
+    CPGC.ser_fail_hits = 1;
+    CPGC.ser_success_hits = 1;
+    CPGC.max_fail_num = 2;
 
     strcpy(CPGC.title, title);
     strcpy(CPGC.ini_file, ini_file);
@@ -105,12 +108,36 @@ void cpServer_init(zval *conf, char *title, char *ini_file, int group_id) {
         convert_to_long(*v);
         CPGC.use_wait_queue = (int) Z_LVAL_PP(v);
     }
+
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ser_fail_hits"), (void **) &v) == SUCCESS)
+    {
+        convert_to_long(*v);
+        CPGC.ser_fail_hits = (int) Z_LVAL_PP(v);
+    }
+
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ser_success_hits"), (void **) &v) == SUCCESS)
+    {
+        convert_to_long(*v);
+        CPGC.ser_success_hits = (int) Z_LVAL_PP(v);
+    }
+
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_fail_num"), (void **) &v) == SUCCESS)
+    {
+        convert_to_long(*v);
+        CPGC.max_fail_num = (int) Z_LVAL_PP(v);
+    }
 }
 
 int cpServer_create() {
     if (CPGC.worker_min < 1 || CPGC.reactor_num < 1 || CPGC.max_read_len >= CP_MAX_READ_LEN)
     {
         printf("Fatal Error: worker_min < 1 or reactor_num < 1 or max_read_len >%d\n", CP_MAX_READ_LEN);
+        return FAILURE;
+    }
+
+    if (CPGC.ser_success_hits < 1 || CPGC.ser_fail_hits < 1 || CPGC.max_fail_num < 1)
+    {
+        printf("ping server conf error\n");
         return FAILURE;
     }
 
@@ -149,6 +176,13 @@ int cpServer_create() {
         return FAILURE;
     }
 
+    CPGS->ping_workers = (cpWorker*) cp_mmap_calloc(sizeof (cpWorker));
+    if (CPGS->ping_workers == NULL)
+    {
+        cpLog("[Main] calloc[ping_workers] fail");
+        return FAILURE;
+    }
+
     CPGS->spin_lock = (pthread_spinlock_t*) cp_mmap_calloc(sizeof (pthread_spinlock_t));
     //worker闲忙的锁,未做兼容,只在linux用
     if (pthread_spin_init(CPGS->spin_lock, 1) < 0)
@@ -164,14 +198,12 @@ int cpServer_create() {
 }
 
 int static cpList_create() {
-    int i;
     CPGS->WaitList = CPGS->WaitTail = NULL;
     return SUCCESS;
 }
 
 int cpServer_start() {
-    int i, pid, ret;
-    //run as daemon
+    int i, pid, ret, ping_pid;
     if (CPGC.daemonize > 0)
     {
         if (daemon(0, 0) < 0)
@@ -188,19 +220,22 @@ int cpServer_start() {
     {
             //创建manager进程
         case 0:
-            //********************数据库坏连接检测恢复进程******************************
-            //            pid = fork();
-            //            if (pid < 0) {
-            //                cpLog("Fork Worker failed. Error: %s [%d]", strerror(errno), errno);
-            //            } else if (pid == 0) {
-            ////                cpSignalSet(SIGALRM, cpManagerSignalHanlde, 1, 0);
-            //            }
-            //********************数据库坏连接检测恢复进程******************************
+            //数据库坏连接检测恢复进程
+            ping_pid = cpFork_ping_worker();
+            ret = cpCreate_ping_worker_mem();
+            if (ping_pid < 0 || ret < 0)
+            {
+                cpLog("Fork ping  process fail");
+                return FAILURE;
+            }
+            CPGS->ping_workers->pid = ping_pid;
+
             for (i = 0; i < CPGC.worker_min; i++)
-            {//alloc了max个 但是只启动min个
+            {
+                //alloc了max个 但是只启动min个
                 pid = cpFork_one_worker(i);
-                cpCreate_worker_mem(i);
-                if (pid < 0)
+                ret = cpCreate_worker_mem(i);
+                if (pid < 0 || ret < 0)
                 {
                     cpLog("Fork worker process fail");
                     return FAILURE;
@@ -328,19 +363,11 @@ CPINLINE static int MasterSend2Client(int fd, int worker_id, int CPid) {
     int sizeinfo = sizeof (info);
     info.worker_id = CPGC.group_id * CP_GROUP_LEN + worker_id;
     info.semid = CPGS->workers[worker_id].sm_obj.shmid;
+    info.ping_semid = CPGS->ping_workers->sm_obj.shmid;
+    info.ping_pid = CPGS->ping_workers->pid;
     info.max = CPGC.max_read_len;
     CPGS->workers[worker_id].CPid = CPid;
     return cpWrite(fd, &info, sizeinfo);
-}
-
-CPINLINE int cpCreate_worker_mem(int worker_id) {
-    cpShareMemory *sm_obj = &(CPGS->workers[worker_id].sm_obj);
-    if (!cpShareMemory_sysv_create(sm_obj, CPGC.max_read_len, 0x3526 + CPGC.port * CP_GROUP_LEN + worker_id))
-    {//todo check <1000
-        cpLog("create sys v shm. Error: %s [%d]", strerror(errno), errno);
-        return FAILURE;
-    }
-    return SUCCESS;
 }
 
 static void cpTryGetWorkerId(cpConnection *conn, char * data, int fd, int len) {

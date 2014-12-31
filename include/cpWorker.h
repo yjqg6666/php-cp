@@ -30,6 +30,7 @@ extern "C" {
 
     int cpFork_one_worker(int id);
     int cpWorker_manager_loop();
+    CPINLINE int cpCreate_worker_mem(int worker_id);
 
 #ifdef	__cplusplus
 }
