@@ -341,7 +341,7 @@ CPINLINE zval * cp_unserialize(char *data, int len) {
     PHP_VAR_UNSERIALIZE_INIT(var_hash);
     if (php_var_unserialize(&unser_value, (const unsigned char **) &data, (unsigned char *) data + len - 1, &var_hash TSRMLS_CC) != 1)
     {
-        php_error_docref(NULL TSRMLS_CC, E_ERROR, "unser data is corrupted");
+        php_error_docref(NULL TSRMLS_CC, E_NOTICE, "unser data is corrupted");
     }
     PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
     return unser_value;

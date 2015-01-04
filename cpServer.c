@@ -221,8 +221,8 @@ int cpServer_start() {
             //创建manager进程
         case 0:
             //数据库坏连接检测恢复进程
-            ping_pid = cpFork_ping_worker();
             ret = cpCreate_ping_worker_mem();
+            ping_pid = cpFork_ping_worker();
             if (ping_pid < 0 || ret < 0)
             {
                 cpLog("Fork ping  process fail");
@@ -233,8 +233,8 @@ int cpServer_start() {
             for (i = 0; i < CPGC.worker_min; i++)
             {
                 //alloc了max个 但是只启动min个
-                pid = cpFork_one_worker(i);
                 ret = cpCreate_worker_mem(i);
+                pid = cpFork_one_worker(i);
                 if (pid < 0 || ret < 0)
                 {
                     cpLog("Fork worker process fail");
@@ -710,20 +710,25 @@ static void cpSignalHanlde(int sig) {
         case SIGTERM:
             cpLog("stop %s", CPGC.title);
             CPGS->running = 0;
-            int i = 0;
+            int i = 0,ret;
             for (; i < CPGS->worker_num; i++)
             {
-                int ret = kill(CPGS->workers[i].pid, SIGKILL);
+                ret = kill(CPGS->workers[i].pid, SIGKILL);
                 if (ret == -1)
                 {
                     cpLog("kill failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
                 }
             }
+            ret = kill(CPGS->ping_workers->pid, SIGKILL);
+            if (ret == -1)
+            {
+                cpLog("kill ping worker failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
+            }
             exit(1);
             break;
         case SIGUSR1:
             cpLog("reload %s", CPGC.title);
-            int ret = kill(CPGS->manager_pid, SIGUSR1);
+            ret = kill(CPGS->manager_pid, SIGUSR1);
             if (ret == -1)
             {
                 cpLog("reload failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);

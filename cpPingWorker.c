@@ -25,12 +25,9 @@ static int cpPing_worker_loop() {
     while (1)
     {
         zval *arr = cp_unserialize(buf + CP_PING_DIS_LEN + CP_PING_MD5_LEN, CP_PING_PRO_LEN);
-        if (Z_TYPE_P(arr) == IS_BOOL)
+        if (Z_TYPE_P(arr) != IS_BOOL && Z_TYPE_P(arr) != IS_NULL)
         {
-            continue;
-        }
-        else
-        {//检查probably里面是否有可以放入disable的
+            //检查probably里面是否有可以放入disable的
             for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(arr)); zend_hash_has_more_elements(Z_ARRVAL_P(arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(arr)))
             {
                 zval **config;
@@ -40,7 +37,7 @@ static int cpPing_worker_loop() {
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(arr), &name, &keylen, NULL, 0, NULL);
             }
             //开始检测disable中是否有恢复的
-            
+
 
         }
         sleep(1);
