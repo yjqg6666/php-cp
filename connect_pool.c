@@ -66,7 +66,7 @@ static void cp_add_fail_into_mem(zval *conf, char *data_source);
 #define CP_INTERNAL_ERROR_SEND_RETURN(send_data) ({ CP_INTERNAL_ERROR_SEND(send_data);return CP_FALSE;})
 #define CP_SEND_EXCEPTION_RETURN do{CP_SEND_EXCEPTION;return CP_FALSE;}while(0);
 
-#define CP_TEST_RETURN_FALSE(flag) ({if(flag==CP_CONNECT_PING)return CP_FALSE;})
+#define CP_TEST_RETURN_FALSE(flag) ({if(flag==CP_CONNECT_PING){EG(exception) = NULL;return CP_FALSE;}})
 #define CP_TEST_RETURN_TRUE(flag) ({if(flag==CP_CONNECT_PING)return CP_TRUE;})
 
 #include "zend_exceptions.h"
@@ -696,6 +696,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag) {
         cp_add_fail_into_mem(args, Z_STRVAL_P(data_source));
         CP_SEND_EXCEPTION_RETURN;
     }
+    CP_TEST_RETURN_TRUE(flag);
     if (zend_hash_index_find(Z_ARRVAL_P(ex_arr), 2, (void**) &db) == SUCCESS)
     {
         if (!cp_redis_select(new_obj, db))

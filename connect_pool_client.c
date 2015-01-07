@@ -785,11 +785,11 @@ PHP_FUNCTION(get_disable_list) {
         int *pid = ping_addr + CP_PING_MD5_LEN;
         if (*pid > 0)
         {
-//            int ret = kill(*pid, SIGUSR1); //清空disable和probably
-//            if (ret == -1)
-//            {
-//                zend_error(E_NOTICE, "kill failed, Error: %s [%d]", strerror(errno), errno);
-//            }
+            int ret = kill(*pid, SIGUSR1); //清空disable和probably
+            if (ret == -1)
+            {
+                zend_error(E_NOTICE, "kill failed, Error: %s [%d]", strerror(errno), errno);
+            }
         }
         array_init(return_value);
     }

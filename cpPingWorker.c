@@ -39,7 +39,12 @@ static void cpPing_del_prolist(zval *pro_arr, char *data_source) {
     cp_ser_and_setpro(pro_arr);
 }
 
+static void cpPingClear(int sig){
+        bzero(CPGL.ping_mem_addr+ CP_PING_MD5_LEN+CP_PING_PID_LEN, CP_PING_DIS_LEN);
+}
+
 static int cpPing_worker_loop() {
+    cpSignalSet(SIGUSR1, cpPingClear, 1, 0);
     if ((CPGL.ping_mem_addr = shmat(CPGS->ping_workers->sm_obj.shmid, NULL, 0)) < 0)
     {
         zend_error(E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
@@ -64,7 +69,6 @@ static int cpPing_worker_loop() {
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(pro_arr), &data_source, &keylen, NULL, 0, NULL);
                 if (zend_hash_find(Z_ARRVAL_PP(args), ZEND_STRS("count"), (void **) &zval_count) == SUCCESS)
                 {
-                    printf("%s %d,%d\n", data_source, Z_LVAL_PP(zval_count), CPGC.ser_fail_hits);
                     if (Z_LVAL_PP(zval_count) >= CPGC.ser_fail_hits)
                     {//连续错n次 放入dis列表
                         cpPing_add_dislist(dis_arr, args, data_source);
@@ -86,7 +90,7 @@ static int cpPing_worker_loop() {
                 char *data_source;
                 int keylen;
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(dis_arr), &data_source, &keylen, NULL, 0, NULL);
-                if (strstr("host", data_source))
+                if (strstr( data_source,"host"))
                 {//mysql
                     if (pdo_proxy_connect(*args, CP_CONNECT_PING))
                     {
