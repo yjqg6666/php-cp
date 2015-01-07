@@ -33,6 +33,12 @@ extern "C" {
 #define CP_PING_DIS_LEN          409600  //disable list mem
 #define CP_PING_PRO_LEN          409600  //probaly disable
 #define CP_PING_MD5_LEN          32        //conf md5 value
+#define CP_PING_PID_LEN          4        //conf md5 value
+#define CP_PING_GET_DIS(addr) cp_unserialize((addr) + CP_PING_MD5_LEN+CP_PING_PID_LEN, CP_PING_DIS_LEN);
+#define CP_PING_GET_PRO(addr) cp_unserialize((addr) + CP_PING_MD5_LEN+CP_PING_PID_LEN+CP_PING_DIS_LEN, CP_PING_PRO_LEN);
+#define CP_CONNECT_NORMAL        0
+#define CP_CONNECT_RECONNECT     1
+#define CP_CONNECT_PING          2
 
 #define CPGC                     ConProxyG.conf
 #define CPGL                     ConProxyG
@@ -47,16 +53,19 @@ extern "C" {
 #define CP_WORKER_IDLE           1
 #define CP_WORKER_DEL            0
 
-#define CP_ACCEPT_AGAIN            1     //是否循环accept，可以一次性处理完全部的listen队列，用于大量并发连接的场景
-#define CP_ACCEPT_MAX_COUNT        64    //一次循环的最大accept次数
+#define CP_ACCEPT_AGAIN          1     //是否循环accept，可以一次性处理完全部的listen队列，用于大量并发连接的场景
+#define CP_ACCEPT_MAX_COUNT      64    //一次循环的最大accept次数
 #define CP_TCP_KEEPCOUNT         5
 #define CP_TCP_KEEPIDLE          3600 //1小时
 #define CP_TCP_KEEPINTERVAL      60
 
-#define CP_FD_NCON             2
-#define CP_FD_RELEASED          0
+#define CP_FD_NCON               2
+#define CP_FD_RELEASED           0
 #define CP_FD_NRELEASED          2
-#define CP_FD_WAITING          1
+#define CP_FD_WAITING            1
+    
+#define CP_TRUE                  1
+#define CP_FALSE                 0
 
 #define CP_START_SLEEP           usleep(50000);
 
@@ -84,9 +93,6 @@ extern "C" {
 
         //连续失败多少次算失效
         uint16_t ser_fail_hits;
-
-        //连续成功多少次恢复
-        uint16_t ser_success_hits;
 
         //最多可以剔除多少个结点,防止网络抖动等,导致的全部踢掉
         uint16_t max_fail_num;
@@ -125,6 +131,7 @@ extern "C" {
 
         cpConfig conf;
         int epfd;
+        void *ping_mem_addr;
     } cpServerG;
 
     typedef struct _cpConnection {

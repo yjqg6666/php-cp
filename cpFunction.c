@@ -71,23 +71,19 @@ CPINLINE int cpWrite(int fd, void *buf, int count) {
         {
             totlen += nwritten;
             buf += nwritten;
-        }
-        else if (nwritten == 0)
+        } else if (nwritten == 0)
         {
             return totlen;
-        }
-        else
+        } else
         {
             if (errno == EINTR)
             {
                 continue;
-            }
-            else if (errno == EAGAIN)
+            } else if (errno == EAGAIN)
             {
                 usleep(1);
                 continue;
-            }
-            else
+            } else
             {
                 return -1;
             }
@@ -129,8 +125,7 @@ CPINLINE int cpNetRead(int fd, void *buf, int len) {
             {
                 break;
             }
-        }
-        else if (n == 0)
+        } else if (n == 0)
         {
             return 0;
         }
@@ -347,14 +342,27 @@ CPINLINE zval * cp_unserialize(char *data, int len) {
     return unser_value;
 }
 
+CPINLINE void cp_ser_and_setpro(zval *arr) {
+    smart_str ser_data = {0};
+    cp_serialize(&ser_data, arr);
+    memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN + CP_PING_PID_LEN + CP_PING_DIS_LEN, ser_data.c, ser_data.len);
+    smart_str_free(&ser_data);
+}
+
+CPINLINE void cp_ser_and_setdis(zval *arr) {
+    smart_str ser_data = {0};
+    cp_serialize(&ser_data, arr);
+    memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN + CP_PING_PID_LEN, ser_data.c, ser_data.len);
+    smart_str_free(&ser_data);
+}
+
 cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask) {
     struct sigaction act, oact;
     act.sa_handler = func;
     if (mask)
     {
         sigfillset(&act.sa_mask);
-    }
-    else
+    } else
     {
         sigemptyset(&act.sa_mask);
     }

@@ -16,31 +16,97 @@
 
 #include "php_connect_pool.h"
 
+static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source) {
+    if (Z_TYPE_P(dis_arr) == IS_NULL)
+    {
+        zval first_arr;
+        array_init(&first_arr);
+        add_assoc_zval(&first_arr, data_source, *args);
+        cp_ser_and_setdis(&first_arr);
+    } else if (Z_TYPE_P(dis_arr) != IS_BOOL)
+    {
+        zval **zval_source;
+        if (zend_hash_find(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1, (void **) &zval_source) == FAILURE)//SUCCESS的跳过,证明dis后继续调用这个节点了
+        {
+            add_assoc_zval(dis_arr, data_source, *args);
+            cp_ser_and_setdis(dis_arr);
+        }
+    }
+}
+
+static void cpPing_del_prolist(zval *pro_arr, char *data_source) {
+    zend_hash_del(Z_ARRVAL_P(pro_arr), data_source, strlen(data_source) + 1);
+    cp_ser_and_setpro(pro_arr);
+}
+
 static int cpPing_worker_loop() {
-    char *buf = NULL;
-    if ((buf = shmat(CPGS->ping_workers->sm_obj.shmid, NULL, 0)) < 0)
+    if ((CPGL.ping_mem_addr = shmat(CPGS->ping_workers->sm_obj.shmid, NULL, 0)) < 0)
     {
         zend_error(E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
     }
+    bzero(CPGL.ping_mem_addr, CP_PING_MEM_LEN);
+    memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN, &CPGS->ping_workers->pid, CP_PING_PID_LEN);
+
     while (1)
     {
-        zval *arr = cp_unserialize(buf + CP_PING_DIS_LEN + CP_PING_MD5_LEN, CP_PING_PRO_LEN);
-        if (Z_TYPE_P(arr) != IS_BOOL && Z_TYPE_P(arr) != IS_NULL)
+        sleep(1);
+        zval *pro_arr = CP_PING_GET_PRO(CPGL.ping_mem_addr);
+        zval *dis_arr = CP_PING_GET_DIS(CPGL.ping_mem_addr);
+        if (Z_TYPE_P(pro_arr) != IS_BOOL && Z_TYPE_P(pro_arr) != IS_NULL)
         {
             //检查probably里面是否有可以放入disable的
-            for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(arr)); zend_hash_has_more_elements(Z_ARRVAL_P(arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(arr)))
+            for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(pro_arr)); zend_hash_has_more_elements(Z_ARRVAL_P(pro_arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(pro_arr)))
             {
-                zval **config;
-                zend_hash_get_current_data(Z_ARRVAL_P(arr), (void**) &config);
-                char *name;
+                zval **args, **zval_count;
+                zend_hash_get_current_data(Z_ARRVAL_P(pro_arr), (void**) &args);
+                char *data_source;
                 int keylen;
-                zend_hash_get_current_key_ex(Z_ARRVAL_P(arr), &name, &keylen, NULL, 0, NULL);
+                zend_hash_get_current_key_ex(Z_ARRVAL_P(pro_arr), &data_source, &keylen, NULL, 0, NULL);
+                if (zend_hash_find(Z_ARRVAL_PP(args), ZEND_STRS("count"), (void **) &zval_count) == SUCCESS)
+                {
+                    printf("%s %d,%d\n", data_source, Z_LVAL_PP(zval_count), CPGC.ser_fail_hits);
+                    if (Z_LVAL_PP(zval_count) >= CPGC.ser_fail_hits)
+                    {//连续错n次 放入dis列表
+                        cpPing_add_dislist(dis_arr, args, data_source);
+                        cpPing_del_prolist(pro_arr, data_source);
+                    }
+                }
             }
-            //开始检测disable中是否有恢复的
-
-
         }
-        sleep(1);
+        zval_ptr_dtor(&dis_arr);
+
+        dis_arr = CP_PING_GET_DIS(CPGL.ping_mem_addr);
+        if (Z_TYPE_P(dis_arr) != IS_BOOL && Z_TYPE_P(dis_arr) != IS_NULL)
+        {
+            //开始检测disable中是否有恢复的
+            for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(dis_arr)); zend_hash_has_more_elements(Z_ARRVAL_P(dis_arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(dis_arr)))
+            {
+                zval **args;
+                zend_hash_get_current_data(Z_ARRVAL_P(dis_arr), (void**) &args);
+                char *data_source;
+                int keylen;
+                zend_hash_get_current_key_ex(Z_ARRVAL_P(dis_arr), &data_source, &keylen, NULL, 0, NULL);
+                if (strstr("host", data_source))
+                {//mysql
+                    if (pdo_proxy_connect(*args, CP_CONNECT_PING))
+                    {
+                        zend_hash_del(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1);
+                        cp_ser_and_setdis(dis_arr);
+                    }
+                } else
+                {//redis
+                    zval z_data_source;
+                    ZVAL_STRINGL(&z_data_source, data_source, keylen, 1);
+                    if (redis_proxy_connect(&z_data_source, *args, CP_CONNECT_PING))
+                    {
+                        zend_hash_del(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1);
+                        cp_ser_and_setdis(dis_arr);
+                    }
+                }
+            }
+        }
+        zval_ptr_dtor(&dis_arr);
+        zval_ptr_dtor(&pro_arr);
     }
 
 
@@ -53,8 +119,7 @@ int cpFork_ping_worker() {
     {
         cpLog("Fork Worker failed. Error: %s [%d]", strerror(errno), errno);
         return FAILURE;
-    }
-    else if (pid == 0)
+    } else if (pid == 0)
     {
         //标识为worker进程
         CPGL.process_type = CP_PROCESS_PING;
@@ -64,8 +129,7 @@ int cpFork_ping_worker() {
         cpSettitle(name);
         ret = cpPing_worker_loop();
         exit(ret);
-    }
-    else
+    } else
     {
         return pid;
     }

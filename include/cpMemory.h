@@ -30,7 +30,6 @@ extern "C" {
 
     typedef struct _cpMasterInfo {//获取连接,master进程返回的信息
         int semid;
-        int ping_semid;
         int ping_pid;
         int worker_id;
         int max;//数据包max

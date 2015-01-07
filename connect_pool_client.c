@@ -35,6 +35,7 @@ cpRecvEvent RecvData;
 static int *workerid2writefd = NULL;
 static int *workerid2readfd = NULL;
 static void **semid2attbuf = NULL;
+void *ping_addr = NULL;
 static int cpPid = 0;
 #define CP_GET_PID if(cpPid==0)cpPid=getpid()
 
@@ -69,8 +70,7 @@ static int get_writefd(int worker_id) {
             zend_error(E_ERROR, "pipe open Error: %s [%d]", strerror(errno), errno);
         }
         workerid2writefd[worker_id] = pipe_fd_write;
-    }
-    else
+    } else
     {
         pipe_fd_write = workerid2writefd[worker_id];
     }
@@ -97,8 +97,7 @@ static int get_readfd(int worker_id) {
             zend_error(E_ERROR, "pipe open Error: %s [%d]", strerror(errno), errno);
         }
         workerid2readfd[worker_id] = pipe_fd_read;
-    }
-    else
+    } else
     {
         pipe_fd_read = workerid2readfd[worker_id];
     }
@@ -122,8 +121,7 @@ static void* get_attach_buf(int worker_id, int semid) {
             zend_error(E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
         }
         semid2attbuf[worker_id] = buf;
-    }
-    else
+    } else
     {
         buf = semid2attbuf[worker_id];
     }
@@ -142,8 +140,7 @@ CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int ma
     if (dest.exceed == '1')
     {
         zend_error(E_ERROR, "data is exceed,increase max_read_len");
-    }
-    else
+    } else
     {
         cpWorkerInfo worker_event;
         worker_event.len = dest.len;
@@ -203,18 +200,15 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data) {
             {
                 cli->released = CP_FD_NRELEASED;
             }
-        }
-        else if (n == 0)
+        } else if (n == 0)
         {
             php_pdo_connect_pool_close(cli);
             zend_error(E_ERROR, "connect_pool: connect with conPool close");
-        }
-        else
+        } else
         {
             zend_error(E_ERROR, "connect_pool: recv failed. Error: %s [%d]", strerror(errno), errno);
         }
-    }
-    else
+    } else
     {
         ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->semid);
     }
@@ -260,8 +254,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call) {
     if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
     {
         ZEND_FETCH_RESOURCE(cli, cpClient*, zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-    }
-    else
+    } else
     {
         zend_error(E_WARNING, "pdo_connect_pool: object is not instanceof pdo_connect_pool. ");
         RETURN_FALSE;
@@ -291,8 +284,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call) {
     {
         zend_throw_exception(php_pdo_get_exception(), Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
-    }
-    else
+    } else
     {
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
     }
@@ -316,8 +308,7 @@ PHP_METHOD(pdo_connect_pool, __call) {
     if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
     {
         ZEND_FETCH_RESOURCE(cli, cpClient*, zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-    }
-    else
+    } else
     {
         zend_error(E_WARNING, "pdo_connect_pool: object is not instanceof pdo_connect_pool. ");
         RETURN_FALSE;
@@ -357,13 +348,11 @@ PHP_METHOD(pdo_connect_pool, __call) {
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("cli"), *zres TSRMLS_CC);
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("data_source"), *source_zval TSRMLS_CC); //标示这个连接的真实目标
         zval_ptr_dtor(&RecvData.ret_value);
-    }
-    else if (RecvData.type == CP_SIGEVENT_EXCEPTION)
+    } else if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
         zend_throw_exception(php_pdo_get_exception(), Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
-    }
-    else
+    } else
     {
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
     }
@@ -382,11 +371,12 @@ PHP_METHOD(pdo_connect_pool, __construct) {
     char *data_source;
     int data_source_len;
     char *username = NULL, *password = NULL;
-    int usernamelen, passwordlen, port = CP_PORT_PDO;
+    int usernamelen, passwordlen;
+    long port = CP_PORT_PDO;
     zval *options = NULL;
 
     if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!s!a!l!", &data_source, &data_source_len,
-            &username, &usernamelen, &password, &passwordlen, &options, &port))
+        &username, &usernamelen, &password, &passwordlen, &options, &port))
     {
         ZVAL_NULL(object);
         return;
@@ -424,8 +414,7 @@ PHP_METHOD(pdo_connect_pool, __construct) {
         cli = (cpClient*) p_sock_le->ptr;
         //        zend_hash_index_del(&EG(regular_list),Z_RESVAL_P(file_resource));
         ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
-    }
-    else
+    } else
     {//这个fpm进程第一次创建连接
         if (connect_pool_perisent(&cli, zres, port) < 0)
         {//没连上
@@ -473,8 +462,7 @@ PHP_FUNCTION(client_close) {//close 关闭和中间件的连接
     if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
     {
         ZEND_FETCH_RESOURCE(cli, cpClient*, zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-    }
-    else
+    } else
     {
         RETURN_FALSE;
     }
@@ -521,7 +509,7 @@ PHP_METHOD(redis_connect_pool, __construct) {
     MAKE_STD_ZVAL(zres);
     cpClient *cli;
     zend_rsrc_list_entry *p_sock_le;
-    int port = CP_PORT_REDIS;
+    long port = CP_PORT_REDIS;
     if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|l", &port))
     {
         return;
@@ -533,8 +521,7 @@ PHP_METHOD(redis_connect_pool, __construct) {
     {
         cli = (cpClient*) p_sock_le->ptr;
         ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
-    }
-    else
+    } else
     {//这个fpm进程第一次创建连接
         if (connect_pool_perisent(&cli, zres, port) < 0)
         {//没连上
@@ -578,8 +565,7 @@ PHP_FUNCTION(redis_connect) {
     if (port_len > 0)
     {
         ZVAL_STRING(zval_port, port, 1);
-    }
-    else
+    } else
     {
         ZVAL_STRING(zval_port, "6379", 1);
     }
@@ -610,8 +596,7 @@ PHP_METHOD(redis_connect_pool, select) {
     {
         strcat(source_char, Z_STRVAL_PP(ip));
         strcat(source_char, ":");
-    }
-    else
+    } else
     {
         zend_error(E_ERROR, "redis_connect_pool: IP is empty ");
         RETURN_FALSE;
@@ -621,8 +606,7 @@ PHP_METHOD(redis_connect_pool, select) {
     {
         strcat(source_char, Z_STRVAL_PP(port));
         strcat(source_char, ":");
-    }
-    else
+    } else
     {
         zend_error(E_ERROR, "redis_connect_pool: PORT is empty");
         RETURN_FALSE;
@@ -642,8 +626,7 @@ PHP_METHOD(redis_connect_pool, select) {
     if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
     {
         ZEND_FETCH_RESOURCE(cli, cpClient*, zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-    }
-    else
+    } else
     {
         zend_error(E_WARNING, "redis_connect_pool: object is not instanceof redis_connect_pool. ");
         RETURN_FALSE;
@@ -671,8 +654,7 @@ PHP_METHOD(redis_connect_pool, select) {
     {
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
-    }
-    else
+    } else
     {
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
     }
@@ -697,8 +679,7 @@ PHP_METHOD(redis_connect_pool, __call) {
     if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
     {
         ZEND_FETCH_RESOURCE(cli, cpClient*, zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-    }
-    else
+    } else
     {
         zend_error(E_WARNING, "redis_connect_pool: object is not instanceof redis_connect_pool. ");
         RETURN_FALSE;
@@ -713,16 +694,14 @@ PHP_METHOD(redis_connect_pool, __call) {
     if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("data_source"), (void **) &source_zval) == SUCCESS)
     {
         add_assoc_string(pass_data, "data_source", Z_STRVAL_PP(source_zval), 1);
-    }
-    else
+    } else
     {//沒select 走db0
         zval **ip;
         if (zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("ip"), (void **) &ip) == SUCCESS)
         {
             strcat(source_char, Z_STRVAL_PP(ip));
             strcat(source_char, ":");
-        }
-        else
+        } else
         {
             zend_error(E_ERROR, "redis_connect_pool: IP is empty ");
             RETURN_FALSE;
@@ -732,8 +711,7 @@ PHP_METHOD(redis_connect_pool, __call) {
         {
             strcat(source_char, Z_STRVAL_PP(port));
             strcat(source_char, ":");
-        }
-        else
+        } else
         {
             zend_error(E_ERROR, "redis_connect_pool: PORT is empty");
             RETURN_FALSE;
@@ -758,8 +736,7 @@ PHP_METHOD(redis_connect_pool, __call) {
     {
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
-    }
-    else
+    } else
     {
         RETVAL_ZVAL(RecvData.ret_value, 0, 1); //no copy  destroy
     }
@@ -768,58 +745,52 @@ PHP_METHOD(redis_connect_pool, __call) {
 
 PHP_FUNCTION(get_disable_list) {
     zval *conf = NULL;
-    int port, ret;
+    long port;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a!l!", &conf, &port) == FAILURE)
     {
-        zend_error(E_ERROR, "get_disable_list param error");
-        RETURN_FALSE;
+        return;
     }
-    cpClient *cli;
-    zend_rsrc_list_entry *p_sock_le;
-    char str[100] = {0};
-    CON_FORMART_KEY(str, port);
-
-    if (zend_hash_find(&EG(persistent_list), str, strlen(str), (void **) &p_sock_le) == SUCCESS)
+    if (!ping_addr)
     {
-        cli = (cpClient*) p_sock_le->ptr;
-        zval *new_md5 = cpMD5(conf);
-        if (!cli->pingid2attbuf)
+        int shmid;
+        if ((shmid = shmget(0x2526 + port, CP_PING_MD5_LEN, SHM_R | SHM_W | 0666)) < 0)
         {
-            if ((cli->pingid2attbuf = shmat(cli->info.ping_semid, NULL, 0)) < 0)
-            {
-                zend_error(E_NOTICE, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
-                array_init(return_value);
-                return;
-            }
+            zend_error(E_NOTICE, "shmget sys mem error Error: %s [%d]", strerror(errno), errno);
+            RETURN_FALSE
         }
-        if (memcmp(cli->pingid2attbuf, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN) == 0)
+        ping_addr = shmat(shmid, NULL, 0);
+        if (!ping_addr)
         {
-            zval *arr = cp_unserialize(cli->pingid2attbuf + CP_PING_MD5_LEN, CP_PING_DIS_LEN);
-            if (Z_TYPE_P(arr) == IS_BOOL)
-            {
-                //todo again
-                array_init(return_value);
-            }
-            else
-            {
-                RETURN_ZVAL(arr, 0, 1);
-            }
-        }
-        else
-        {
-            memcpy(cli->pingid2attbuf, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN);
-            ret = kill(cli->info.ping_pid, SIGUSR1); //清空disable和probably
-            if (ret == -1)
-            {
-                zend_error(E_NOTICE, "kill failed, Error: %s [%d]", strerror(errno), errno);
-                array_init(return_value);
-                return;
-            }
-            array_init(return_value);
+            zend_error(E_NOTICE, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
+            RETURN_FALSE
         }
     }
-    else
-    {//第一次返回空数组
+    zval *new_md5 = cpMD5(conf);
+
+    if (memcmp(ping_addr, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN) == 0)
+    {
+        zval *arr = CP_PING_GET_DIS(ping_addr);
+        if (Z_TYPE_P(arr) == IS_BOOL)
+        {
+            //todo again
+            array_init(return_value);
+        } else
+        {
+            RETURN_ZVAL(arr, 0, 1);
+        }
+        zval_ptr_dtor(&arr);
+    } else
+    {
+        memcpy(ping_addr, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN);
+        int *pid = ping_addr + CP_PING_MD5_LEN;
+        if (*pid > 0)
+        {
+//            int ret = kill(*pid, SIGUSR1); //清空disable和probably
+//            if (ret == -1)
+//            {
+//                zend_error(E_NOTICE, "kill failed, Error: %s [%d]", strerror(errno), errno);
+//            }
+        }
         array_init(return_value);
     }
 }

@@ -65,6 +65,7 @@ extern "C" {
     void cpSettitle(char *title);
     zval * cpGetConfig(char *filename);
     zval * cpMD5(zval *arr);
+    CPINLINE void cp_ser_and_setpro(zval *arr);
 
 
 

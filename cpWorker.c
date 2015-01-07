@@ -44,8 +44,7 @@ static int cpWorker_loop(int worker_id) {
             len = CPGS->workers[worker_id].pre_len;
             CPGS->workers[worker_id].pre_len = 0;
             CPWG.clientPid = CPGS->workers[worker_id].pre_pid;
-        }
-        else
+        } else
         {
             do
             {
@@ -54,7 +53,7 @@ static int cpWorker_loop(int worker_id) {
                 {
                     cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
                 }
-            } while (event.pid != CPGS->workers[worker_id].CPid); //有可能有脏数据  读出来
+            }            while (event.pid != CPGS->workers[worker_id].CPid); //有可能有脏数据  读出来
             if (!CPGS->workers[worker_id].run)
             {
                 CPGS->workers[worker_id].pre_len = event.len; //啊~~我要挂了,赶紧存起来 下次再用
@@ -88,16 +87,14 @@ int cpFork_one_worker(int worker_id) {
     {
         cpLog("Fork Worker failed. Error: %s [%d]", strerror(errno), errno);
         return FAILURE;
-    }
-    else if (pid == 0)
+    } else if (pid == 0)
     {
         //标识为worker进程
         CPGL.process_type = CP_PROCESS_WORKER;
         CPGS->workers[worker_id].run = 1;
         ret = cpWorker_loop(worker_id);
         exit(ret);
-    }
-    else
+    } else
     {
         return pid;
     }
@@ -126,8 +123,7 @@ static void cpManagerRecycle(int sig) {
                 if (ret == -1)
                 {
                     cpLog("[Manager]kill failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
-                }
-                else
+                } else
                 {
                     CPGS->worker_num--;
                     CPGS->workers_status[i] = CP_WORKER_DEL;
@@ -160,8 +156,7 @@ static void cpManagerAdd(int sig) {
             {
                 //                        CPGS->workers[i].pid = -1;//todo fork失敗的處理
                 cpLog("Fork worker process failed. Error: %s [%d]", strerror(errno), errno);
-            }
-            else
+            } else
             {
                 CPGS->workers[i].pid = new_pid;
             }
@@ -175,8 +170,7 @@ static void cpManagerReload(int sig) {
     if (!Z_BVAL_P(group_conf))
     {
         cpLog("parse ini file[%s] error,%s reload error!", CPGC.ini_file, CPGC.title);
-    }
-    else
+    } else
     {
         zval **v, **conf;
         if (zend_hash_find(Z_ARRVAL_P(group_conf), CPGC.title, strlen(CPGC.title) + 1, (void **) &conf) == SUCCESS)
@@ -201,8 +195,7 @@ static void cpManagerReload(int sig) {
                 convert_to_long(*v);
                 CPGC.idel_time = (int) Z_LVAL_PP(v);
             }
-        }
-        else
+        } else
         {
             cpLog("find %s failed,The reload can only modify 'pool_min','pool_max','recycle_num' and 'idel_time',if you want modify other options please restart pool", CPGC.title);
         }
@@ -240,14 +233,12 @@ int cpWorker_manager_loop() {
                 if (pid != CPGS->workers[i].pid || CPGS->workers_status[i] == CP_WORKER_DEL)
                 {//对比pid||回收的不拉起
                     continue;
-                }
-                else
+                } else
                 {
                     if (CPGS->workers[i].run == 0)
                     {
                         cpLog("restart worker!worker index %d,worker id %d,exit code %d\n", i, pid, WEXITSTATUS(worker_exit_code));
-                    }
-                    else
+                    } else
                     {
                         cpLog("worker exit!worker index %d,worker id %d,exit code %d,times %d,pre_len %d\n", i, pid, WEXITSTATUS(worker_exit_code), CPGS->workers[i].request, CPGS->workers[i].pre_len);
                     }
@@ -260,8 +251,7 @@ int cpWorker_manager_loop() {
                         cpLog("Fork worker process failed. Error: %s [%d]", strerror(errno), errno);
                         sigprocmask(SIG_UNBLOCK, &block_alarm, NULL);
                         return FAILURE;
-                    }
-                    else
+                    } else
                     {
                         CPGS->workers[i].pid = new_pid;
                     }

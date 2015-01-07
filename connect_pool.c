@@ -33,36 +33,41 @@ extern sapi_module_struct sapi_module;
 static void cp_destory_client(zend_rsrc_list_entry *rsrc TSRMLS_DC);
 
 static void pdo_dispatch(zval *args);
-static void pdo_proxy_connect(zval *args, int reconnect);
 static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
-static void cp_add_fail_into_mem(zval *conf);
+static void cp_add_fail_into_mem(zval *conf, char *data_source);
 
 #define CP_VERSION "1.0"
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
-                        ({         \
-                        zval send_zval;\
-                        ZVAL_STRING(&send_zval,send_data,0);\
-                        CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,CP_SIGEVENT_EXCEPTION);\
-                         })
+                                ({         \
+                                zval send_zval;\
+                                ZVAL_STRING(&send_zval,send_data,0);\
+                                CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,CP_SIGEVENT_EXCEPTION);\
+                                 })
 
 #define CP_INTERNAL_NORMAL_SEND(send_data)\
-                        ({         \
-                        zval send_zval;\
-                        ZVAL_STRING(&send_zval,send_data,0);\
-                        CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,CP_SIGEVENT_TURE);\
-                         })
+                                ({         \
+                                zval send_zval;\
+                                ZVAL_STRING(&send_zval,send_data,0);\
+                                CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,CP_SIGEVENT_TURE);\
+                                 })
 
-#define CP_SEND_EXCEPTION(str,use_mem) do{zval *exception = EG(exception);\
-                        zend_class_entry *ce_exception = Z_OBJCE_P(exception);\
-                        EG(exception) = NULL;\
-                        zend_call_method_with_0_params(&exception, ce_exception, NULL, "__tostring", str);\
-                        if(use_mem){\
-                        CP_INTERNAL_SERIALIZE_SEND_MEM(*str,CP_SIGEVENT_EXCEPTION);\
-                        }else{\
-                        CP_INTERNAL_ERROR_SEND(Z_STRVAL_P(*str));}\
+#define CP_SEND_EXCEPTION_ARGS(str) do{   zval *exception = EG(exception);\
+                                zend_class_entry *ce_exception = Z_OBJCE_P(exception);\
+                                EG(exception) = NULL;\
+                                zend_call_method_with_0_params(&exception, ce_exception, NULL, "__tostring", str);\
+                                CP_INTERNAL_SERIALIZE_SEND_MEM(*str,CP_SIGEVENT_EXCEPTION);\
+                                zval_ptr_dtor(&exception);\
                         }while(0);
+
+#define CP_SEND_EXCEPTION do{zval *str;CP_SEND_EXCEPTION_ARGS(&str);zval_ptr_dtor(&str);}while(0);
+#define CP_INTERNAL_NORMAL_SEND_RETURN(send_data)({CP_INTERNAL_NORMAL_SEND(send_data);return CP_TRUE;})
+#define CP_INTERNAL_ERROR_SEND_RETURN(send_data) ({ CP_INTERNAL_ERROR_SEND(send_data);return CP_FALSE;})
+#define CP_SEND_EXCEPTION_RETURN do{CP_SEND_EXCEPTION;return CP_FALSE;}while(0);
+
+#define CP_TEST_RETURN_FALSE(flag) ({if(flag==CP_CONNECT_PING)return CP_FALSE;})
+#define CP_TEST_RETURN_TRUE(flag) ({if(flag==CP_CONNECT_PING)return CP_TRUE;})
 
 #include "zend_exceptions.h"
 
@@ -217,18 +222,17 @@ void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC) {
     if (cli->sock == 0)
     {
         pefree(cli, 1); //长连接
-    }
-    else if (cli->released == CP_FD_NRELEASED)
-    {//防止release后rshutdown的重複释放
+    } else if (cli->released == CP_FD_NRELEASED)
+    {//防止release后rshutdown的重复释放
         //        ret = cpClient_send(cli->sock, CP_RELEASE_HEADER, CP_RELEASE_HEADER_LEN, MSG_OOB);
         cpTcpEvent event;
         event.type = CP_TCPEVENT_RELEASE;
+        event.ClientPid = 0;
         int ret = cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
         if (ret >= 0)
         {
             cli->released = CP_FD_RELEASED;
-        }
-        else
+        } else
         {
             zend_error(E_ERROR, "pdo_connect_pool: release error. Error: %s [%d]", strerror(errno), errno);
         }
@@ -283,27 +287,26 @@ PHP_FUNCTION(pool_server_create) {
         char *name;
         int keylen;
         zend_hash_get_current_key_ex(Z_ARRVAL_P(conf), &name, &keylen, NULL, 0, NULL);
-        int pid = fork();
-        if (pid < 0)
-        {
-            printf("create fork error!\n");
-        }
-        else if (pid == 0)
-        {
-            cpServer_init(*config, name, config_file, group_id);
+        //        int pid = fork();
+        //        if (pid < 0)
+        //        {
+        //            printf("create fork error!\n");
+        //        } else if (pid == 0)
+        //        {
+        cpServer_init(*config, name, config_file, group_id);
 
-            int ret = cpServer_create();
-            if (ret < 0)
-            {
-                zend_error(E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
-            }
-
-            ret = cpServer_start();
-            if (ret < 0)
-            {
-                zend_error(E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
-            }
+        int ret = cpServer_create();
+        if (ret < 0)
+        {
+            zend_error(E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
         }
+
+        ret = cpServer_start();
+        if (ret < 0)
+        {
+            zend_error(E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
+        }
+        //        }
         group_id++;
     }
     zval_ptr_dtor(&conf);
@@ -320,8 +323,7 @@ PHP_FUNCTION(pool_server_reload) {
     {
         printf("reload fail. kill -SIGUSR1 master_pid[%d] fail. Error: %s[%d]\n", pid, strerror(errno), errno);
         RETURN_FALSE;
-    }
-    else
+    } else
     {
         RETURN_TRUE;
     }
@@ -342,8 +344,7 @@ PHP_FUNCTION(pool_server_shutdown) {
     {
         printf("shutdown fail. kill -SIGTERM master_pid[%d] fail. Error: %s[%d]\n", pid, strerror(errno), errno);
         RETURN_FALSE;
-    }
-    else
+    } else
     {
         RETURN_TRUE;
     }
@@ -362,8 +363,7 @@ CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type) {
         zval exceed;
         ZVAL_STRING(&exceed, "data is exceed,increase max_read_len", 0);
         return CP_INTERNAL_SERIALIZE_SEND_MEM(&exceed, CP_SIGEVENT_EXCEPTION);
-    }
-    else
+    } else
     {
         //        union sigval sigvalPara;
         //        CP_EVENTLEN_ADD_TYPE(dest.len,__type);//todo 2字节int 长度检查
@@ -386,7 +386,7 @@ CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type) {
     }
 }
 
-static void pdo_proxy_connect(zval *args, int reconnect) {
+int pdo_proxy_connect(zval *args, int flag) {
     zval **data_source;
     zval **object;
 
@@ -394,9 +394,8 @@ static void pdo_proxy_connect(zval *args, int reconnect) {
     {
         if (zend_hash_find(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void **) &object) == SUCCESS)
         {
-            CP_INTERNAL_NORMAL_SEND("CON_SUCCESS!");
-        }
-        else
+            CP_INTERNAL_NORMAL_SEND_RETURN("CON_SUCCESS!");
+        } else
         {
             zval **tmp_pass[4];
             zval *new_obj;
@@ -408,19 +407,11 @@ static void pdo_proxy_connect(zval *args, int reconnect) {
             {
                 tmp_pass[1] = username;
             }
-            else
-            {
-                CP_INTERNAL_ERROR_SEND("PDO username null!");
-            }
 
             zval **password;
             if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("password"), (void **) &password) == SUCCESS)
             {
                 tmp_pass[2] = password;
-            }
-            else
-            {
-                CP_INTERNAL_ERROR_SEND("PDO password null!");
             }
 
             zval **options;
@@ -428,8 +419,7 @@ static void pdo_proxy_connect(zval *args, int reconnect) {
             if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("options"), (void **) &options) == SUCCESS)
             {
                 tmp_pass[3] = options;
-            }
-            else
+            } else
             {
                 MAKE_STD_ZVAL(null_arr);
                 array_init(null_arr);
@@ -441,37 +431,32 @@ static void pdo_proxy_connect(zval *args, int reconnect) {
             ZVAL_STRING(&con_fun_name, "__construct", 0);
             call_user_function_ex(NULL, &new_obj, &con_fun_name, &ret_pdo_obj, 4, tmp_pass, 0, NULL TSRMLS_CC);
             if (null_arr)
-            {
                 zval_ptr_dtor(&null_arr);
-            }
             if (ret_pdo_obj)
                 zval_ptr_dtor(&ret_pdo_obj);
             if (EG(exception))
             {
-                cp_add_fail_into_mem(args);
-                zval *str;
-                CP_SEND_EXCEPTION(&str, 0);
                 zval_ptr_dtor(&new_obj);
-                zval_ptr_dtor(&str);
-            }
-            else
+                CP_TEST_RETURN_FALSE(flag);
+                cp_add_fail_into_mem(args, Z_STRVAL_PP(data_source));
+                CP_SEND_EXCEPTION_RETURN;
+            } else
             {
+                CP_TEST_RETURN_TRUE(flag);
                 //存起來
                 if (zend_hash_add(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void*) &new_obj, sizeof (zval *), NULL) == SUCCESS)
                 {
-                    if (!reconnect)
-                        CP_INTERNAL_NORMAL_SEND("CON_SUCCESS!");
-                }
-                else
+                    if (flag == CP_CONNECT_NORMAL)
+                        CP_INTERNAL_NORMAL_SEND_RETURN("CON_SUCCESS!");
+                } else
                 {
-                    CP_INTERNAL_ERROR_SEND("PDO obj add table fail!");
+                    CP_INTERNAL_ERROR_SEND_RETURN("PDO obj add table fail!");
                 }
             }
         }
-    }
-    else
+    } else
     {
-        CP_INTERNAL_ERROR_SEND("PDO no datasource!");
+        CP_INTERNAL_ERROR_SEND_RETURN("PDO no datasource!");
     }
 }
 
@@ -491,8 +476,7 @@ static int cp_call_user_function(zval **object, zval *fun, zval **ret_value, zva
             i++;
         }
         return call_user_function_ex(NULL, object, fun, ret_value, count, tmp_pass, 0, NULL TSRMLS_CC);
-    }
-    else
+    } else
     {
         return call_user_function_ex(NULL, object, fun, ret_value, count, NULL, 0, NULL TSRMLS_CC);
     }
@@ -508,7 +492,7 @@ static void pdo_proxy_pdo(zval *args) {
         {
             zval **con_args;
             zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("con_args"), (void **) &con_args);
-            pdo_proxy_connect(*con_args, 1);
+            pdo_proxy_connect(*con_args, CP_CONNECT_RECONNECT);
         }//超过n次被kill
 
         if (zend_hash_find(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void **) &object) == SUCCESS)
@@ -523,13 +507,12 @@ static void pdo_proxy_pdo(zval *args) {
             if (cp_call_user_function(object, *method, &ret_value, args) == FAILURE)
             {
                 CP_INTERNAL_ERROR_SEND("call pdo method error!");
-            }
-            else
+            } else
             {
                 if (EG(exception))
                 {
                     zval *str;
-                    CP_SEND_EXCEPTION(&str, 0);
+                    CP_SEND_EXCEPTION_ARGS(&str);
                     char *p = strstr(Z_STRVAL_P(str), "server has gone away");
                     char *p2 = strstr(Z_STRVAL_P(str), "There is already an active transaction");
                     if (p || p2)
@@ -539,8 +522,7 @@ static void pdo_proxy_pdo(zval *args) {
                     zval_ptr_dtor(&str);
                     if (ret_value)
                         zval_ptr_dtor(&ret_value);
-                }
-                else
+                } else
                 {
                     if (Z_TYPE_P(ret_value) == IS_OBJECT)
                     {
@@ -559,15 +541,13 @@ static void pdo_proxy_pdo(zval *args) {
                             CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval, CP_SIGEVENT_PDO);
                         }
                         efree(name);
-                    }
-                    else
+                    } else
                     {//pdo
                         if (ConProxyWG.warning_gone_away)
                         {//restart mysql will trigger this warning
                             zend_hash_del(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
                             CP_INTERNAL_ERROR_SEND("Server has gone away");
-                        }
-                        else
+                        } else
                         {
                             CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
                         }
@@ -577,8 +557,7 @@ static void pdo_proxy_pdo(zval *args) {
                 }
             }
         }
-    }
-    else
+    } else
     {
         CP_INTERNAL_ERROR_SEND("PDO no datasource!");
     }
@@ -597,18 +576,14 @@ static void pdo_proxy_stmt(zval *args) {
         MAKE_STD_ZVAL(ret_value);
         ZVAL_STRING(ret_value, "call pdo stmt method error!", 0);
         CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_EXCEPTION);
-    }
-    else
+    } else
     {
         if (EG(exception))
         {
-            zval *str;
-            CP_SEND_EXCEPTION(&str, 1);
-            zval_ptr_dtor(&str);
+            CP_SEND_EXCEPTION;
             zval_ptr_dtor(&pdo_stmt);
             pdo_stmt = NULL;
-        }
-        else
+        } else
         {
             CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
         }
@@ -625,24 +600,43 @@ static void pdo_dispatch(zval *args) {
     {
         if (strcmp(Z_STRVAL_PP(m_type), "connect") == 0)
         {
-            pdo_proxy_connect(args, 0);
-        }
-        else if (strcmp(Z_STRVAL_PP(m_type), "PDOStatement") == 0)
+            pdo_proxy_connect(args, CP_CONNECT_NORMAL);
+        } else if (strcmp(Z_STRVAL_PP(m_type), "PDOStatement") == 0)
         {
             pdo_proxy_stmt(args);
-        }
-        else
+        } else
         {
             pdo_proxy_pdo(args);
         }
-    }
-    else
+    } else
     {//操作pdo
         CP_INTERNAL_ERROR_SEND("PDO  method_type is none!");
     }
 }
 
-static void redis_proxy_connect(zval *data_source, zval *args) {
+static int cp_redis_select(zval *new_obj, zval **db) {
+    //有db并且不0那么就select
+    if (strcmp("0", Z_STRVAL_PP(db)) != 0)
+    {
+        zval **tmp_pass2[1];
+        tmp_pass2[0] = db;
+        zval * ret_redis_select = NULL;
+        zval select_fun_name;
+        ZVAL_STRING(&select_fun_name, "select", 0);
+        call_user_function_ex(NULL, &new_obj, &select_fun_name, &ret_redis_select, 1, tmp_pass2, 0, NULL TSRMLS_CC);
+        if (ret_redis_select)
+            zval_ptr_dtor(&ret_redis_select);
+
+        if (EG(exception))
+        {
+            zval_ptr_dtor(&new_obj);
+            CP_SEND_EXCEPTION_RETURN;
+        }
+    }
+    return CP_TRUE;
+}
+
+int redis_proxy_connect(zval *data_source, zval *args, int flag) {
     zval *ex_arr, zdelim, **ip, **port, **db;
     MAKE_STD_ZVAL(ex_arr);
     array_init(ex_arr);
@@ -657,24 +651,16 @@ static void redis_proxy_connect(zval *data_source, zval *args) {
     if (zend_hash_find(CG(class_table), ZEND_STRS("redis"), (void **) &redis_ce) == FAILURE)
     {
         cpLog("redis class ce error\n");
-    };
+    }
     object_init_ex(new_obj, *redis_ce);
 
     if (zend_hash_index_find(Z_ARRVAL_P(ex_arr), 0, (void**) &ip) == SUCCESS)
     {
         tmp_pass[0] = ip;
     }
-    else
-    {
-        CP_INTERNAL_ERROR_SEND("redis ip null!");
-    }
     if (zend_hash_index_find(Z_ARRVAL_P(ex_arr), 1, (void**) &port) == SUCCESS)
     {
         tmp_pass[1] = port;
-    }
-    else
-    {
-        CP_INTERNAL_ERROR_SEND("redis port null!");
     }
 
     zval *timeout;
@@ -691,87 +677,67 @@ static void redis_proxy_connect(zval *data_source, zval *args) {
     if (ret_redis_obj)
     {
         if (Z_BVAL_P(ret_redis_obj) == FALSE)
-        {//这块直接抛异常比较好吧
-            zval con_error;
-            ZVAL_STRING(&con_error, "connect redis error!", 0);
-            CP_INTERNAL_SERIALIZE_SEND_MEM(&con_error, CP_SIGEVENT_EXCEPTION);
+        {
+            zval_ptr_dtor(&ex_arr);
             zval_ptr_dtor(&ret_redis_obj);
-            return;
-        }
-        else
+            CP_TEST_RETURN_FALSE(flag);
+            cp_add_fail_into_mem(args, Z_STRVAL_P(data_source));
+            CP_INTERNAL_ERROR_SEND_RETURN("connect redis error!");
+        } else
         {
             zval_ptr_dtor(&ret_redis_obj);
         }
     }
     if (EG(exception))
     {
-        zval *str;
-        CP_SEND_EXCEPTION(&str, 0);
-        zval_ptr_dtor(&str);
         zval_ptr_dtor(&new_obj);
-        return;
+        zval_ptr_dtor(&ex_arr);
+        CP_TEST_RETURN_FALSE(flag);
+        cp_add_fail_into_mem(args, Z_STRVAL_P(data_source));
+        CP_SEND_EXCEPTION_RETURN;
     }
     if (zend_hash_index_find(Z_ARRVAL_P(ex_arr), 2, (void**) &db) == SUCCESS)
-    {//有db并且不0那么就select
-        if (strcmp("0", Z_STRVAL_PP(db)) != 0)
+    {
+        if (!cp_redis_select(new_obj, db))
         {
-            zval **tmp_pass2[1];
-            tmp_pass2[0] = db;
-            zval * ret_redis_select = NULL;
-            zval select_fun_name;
-            ZVAL_STRING(&select_fun_name, "select", 0);
-            call_user_function_ex(NULL, &new_obj, &select_fun_name, &ret_redis_select, 1, tmp_pass2, 0, NULL TSRMLS_CC);
-            if (ret_redis_select)
-                zval_ptr_dtor(&ret_redis_select);
-
-            if (EG(exception))
-            {
-                zval *str;
-                CP_SEND_EXCEPTION(&str, 1);
-                zval_ptr_dtor(&new_obj);
-                zval_ptr_dtor(&str);
-                return;
-            }
+            zval_ptr_dtor(&ex_arr);
+            return CP_FALSE;
         }
     }
+    zval_ptr_dtor(&ex_arr);
     //存起來
     if (zend_hash_add(&redis_object_table, Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void*) &new_obj, sizeof (zval *), NULL) == FAILURE)
     {
-        CP_INTERNAL_ERROR_SEND("redis obj add table fail!");
+        CP_INTERNAL_ERROR_SEND_RETURN("redis obj add table fail!");
     }
     zval **method;
     if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method"), (void **) &method) == FAILURE)
     {
-        CP_INTERNAL_ERROR_SEND("redis no method!");
+        CP_INTERNAL_ERROR_SEND_RETURN("redis no method!");
     }
     if (strcmp(Z_STRVAL_PP(method), "select") == 0)
     {
-        CP_INTERNAL_NORMAL_SEND("CON_SUCCESS!");
-    }
-    else
+        CP_INTERNAL_NORMAL_SEND_RETURN("CON_SUCCESS!");
+    } else
     {
         zval * ret_value = NULL;
-        if (cp_call_user_function(&new_obj, *method, &ret_value, args) == FAILURE)
+        if (cp_call_user_function(&new_obj, *method, &ret_value, args) == SUCCESS)
         {
-            zval error_str;
-            ZVAL_STRING(&error_str, "call redis method error!", 0);
-            CP_INTERNAL_SERIALIZE_SEND_MEM(&error_str, CP_SIGEVENT_EXCEPTION);
-        }
-        else
-        {
-            if (EG(exception))
-            {
-                zval *str;
-                CP_SEND_EXCEPTION(&str, 1);
-                zval_ptr_dtor(&str);
-            }
-            else
+            if (!EG(exception))
             {
                 CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
+
+            } else
+            {
+                CP_SEND_EXCEPTION;
             }
+        } else
+        {
+            CP_INTERNAL_ERROR_SEND("call redis method error!");
         }
         if (ret_value)
             zval_ptr_dtor(&ret_value);
+        return CP_TRUE; //no use
     }
 }
 
@@ -795,13 +761,12 @@ static void redis_dispatch(zval * args) {
                 zval error_str;
                 ZVAL_STRING(&error_str, "call redis method error!", 0);
                 CP_INTERNAL_SERIALIZE_SEND_MEM(&error_str, CP_SIGEVENT_EXCEPTION);
-            }
-            else
+            } else
             {
                 if (EG(exception))
                 {
                     zval *str;
-                    CP_SEND_EXCEPTION(&str, 1);
+                    CP_SEND_EXCEPTION_ARGS(&str);
                     char *p = strstr(Z_STRVAL_P(str), "server went away");
                     char *p2 = strstr(Z_STRVAL_P(str), "Connection lost");
                     if (p || p2)
@@ -809,21 +774,18 @@ static void redis_dispatch(zval * args) {
                         zend_hash_del(&redis_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
                     }
                     zval_ptr_dtor(&str);
-                }
-                else
+                } else
                 {
                     CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
                 }
             }
             if (ret_value)
                 zval_ptr_dtor(&ret_value);
-        }
-        else
+        } else
         {
-            redis_proxy_connect(*data_source, args);
+            redis_proxy_connect(*data_source, args, CP_CONNECT_NORMAL);
         }
-    }
-    else
+    } else
     {
         CP_INTERNAL_ERROR_SEND("redis no datasource!");
     }
@@ -836,20 +798,59 @@ int worker_onReceive(zval *unser_value) {
         if (strcmp(Z_STRVAL_PP(type), "pdo") == 0)
         {
             pdo_dispatch(unser_value);
-        }
-        else if (strcmp(Z_STRVAL_PP(type), "redis") == 0)
+        } else if (strcmp(Z_STRVAL_PP(type), "redis") == 0)
         {
             redis_dispatch(unser_value);
         }
-    }
-    else
+    } else
     {
         cpLog("args error no type!");
     }
     zval_ptr_dtor(&unser_value);
-    return 0;
+    return CP_TRUE;
 }
 
-static void cp_add_fail_into_mem(zval *conf) {
+static void cp_add_fail_into_mem(zval *o_arg, char *data_source) {
+    zval *args;
+    MAKE_STD_ZVAL(args);
+    *args = *o_arg;
+    zval_copy_ctor(args);
+    if (!CPGL.ping_mem_addr)
+    {
+        if ((CPGL.ping_mem_addr = shmat(CPGS->ping_workers->sm_obj.shmid, NULL, 0)) < 0)
+        {
+            cpLog("worker attach ping worker sys mem error Error: %s [%d]", strerror(errno), errno);
+        }
+    }
+    zval *arr = CP_PING_GET_PRO(CPGL.ping_mem_addr);
+    if (Z_TYPE_P(arr) == IS_NULL)
+    {
+        zval first_arr;
+        array_init(&first_arr);
+        add_assoc_long(args, "count", 1);
+        add_assoc_zval(&first_arr, data_source, args);
+        cp_ser_and_setpro(&first_arr);
+    } else if (Z_TYPE_P(arr) != IS_BOOL)
+    {
+        zval **zval_source;
+        if (zend_hash_find(Z_ARRVAL_P(arr), data_source, strlen(data_source) + 1, (void **) &zval_source) == SUCCESS)
+        {//++
+            zval **zval_probably_count;
+            if (zend_hash_find(Z_ARRVAL_PP(zval_source), ZEND_STRS("count"), (void **) &zval_probably_count) == SUCCESS)
+            {
+                int num = (int) Z_LVAL_PP(zval_probably_count);
+                add_assoc_long(args, "count", ++num);
+                zend_hash_del(Z_ARRVAL_P(arr), data_source, strlen(data_source));
+                add_assoc_zval(arr, data_source, args);
+                cp_ser_and_setpro(arr);
+            }
+        } else
+        {//add
+            add_assoc_long(args, "count", 1);
+            add_assoc_zval(arr, data_source, args);
+            cp_ser_and_setpro(arr);
+        }
 
+    }
+    zval_ptr_dtor(&arr);
 }
