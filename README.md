@@ -32,7 +32,7 @@ phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 - 7.支持连接用光的排队机制。
 - 8.框架简单整合后（修改new 方法），现有业务一行代码都不用改即可用上连接池。
 - 9.提供了get_disable_list函数，来获得不可用的宕机ip列表，这样负载均衡也可以做在客户端避免lvs转发。
--10.连接池进程会启动ping进程来监听宕机列表，如果可用会反映到get_disable_list函数的返回值上。
+- 10.连接池进程会启动ping进程来监听宕机列表，如果可用会反映到get_disable_list函数的返回值上。
 
 ## Example
 step 1 move the pool.ini file to /etc/ and modify it as you need.
@@ -54,10 +54,10 @@ tips:use $db($redis)->release() to release the connection  as early as you can;
 ?>
 ```
 ##API
-get_disable_list($config,CP_DEFAULT_PDO_PORT);
-get_disable_list($config,CP_DEFAULT_REDIS_PORT);
+get_disable_list($pdo_config,CP_DEFAULT_PDO_PORT);// get the pdo disable ips;
+get_disable_list($redis_conf,CP_DEFAULT_REDIS_PORT); // get the redis disable ips;
 
-$config is you ip list;
+first param is you ip list;
 this function will return the fail ips;
 
 ## contact me
