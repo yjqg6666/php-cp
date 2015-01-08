@@ -1,7 +1,7 @@
 ## redis and pdo sync connect pool, just for PHP
+[中文简介] http://blog.sina.com.cn/s/blog_9eaa0f400102v9fd.html
 
 Provide local connection pool like java
-
 
 ## Requirement
 
@@ -14,25 +14,15 @@ Provide local connection pool like java
 phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 
 
-## 解决的问题
-
-- 1.php的短链接对mysql和redis造成了大量的资源消耗。
-- 2.想象一个这样的业务：请求过来连了一次redis，又去连了mysql，之后去调用其他的rpc请求，而某种原因导致请求非常慢，那么之前的tcp连接就会一直占用。
-- 3.现有开源产品（Atlas,TDDL等）需要单独部署集群，在架构上引入了外部依赖，经过中间网络转发效率变低，没法同时支持redis和pdo。
-
-
-## 技术特性
-
-- 1.在model框架里面做集成，每次fetchAll（set/get）后执行release方法，释放所占用的连接，防止因为脚本卡住导致的连接占用过高问题。
-- 2.支持最大最小连接数配置。
-- 3.支持压力小自动回收连接（可配置）。
-- 4.支持平滑重启。
-- 5.减少php短连接对db层的压力。
-- 6.做了大量优化，虽然请求经过连接池进程转发，但是基本无qps损耗。
-- 7.支持连接用光的排队机制。
-- 8.框架简单整合后（修改new 方法），现有业务一行代码都不用改即可用上连接池。
-- 9.提供了get_disable_list函数，来获得不可用的宕机ip列表，这样负载均衡也可以做在客户端避免lvs转发。
-- 10.连接池进程会启动ping进程来监听宕机列表，如果可用会反映到get_disable_list函数的返回值上。
+##Technical characteristics:
+ 
+- After each time fetchAll (set/get)  call release() method, release the connection to the pool, avoid that the script jammed causing connection occupy high problem.
+- The maximum and minimum number of connections configuration support.
+- Support  small pressure automatic recovery connection.
+- Support graceful restart (reload).
+- Do a lot of optimization, although the request through the connection pool process forward, but no loss of QPS.
+- When the connection use out,support queue.
+- Simple! just change the new method and add release function (see demon),you used the tcp pool.
 
 ## Example
 step 1 move the pool.ini file to /etc/ and modify it as you need.
@@ -50,16 +40,16 @@ $db = new PDO(xxxxx);
 $redis = new Redis();
 =》$redis = new redis_connect_pool();//dont use pconnect
 
-tips:use $db($redis)->release() to release the connection  as early as you can;
+tips:use $db/$redis->release() to release the connection  as early as you can;
 ?>
 ```
 ##API
 get_disable_list($pdo_config,CP_DEFAULT_PDO_PORT);// get the pdo disable ips;
 get_disable_list($redis_conf,CP_DEFAULT_REDIS_PORT); // get the redis disable ips;
 
-first param is you ip list;
-if ip list changed,the disable list will be clear;
-this function will return the fail ips;
+- first param is you ip list.
+- if the first param changed,the disable list will be clear.
+- this function will return the fail ips.
 
 ## contact me
 http://weibo.com/u/2661945152

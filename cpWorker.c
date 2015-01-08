@@ -236,8 +236,10 @@ int cpWorker_manager_loop() {
                 if (ping_pid < 0)
                 {
                     cpLog("Fork ping  process fail");
+                } else
+                {
+                    CPGS->ping_workers->pid = ping_pid;
                 }
-                CPGS->ping_workers->pid = ping_pid;
             }
             for (i = CPGS->worker_num; i >= 0; i--)
             {

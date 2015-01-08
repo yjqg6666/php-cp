@@ -1,5 +1,5 @@
 <?php
-//传统方式
+//don't use pool
 $obj = new Redis();
 $rs = $obj->connect("192.168.20.130");
 $obj->select(5);
@@ -10,7 +10,7 @@ $obj = new PDO('mysql:host=192.168.20.130;dbname=test1', "admin", "admin");
 $rs = $obj->query("show tables");
 var_dump($rs->fetchAll());
 
-//中间件方式(连接池)
+//use pool
 $obj = new redis_connect_pool();
 $rs = $obj->connect("192.168.20.130");
 $obj->select(5);
@@ -23,8 +23,13 @@ $rs = $obj1->query("show tables");
 var_dump($rs->fetchAll());
 $obj1->release();
 
+/* tips：
+ * 1、The relase() method will release the connections to the pool that the process holds.
+ * 2、after rshutdown/mshutdown will trigger the release() function.
+ */
+
+
 /* 说明：
- * 1、relase方法：通知中间件,可以将这个链接给其他进程
+ * 1、relase方法：通知中间件,可以将这个进程持有的链接放回连接池
  * 2、请求结束（rshutdown/mshutdown阶段）会调用自动调用release
- * 3、每次fetchall/get set后，尽早调用release方法给其他进程用
  */

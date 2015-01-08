@@ -23,15 +23,21 @@ static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source) {
         array_init(&first_arr);
         add_assoc_zval(&first_arr, data_source, *args);
         cp_ser_and_setdis(&first_arr);
-        cpLog("'%s' insert into disable list",data_source);
+        cpLog("'%s' insert into disable list", data_source);
     } else if (Z_TYPE_P(dis_arr) != IS_BOOL)
     {
         zval **zval_source;
-        if (zend_hash_find(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1, (void **) &zval_source) == FAILURE)//SUCCESS的跳过,证明dis后继续调用这个节点了
+        if (zend_hash_find(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1, (void **) &zval_source) == FAILURE)//SUCCESS的跳过,证明dis后继续调用这个节点了,防止重复添加
         {
-            add_assoc_zval(dis_arr, data_source, *args);
-            cp_ser_and_setdis(dis_arr);
-            cpLog("'%s' insert into disable list",data_source);
+            if (zend_hash_num_elements(Z_ARRVAL_P(dis_arr)) >= CPGC.max_fail_num)
+            {
+                cpLog("the disable count exceed");
+            } else
+            {
+                add_assoc_zval(dis_arr, data_source, *args);
+                cp_ser_and_setdis(dis_arr);
+                cpLog("'%s' insert into disable list", data_source);
+            }
         }
     }
 }
@@ -41,8 +47,8 @@ static void cpPing_del_prolist(zval *pro_arr, char *data_source) {
     cp_ser_and_setpro(pro_arr);
 }
 
-static void cpPingClear(int sig){
-        bzero(CPGL.ping_mem_addr+ CP_PING_MD5_LEN+CP_PING_PID_LEN, CP_PING_DIS_LEN);
+static void cpPingClear(int sig) {
+    bzero(CPGL.ping_mem_addr + CP_PING_MD5_LEN + CP_PING_PID_LEN, CP_PING_DIS_LEN);
 }
 
 static int cpPing_worker_loop() {
@@ -92,13 +98,13 @@ static int cpPing_worker_loop() {
                 char *data_source;
                 int keylen;
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(dis_arr), &data_source, &keylen, NULL, 0, NULL);
-                if (strstr( data_source,"host"))
+                if (strstr(data_source, "host"))
                 {//mysql
                     if (pdo_proxy_connect(*args, CP_CONNECT_PING))
                     {
                         zend_hash_del(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1);
                         cp_ser_and_setdis(dis_arr);
-                        cpLog("'%s' remove from disable list",data_source);
+                        cpLog("'%s' remove from disable list", data_source);
                     }
                 } else
                 {//redis
@@ -108,7 +114,7 @@ static int cpPing_worker_loop() {
                     {
                         zend_hash_del(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1);
                         cp_ser_and_setdis(dis_arr);
-                        cpLog("'%s' remove from disable list",data_source);
+                        cpLog("'%s' remove from disable list", data_source);
                     }
                 }
             }
