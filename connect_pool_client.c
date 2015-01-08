@@ -35,7 +35,8 @@ cpRecvEvent RecvData;
 static int *workerid2writefd = NULL;
 static int *workerid2readfd = NULL;
 static void **semid2attbuf = NULL;
-void *ping_addr = NULL;
+static HashTable ping_addr;
+static HashTable *ptr_ping_addr = NULL;
 static int cpPid = 0;
 #define CP_GET_PID if(cpPid==0)cpPid=getpid()
 
@@ -750,7 +751,13 @@ PHP_FUNCTION(get_disable_list) {
     {
         return;
     }
-    if (!ping_addr)
+    if (!ptr_ping_addr)
+    {
+        ptr_ping_addr = &ping_addr;
+        zend_hash_init(ptr_ping_addr, 10, NULL, ZVAL_PTR_DTOR, 1);
+    }
+    void *addr = NULL;
+    if (FAILURE == zend_hash_index_find(ptr_ping_addr, port, &addr))
     {
         int shmid;
         if ((shmid = shmget(0x2526 + port, CP_PING_MD5_LEN, SHM_R | SHM_W | 0666)) < 0)
@@ -758,19 +765,20 @@ PHP_FUNCTION(get_disable_list) {
             zend_error(E_NOTICE, "shmget sys mem error Error: %s [%d]", strerror(errno), errno);
             RETURN_FALSE
         }
-        ping_addr = shmat(shmid, NULL, 0);
-        if (!ping_addr)
+        addr = shmat(shmid, NULL, 0);
+        if (!addr)
         {
             zend_error(E_NOTICE, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
             RETURN_FALSE
         }
+        zend_hash_index_update(ptr_ping_addr, port, addr, sizeof (void *), NULL);
     }
-    zval *new_md5 = cpMD5(conf);
 
-    if (memcmp(ping_addr, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN) == 0)
+    zval *new_md5 = cpMD5(conf);
+    if (memcmp(addr, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN) == 0)
     {
-        zval *arr = CP_PING_GET_DIS(ping_addr);
-        if (Z_TYPE_P(arr) == IS_BOOL)
+        zval *arr = CP_PING_GET_DIS(addr);
+        if (Z_TYPE_P(arr) == IS_BOOL || Z_TYPE_P(arr) == IS_NULL)
         {
             //todo again
             array_init(return_value);
@@ -781,8 +789,8 @@ PHP_FUNCTION(get_disable_list) {
         zval_ptr_dtor(&arr);
     } else
     {
-        memcpy(ping_addr, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN);
-        int *pid = ping_addr + CP_PING_MD5_LEN;
+        memcpy(addr, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN);
+        int *pid = addr + CP_PING_MD5_LEN;
         if (*pid > 0)
         {
             int ret = kill(*pid, SIGUSR1); //清空disable和probably

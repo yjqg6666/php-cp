@@ -5,7 +5,7 @@ Provide local connection pool like java
 
 ## Requirement
 
-- PHP 5.3 +(no zts 编译php时不要加 --enable-maintainer-zts)
+- PHP 5.3 +
 - linux 2.6+
 - pdo and redis extension install
 
@@ -58,6 +58,7 @@ get_disable_list($pdo_config,CP_DEFAULT_PDO_PORT);// get the pdo disable ips;
 get_disable_list($redis_conf,CP_DEFAULT_REDIS_PORT); // get the redis disable ips;
 
 first param is you ip list;
+if ip list changed,the disable list will be clear;
 this function will return the fail ips;
 
 ## contact me

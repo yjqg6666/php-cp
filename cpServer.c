@@ -47,7 +47,7 @@ void cpServer_init(zval *conf, char *title, char *ini_file, int group_id) {
     CPGS->worker_max = CP_MAX_WORKER;
     CPGC.worker_min = CP_MIN_WORKER;
 
-    CPGC.ser_fail_hits = 3;
+    CPGC.ser_fail_hits = 1;
     CPGC.max_fail_num = 2;
 
     strcpy(CPGC.title, title);

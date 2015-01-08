@@ -23,6 +23,7 @@ static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source) {
         array_init(&first_arr);
         add_assoc_zval(&first_arr, data_source, *args);
         cp_ser_and_setdis(&first_arr);
+        cpLog("'%s' insert into disable list",data_source);
     } else if (Z_TYPE_P(dis_arr) != IS_BOOL)
     {
         zval **zval_source;
@@ -30,6 +31,7 @@ static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source) {
         {
             add_assoc_zval(dis_arr, data_source, *args);
             cp_ser_and_setdis(dis_arr);
+            cpLog("'%s' insert into disable list",data_source);
         }
     }
 }
@@ -96,6 +98,7 @@ static int cpPing_worker_loop() {
                     {
                         zend_hash_del(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1);
                         cp_ser_and_setdis(dis_arr);
+                        cpLog("'%s' remove from disable list",data_source);
                     }
                 } else
                 {//redis
@@ -105,6 +108,7 @@ static int cpPing_worker_loop() {
                     {
                         zend_hash_del(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1);
                         cp_ser_and_setdis(dis_arr);
+                        cpLog("'%s' remove from disable list",data_source);
                     }
                 }
             }
