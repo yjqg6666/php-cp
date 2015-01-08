@@ -53,7 +53,7 @@ static int cpWorker_loop(int worker_id) {
                 {
                     cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
                 }
-            }            while (event.pid != CPGS->workers[worker_id].CPid); //有可能有脏数据  读出来
+            } while (event.pid != CPGS->workers[worker_id].CPid); //有可能有脏数据  读出来
             if (!CPGS->workers[worker_id].run)
             {
                 CPGS->workers[worker_id].pre_len = event.len; //啊~~我要挂了,赶紧存起来 下次再用
@@ -228,6 +228,17 @@ int cpWorker_manager_loop() {
         sigprocmask(SIG_BLOCK, &block_alarm, NULL);
         if (CPGS->running == 1 && pid > 0)
         {
+
+            if (pid == CPGS->ping_workers->pid)
+            {
+                cpLog("ping worker exit");
+                int ping_pid = cpFork_ping_worker();
+                if (ping_pid < 0)
+                {
+                    cpLog("Fork ping  process fail");
+                }
+                CPGS->ping_workers->pid = ping_pid;
+            }
             for (i = CPGS->worker_num; i >= 0; i--)
             {
                 if (pid != CPGS->workers[i].pid || CPGS->workers_status[i] == CP_WORKER_DEL)
