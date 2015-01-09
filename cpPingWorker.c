@@ -19,10 +19,12 @@
 static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source) {
     if (Z_TYPE_P(dis_arr) == IS_NULL)
     {
-        zval first_arr;
-        array_init(&first_arr);
-        add_assoc_zval(&first_arr, data_source, *args);
-        cp_ser_and_setdis(&first_arr);
+        zval *first_arr;
+        MAKE_STD_ZVAL(first_arr);
+        array_init(first_arr);
+        add_assoc_zval(first_arr, data_source, *args);
+        cp_ser_and_setdis(first_arr);
+        zval_ptr_dtor(&first_arr);
         cpLog("'%s' insert into disable list", data_source);
     } else if (Z_TYPE_P(dis_arr) != IS_BOOL)
     {

@@ -5,7 +5,7 @@ Provide local connection pool like java
 
 ## Requirement
 
-- PHP 5.3 +
+- PHP 5.3 + (no zts)
 - linux 2.6+
 - pdo and redis extension install
 

@@ -777,6 +777,7 @@ PHP_FUNCTION(get_disable_list) {
     zval *new_md5 = cpMD5(conf);
     if (memcmp(addr, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN) == 0)
     {
+        zval_ptr_dtor(&new_md5);
         zval *arr = CP_PING_GET_DIS(addr);
         if (Z_TYPE_P(arr) == IS_BOOL || Z_TYPE_P(arr) == IS_NULL)
         {
@@ -790,14 +791,11 @@ PHP_FUNCTION(get_disable_list) {
     } else
     {
         memcpy(addr, Z_STRVAL_P(new_md5), CP_PING_MD5_LEN);
+        zval_ptr_dtor(&new_md5);
         int *pid = addr + CP_PING_MD5_LEN;
         if (*pid > 0)
         {
-            int ret = kill(*pid, SIGUSR1); //清空disable和probably
-            if (ret == -1)
-            {
-                zend_error(E_NOTICE, "kill failed, Error: %s [%d]", strerror(errno), errno);
-            }
+            kill(*pid, SIGUSR1); //清空disable和probably
         }
         array_init(return_value);
     }

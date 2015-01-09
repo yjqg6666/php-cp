@@ -61,12 +61,19 @@ static void cp_add_fail_into_mem(zval *conf, char *data_source);
                                 zval_ptr_dtor(&exception);\
                         }while(0);
 
+#define CP_TEST_RETURN_FALSE(flag) ({if(flag==CP_CONNECT_PING){ \
+                                          if(EG(exception)){ \
+                                              zval *exception = EG(exception);\
+                                              zval_ptr_dtor(&exception); \
+                                              EG(exception) = NULL;\
+                                           }\
+                                          return CP_FALSE; \
+                                      }});
+
 #define CP_SEND_EXCEPTION do{zval *str;CP_SEND_EXCEPTION_ARGS(&str);zval_ptr_dtor(&str);}while(0);
 #define CP_INTERNAL_NORMAL_SEND_RETURN(send_data)({CP_INTERNAL_NORMAL_SEND(send_data);return CP_TRUE;})
 #define CP_INTERNAL_ERROR_SEND_RETURN(send_data) ({ CP_INTERNAL_ERROR_SEND(send_data);return CP_FALSE;})
 #define CP_SEND_EXCEPTION_RETURN do{CP_SEND_EXCEPTION;return CP_FALSE;}while(0);
-
-#define CP_TEST_RETURN_FALSE(flag) ({if(flag==CP_CONNECT_PING){EG(exception) = NULL;return CP_FALSE;}})
 #define CP_TEST_RETURN_TRUE(flag) ({if(flag==CP_CONNECT_PING)return CP_TRUE;})
 
 #include "zend_exceptions.h"
@@ -406,12 +413,18 @@ int pdo_proxy_connect(zval *args, int flag) {
             if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("username"), (void **) &username) == SUCCESS)
             {
                 tmp_pass[1] = username;
+            } else
+            {
+                CP_INTERNAL_ERROR_SEND_RETURN("username null!");
             }
 
             zval **password;
             if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("password"), (void **) &password) == SUCCESS)
             {
                 tmp_pass[2] = password;
+            } else
+            {
+                CP_INTERNAL_ERROR_SEND_RETURN("password null!");
             }
 
             zval **options;
@@ -442,6 +455,8 @@ int pdo_proxy_connect(zval *args, int flag) {
                 CP_SEND_EXCEPTION_RETURN;
             } else
             {
+                if (flag == CP_CONNECT_PING)
+                    zval_ptr_dtor(&new_obj);
                 CP_TEST_RETURN_TRUE(flag);
                 //存起來
                 if (zend_hash_add(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void*) &new_obj, sizeof (zval *), NULL) == SUCCESS)
@@ -650,17 +665,23 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag) {
 
     if (zend_hash_find(CG(class_table), ZEND_STRS("redis"), (void **) &redis_ce) == FAILURE)
     {
-        cpLog("redis class ce error\n");
+        CP_INTERNAL_ERROR_SEND_RETURN("redis extension is not install");
     }
     object_init_ex(new_obj, *redis_ce);
 
     if (zend_hash_index_find(Z_ARRVAL_P(ex_arr), 0, (void**) &ip) == SUCCESS)
     {
         tmp_pass[0] = ip;
+    } else
+    {
+        CP_INTERNAL_ERROR_SEND_RETURN("redis ip null!");
     }
     if (zend_hash_index_find(Z_ARRVAL_P(ex_arr), 1, (void**) &port) == SUCCESS)
     {
         tmp_pass[1] = port;
+    } else
+    {
+        CP_INTERNAL_ERROR_SEND_RETURN("redis ip null!");
     }
 
     zval *timeout;
@@ -696,7 +717,13 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag) {
         cp_add_fail_into_mem(args, Z_STRVAL_P(data_source));
         CP_SEND_EXCEPTION_RETURN;
     }
-    CP_TEST_RETURN_TRUE(flag);
+    if (flag == CP_CONNECT_PING)
+    {
+        zval_ptr_dtor(&new_obj);
+        zval_ptr_dtor(&ex_arr);
+        return CP_TRUE;
+    }
+
     if (zend_hash_index_find(Z_ARRVAL_P(ex_arr), 2, (void**) &db) == SUCCESS)
     {
         if (!cp_redis_select(new_obj, db))
@@ -826,11 +853,13 @@ static void cp_add_fail_into_mem(zval *o_arg, char *data_source) {
     zval *arr = CP_PING_GET_PRO(CPGL.ping_mem_addr);
     if (Z_TYPE_P(arr) == IS_NULL)
     {
-        zval first_arr;
-        array_init(&first_arr);
+        zval *first_arr;
+        MAKE_STD_ZVAL(first_arr);
+        array_init(first_arr);
         add_assoc_long(args, "count", 1);
-        add_assoc_zval(&first_arr, data_source, args);
-        cp_ser_and_setpro(&first_arr);
+        add_assoc_zval(first_arr, data_source, args);
+        cp_ser_and_setpro(first_arr);
+        zval_ptr_dtor(&first_arr);
     } else if (Z_TYPE_P(arr) != IS_BOOL)
     {
         zval **zval_source;
