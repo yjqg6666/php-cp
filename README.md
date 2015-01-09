@@ -1,4 +1,4 @@
-## redis and pdo sync connect pool, just for PHP
+## php-cp(php-connect-pool),redis and pdo sync connect pool
 [中文简介] http://blog.sina.com.cn/s/blog_9eaa0f400102v9fd.html
 
 Provide local connection pool like java
