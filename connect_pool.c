@@ -294,12 +294,12 @@ PHP_FUNCTION(pool_server_create) {
         char *name;
         int keylen;
         zend_hash_get_current_key_ex(Z_ARRVAL_P(conf), &name, &keylen, NULL, 0, NULL);
-        //        int pid = fork();
-        //        if (pid < 0)
-        //        {
-        //            printf("create fork error!\n");
-        //        } else if (pid == 0)
-        //        {
+                int pid = fork();
+                if (pid < 0)
+                {
+                    printf("create fork error!\n");
+                } else if (pid == 0)
+                {
         cpServer_init(*config, name, config_file, group_id);
 
         int ret = cpServer_create();
@@ -313,7 +313,7 @@ PHP_FUNCTION(pool_server_create) {
         {
             zend_error(E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
         }
-        //        }
+                }
         group_id++;
     }
     zval_ptr_dtor(&conf);
