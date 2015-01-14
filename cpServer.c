@@ -25,10 +25,10 @@ static int cpReactor_client_receive(int fd);
 static int cpReactor_client_release(int fd);
 static void insert_into_used();
 
-void cpServer_init(zval *conf, char *title, char *ini_file, int group_id) {
+void cpServer_init(zval *conf, char *title, char *ini_file, int group_id)
+{
     CPGS = (cpServerGS*) cp_mmap_calloc(sizeof (cpServerGS));
-    if (CPGS == NULL)
-    {
+    if (CPGS == NULL) {
         printf("calloc[1] fail\n");
         return;
     }
@@ -56,132 +56,113 @@ void cpServer_init(zval *conf, char *title, char *ini_file, int group_id) {
 
     zval **v;
     //daemonize，守护进程化
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("daemonize"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("daemonize"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGC.daemonize = (int) Z_LVAL_PP(v);
     }
     //pool_max
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGS->worker_max = (int) Z_LVAL_PP(v);
     }
     //pool_min
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGC.worker_min = (int) Z_LVAL_PP(v);
     }
 
     //pool_min
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("recycle_num"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("recycle_num"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGC.recycle_num = (int) Z_LVAL_PP(v);
     }
     //error_file
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("log_file"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("log_file"), (void **) &v) == SUCCESS) {
         memcpy(CPGC.log_file, Z_STRVAL_PP(v), Z_STRLEN_PP(v));
     }
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_read_len"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_read_len"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGC.max_read_len = (int) Z_LVAL_PP(v);
     }
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("port"), (void **) &v) == SUCCESS)
-    {//todo check null
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("port"), (void **) &v) == SUCCESS) {//todo check null
         convert_to_long(*v);
         CPGC.port = (int) Z_LVAL_PP(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("idel_time"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("idel_time"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGC.idel_time = (int) Z_LVAL_PP(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("use_wait_queue"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("use_wait_queue"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGC.use_wait_queue = (int) Z_LVAL_PP(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ser_fail_hits"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ser_fail_hits"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGC.ser_fail_hits = (int) Z_LVAL_PP(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_fail_num"), (void **) &v) == SUCCESS)
-    {
+    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_fail_num"), (void **) &v) == SUCCESS) {
         convert_to_long(*v);
         CPGC.max_fail_num = (int) Z_LVAL_PP(v);
     }
 }
 
-int cpServer_create() {
-    if (CPGC.worker_min < 1 || CPGC.reactor_num < 1 || CPGC.max_read_len >= CP_MAX_READ_LEN)
-    {
+int cpServer_create()
+{
+    if (CPGC.worker_min < 1 || CPGC.reactor_num < 1 || CPGC.max_read_len >= CP_MAX_READ_LEN) {
         printf("Fatal Error: worker_min < 1 or reactor_num < 1 or max_read_len >%d\n", CP_MAX_READ_LEN);
         return FAILURE;
     }
 
-    if (CPGC.ser_fail_hits < 1 || CPGC.max_fail_num < 1)
-    {
+    if (CPGC.ser_fail_hits < 1 || CPGC.max_fail_num < 1) {
         printf("ping server conf error\n");
         return FAILURE;
     }
 
     CPGS->reactor_threads = (cpThread*) cp_mmap_calloc(CPGC.reactor_num * sizeof (cpThread));
-    if (CPGS->reactor_threads == NULL)
-    {
+    if (CPGS->reactor_threads == NULL) {
         cpLog("calloc[1] fail");
         return FAILURE;
     }
 
     CPGS->conlist = (cpConnection*) cp_mmap_calloc(CPGC.max_conn * sizeof (cpConnection));
-    if (CPGS->conlist == NULL)
-    {
+    if (CPGS->conlist == NULL) {
         cpLog("calloc[1] fail");
         return FAILURE;
     }
 
     CPGS->workerfd2clientfd_list = (uint32_t*) cp_mmap_calloc(CPGC.max_conn * sizeof (uint32_t));
-    if (CPGS->workerfd2clientfd_list == NULL)
-    {
+    if (CPGS->workerfd2clientfd_list == NULL) {
         cpLog("calloc[1] fail");
         return FAILURE;
     }
 
     CPGS->workers_status = (volatile_int8*) cp_mmap_calloc(sizeof (volatile_int8) * CP_GROUP_LEN);
-    if (CPGS->workers_status == NULL)
-    {
+    if (CPGS->workers_status == NULL) {
         cpLog("alloc for worker_status fail");
         return FAILURE;
     }
 
     CPGS->workers = (cpWorker*) cp_mmap_calloc(CP_GROUP_LEN * sizeof (cpWorker));
-    if (CPGS->workers == NULL)
-    {
+    if (CPGS->workers == NULL) {
         cpLog("[Main] calloc[workers] fail");
         return FAILURE;
     }
 
     CPGS->ping_workers = (cpWorker*) cp_mmap_calloc(sizeof (cpWorker));
-    if (CPGS->ping_workers == NULL)
-    {
+    if (CPGS->ping_workers == NULL) {
         cpLog("[Main] calloc[ping_workers] fail");
         return FAILURE;
     }
 
-//    pthread_mutex_t _lock;
-//    pthread_mutexattr_t attr;
+    //    pthread_mutex_t _lock;
+    //    pthread_mutexattr_t attr;
     CPGS->spin_lock = (pthread_spinlock_t*) cp_mmap_calloc(sizeof (pthread_spinlock_t));
     //worker闲忙的锁,未做兼容,只在linux用
-    if (pthread_spin_init(CPGS->spin_lock, 1) < 0)
-    {
+    if (pthread_spin_init(CPGS->spin_lock, 1) < 0) {
         cpLog("pthread_spin_init error!. Error: %s [%d]", strerror(errno), errno);
         return FAILURE;
     }
@@ -192,17 +173,17 @@ int cpServer_create() {
     return SUCCESS;
 }
 
-int static cpList_create() {
+int static cpList_create()
+{
     CPGS->WaitList = CPGS->WaitTail = NULL;
     return SUCCESS;
 }
 
-int cpServer_start() {
+int cpServer_start()
+{
     int i, pid, ret, ping_pid;
-    if (CPGC.daemonize > 0)
-    {
-        if (daemon(0, 0) < 0)
-        {
+    if (CPGC.daemonize > 0) {
+        if (daemon(0, 0) < 0) {
             return FAILURE;
         }
     }
@@ -212,88 +193,83 @@ int cpServer_start() {
 
     pid = fork();
     switch (pid) {
-            //创建manager进程
-        case 0:
-            //数据库坏连接检测恢复进程
-            ret = cpCreate_ping_worker_mem();
-            ping_pid = cpFork_ping_worker();
-            if (ping_pid < 0 || ret < 0)
-            {
-                cpLog("Fork ping  process fail");
+        //创建manager进程
+    case 0:
+        for (i = 0; i < CPGC.worker_min; i++) {
+            //alloc了max个 但是只启动min个
+            ret = cpCreate_worker_mem(i);
+            pid = cpFork_one_worker(i);
+            if (pid < 0 || ret < 0) {
+                cpLog("Fork worker process fail");
                 return FAILURE;
+            } else {
+                CPGS->workers[i].pid = pid;
+                CPGS->workers_status[i] = CP_WORKER_IDLE;
             }
-            CPGS->ping_workers->pid = ping_pid;
-
-            for (i = 0; i < CPGC.worker_min; i++)
-            {
-                //alloc了max个 但是只启动min个
-                ret = cpCreate_worker_mem(i);
-                pid = cpFork_one_worker(i);
-                if (pid < 0 || ret < 0)
-                {
-                    cpLog("Fork worker process fail");
-                    return FAILURE;
-                } else
-                {
-                    CPGS->workers[i].pid = pid;
-                    CPGS->workers_status[i] = CP_WORKER_IDLE;
-                }
-            }
-            //标识为管理进程
-            CPGL.process_type = CP_PROCESS_MANAGER;
-            CPGS->worker_num = CPGC.worker_min; //初始为min个worker
-            ret = cpWorker_manager_loop();
-            exit(ret);
-            break;
-            //主进程
-        default:
-            CPGS->manager_pid = pid;
-            break;
-        case -1:
-        {
-            cpLog("fork manager process fail");
+        }
+        
+        
+         //数据库坏连接检测恢复进程
+        ret = cpCreate_ping_worker_mem();
+        ping_pid = cpFork_ping_worker();
+        if (ping_pid < 0 || ret < 0) {
+            cpLog("Fork ping  process fail");
             return FAILURE;
         }
+        CPGS->ping_workers->pid = ping_pid;
+        
+        
+        //标识为管理进程
+        CPGL.process_type = CP_PROCESS_MANAGER;
+        CPGS->worker_num = CPGC.worker_min; //初始为min个worker
+        ret = cpWorker_manager_loop();
+        exit(ret);
+        break;
+        //主进程
+    default:
+        CPGS->manager_pid = pid;
+        break;
+    case -1:
+    {
+        cpLog("fork manager process fail");
+        return FAILURE;
+    }
     }
 
     cpSignalInit();
-    if (cpReactor_start() < 0)
-    {
+    if (cpReactor_start() < 0) {
         cpLog("Reactor_start[1] fail");
         return FAILURE;
     }
     return SUCCESS;
 }
 
-static int cpServer_master_onAccept(int fd) {
+static int cpServer_master_onAccept(int fd)
+{
     struct sockaddr_in client_addr;
     uint32_t client_addrlen = sizeof (client_addr);
     int conn_fd, c_pti = 0, i;
 
-    for (i = 0; i < CP_ACCEPT_MAX_COUNT; i++)
-    {
+    for (i = 0; i < CP_ACCEPT_MAX_COUNT; i++) {
         //accept得到连接套接字
         conn_fd = accept(fd, (struct sockaddr *) &client_addr, &client_addrlen);
-        if (conn_fd < 0)
-        {
+        if (conn_fd < 0) {
             switch (errno) {
-                case EAGAIN:
-                    return SUCCESS;
-                case EINTR:
-                    continue;
-                default:
-                    cpLog("accept fail. Error: %s[%d]", strerror(errno), errno);
-                    return SUCCESS;
+            case EAGAIN:
+                return SUCCESS;
+            case EINTR:
+                continue;
+            default:
+                cpLog("accept fail. Error: %s[%d]", strerror(errno), errno);
+                return SUCCESS;
             }
         }
         //连接过多
-        if (CPGS->connect_count >= CPGC.max_conn)
-        {
+        if (CPGS->connect_count >= CPGC.max_conn) {
             cpLog("too many connection");
             close(conn_fd);
             return SUCCESS;
         }
-        //        swSetNonBlock(conn_fd);
 
         int flag = 1;
         setsockopt(conn_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof (flag));
@@ -309,14 +285,11 @@ static int cpServer_master_onAccept(int fd) {
         setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPCNT, (void *) &keep_count, sizeof (keep_count));
 #endif
 
-        if (CPGC.reactor_num > 1)
-        {
+        if (CPGC.reactor_num > 1) {
             int i, event_num = CPGS->reactor_threads[0].event_num;
             CPGS->reactor_next_i = 0;
-            for (i = 1; i < CPGC.reactor_num; i++)
-            {
-                if (CPGS->reactor_threads[i].event_num < event_num)
-                {
+            for (i = 1; i < CPGC.reactor_num; i++) {
+                if (CPGS->reactor_threads[i].event_num < event_num) {
                     CPGS->reactor_next_i = i;
                     event_num = CPGS->reactor_threads[i].event_num;
                 }
@@ -326,17 +299,14 @@ static int cpServer_master_onAccept(int fd) {
 
 
         cpConnection *conn = &(CPGS->conlist[conn_fd]);
-        if (conn)
-        {//不能在add后做,线程安全,防止添加到reactor后马上就读到数据,这时候下面new_connect还没执行。
+        if (conn) {//不能在add后做,线程安全,防止添加到reactor后马上就读到数据,这时候下面new_connect还没执行。
             conn->release = CP_FD_RELEASED;
         }
-        if (cpEpoll_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR | EPOLLPRI) < 0)
-        {
+        if (cpEpoll_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR | EPOLLPRI) < 0) {
             cpLog("[Master]add event fail Errno=%d|FD=%d", errno, conn_fd);
             close(conn_fd);
             return SUCCESS;
-        } else
-        {
+        } else {
             CPGS->reactor_threads[c_pti].event_num++;
             conn->fd = conn_fd;
             conn->pth_id = c_pti;
@@ -348,7 +318,8 @@ static int cpServer_master_onAccept(int fd) {
     return SUCCESS;
 }
 
-CPINLINE static int MasterSend2Client(int fd, int worker_id, int CPid) {
+CPINLINE static int MasterSend2Client(int fd, int worker_id, int CPid)
+{
     CPGS->workers[worker_id].fd = fd;
     cpMasterInfo info;
     int sizeinfo = sizeof (info);
@@ -360,135 +331,108 @@ CPINLINE static int MasterSend2Client(int fd, int worker_id, int CPid) {
     return cpWrite(fd, &info, sizeinfo);
 }
 
-static void cpTryGetWorkerId(cpConnection *conn, char * data, int fd, int len) {
-    if (pthread_spin_lock(CPGS->spin_lock) == 0)
-    {
+static void cpTryGetWorkerId(cpConnection *conn, char * data, int fd, int len)
+{
+    if (pthread_spin_lock(CPGS->spin_lock) == 0) {
         int i;
-        for (i = 0; i < CPGS->worker_num; i++)
-        {
-            if (CPGS->workers_status[i] == CP_WORKER_IDLE && i < CPGS->worker_max)
-            {
+        for (i = 0; i < CPGS->worker_num; i++) {
+            if (CPGS->workers_status[i] == CP_WORKER_IDLE && i < CPGS->worker_max) {
                 CPGS->workers_status[i] = CP_WORKER_BUSY;
                 conn->worker_id = i;
                 conn->release = CP_FD_NRELEASED;
-                if (pthread_spin_unlock(CPGS->spin_lock) != 0)
-                {
+                if (pthread_spin_unlock(CPGS->spin_lock) != 0) {
                     cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
                 }
                 return;
             }
         }
-        if (CPGS->worker_num < CPGS->worker_max)
-        {//争抢失败增加一个worker
+        if (CPGS->worker_num < CPGS->worker_max) {//争抢失败增加一个worker
             conn->release = CP_FD_NRELEASED;
             conn->worker_id = CPGS->worker_num;
             cpCreate_worker_mem(CPGS->worker_num);
             CPGS->workers_status[CPGS->worker_num] = CP_WORKER_BUSY; //创建后立马分配,防止第一次too many connections
             CPGS->worker_num++; //先加 线程安全
             int ret = kill(CPGS->manager_pid, SIGRTMIN);
-            if (ret < 0)
-            {
+            if (ret < 0) {
                 CPGS->worker_num--; //todo 
                 cpLog("send sig error. Error: %s [%d]", strerror(errno), errno);
             }
-        } else if (CPGC.use_wait_queue)
-        {
+        } else if (CPGC.use_wait_queue) {
             cpWaitList *node = (cpWaitList*) emalloc(sizeof (cpWaitList) + len);
             node->fd = fd;
             node->len = len;
             node->next = NULL;
-            if (CPGS->WaitList)
-            {
+            if (CPGS->WaitList) {
                 CPGS->WaitTail->next = node;
                 node->pre = CPGS->WaitTail;
                 CPGS->WaitTail = node;
-            } else
-            {
+            } else {
                 node->pre = NULL;
                 CPGS->WaitList = CPGS->WaitTail = node;
             }
             memcpy(node->data, data, len);
             conn->release = CP_FD_WAITING;
         }
-        if (pthread_spin_unlock(CPGS->spin_lock) != 0)
-        {
+        if (pthread_spin_unlock(CPGS->spin_lock) != 0) {
             cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
         }
-    } else
-    {
+    } else {
         cpLog("pthread_spin_lock. Error: %s [%d]", strerror(errno), errno);
     }
 }
 
-static int cpReactor_client_release(int fd) {
+static int cpReactor_client_release(int fd)
+{
     cpConnection *conn = &(CPGS->conlist[fd]);
-    if (conn->release == CP_FD_NRELEASED)
-    {//防止too many cons&&重复release
+    if (conn->release == CP_FD_NRELEASED) {//防止too many cons&&重复release
         CPGS->workers[conn->worker_id].request++;
-        if (pthread_spin_lock(CPGS->spin_lock) == 0)
-        {
-            if (CPGS->workers[conn->worker_id].request >= CP_MAX_REQUEST)
-            {
+        if (pthread_spin_lock(CPGS->spin_lock) == 0) {
+            if (CPGS->workers[conn->worker_id].request >= CP_MAX_REQUEST) {
                 CPGS->workers[conn->worker_id].request = 0;
                 CPGS->workers[conn->worker_id].run = 0;
                 //                cpLog("%p ,worker %d,max %d,num %d",CPGS->WaitList,conn->worker_id,CPGS->worker_max,CPGS->worker_num);
             }
-            if (CPGS->WaitList && CPGC.use_wait_queue && conn->worker_id <= CPGS->worker_max)
-            {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
+            if (CPGS->WaitList && CPGC.use_wait_queue && conn->worker_id <= CPGS->worker_max) {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
                 cpConnection *wait_conn = &(CPGS->conlist[CPGS->WaitList->fd]); //等待队列的连接
                 wait_conn->worker_id = conn->worker_id;
                 wait_conn->release = CP_FD_NRELEASED;
                 conn->release = CP_FD_RELEASED;
                 cpWaitList *tmp = CPGS->WaitList;
-                if (CPGS->WaitList->next)
-                {
+                if (CPGS->WaitList->next) {
                     CPGS->WaitList = CPGS->WaitList->next;
                     CPGS->WaitList->pre = NULL;
-                } else
-                {
+                } else {
                     CPGS->WaitList = CPGS->WaitTail = NULL;
                 }
                 cpTcpEvent *wait_event = (cpTcpEvent*) tmp->data;
-                if (MasterSend2Client(wait_conn->fd, wait_conn->worker_id, wait_event->ClientPid) < 0)
-                {
+                if (MasterSend2Client(wait_conn->fd, wait_conn->worker_id, wait_event->ClientPid) < 0) {
                     cpLog("Write in cpReactor_client_release. Error: %s [%d]", strerror(errno), errno);
                 }
                 efree(tmp);
-            } else
-            {
+            } else {
                 CPGS->workers_status[conn->worker_id] = CP_WORKER_IDLE;
                 conn->release = CP_FD_RELEASED;
             }
-            if (pthread_spin_unlock(CPGS->spin_lock) != 0)
-            {
+            if (pthread_spin_unlock(CPGS->spin_lock) != 0) {
                 cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
             }
         }
-    } else if (conn->release == CP_FD_WAITING)
-    {//在队列里面,没等到分配就结束进程了,从queue里面删除
-        if (pthread_spin_lock(CPGS->spin_lock) == 0)
-        {
+    } else if (conn->release == CP_FD_WAITING) {//在队列里面,没等到分配就结束进程了,从queue里面删除
+        if (pthread_spin_lock(CPGS->spin_lock) == 0) {
             cpWaitList *p = CPGS->WaitList;
-            while (p)
-            {
-                if (p->fd == fd)
-                {
-                    if (p == CPGS->WaitList)
-                    {
-                        if (p->next)
-                        {
+            while (p) {
+                if (p->fd == fd) {
+                    if (p == CPGS->WaitList) {
+                        if (p->next) {
                             p->next->pre = NULL;
                             CPGS->WaitList = p->next;
-                        } else
-                        {//only one
+                        } else {//only one
                             CPGS->WaitList = CPGS->WaitTail = NULL;
                         }
-                    } else if (p == CPGS->WaitTail)
-                    {
+                    } else if (p == CPGS->WaitTail) {
                         p->pre->next = NULL;
                         CPGS->WaitTail = p->pre;
-                    } else
-                    {
+                    } else {
                         p->pre->next = p->next;
                         p->next->pre = p->pre;
                     }
@@ -498,8 +442,7 @@ static int cpReactor_client_release(int fd) {
                 p = p->next;
             }
             conn->release = CP_FD_RELEASED;
-            if (pthread_spin_unlock(CPGS->spin_lock) != 0)
-            {
+            if (pthread_spin_unlock(CPGS->spin_lock) != 0) {
                 cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
             }
             cpLog("The fd %d is closed and remove from the queue but no conn dispatch , maybe have slow query", fd);
@@ -510,7 +453,8 @@ static int cpReactor_client_release(int fd) {
 
 }
 
-static int cpReactor_client_close(int fd) {//长连接 相当于mshutdown
+static int cpReactor_client_close(int fd)
+{//长连接 相当于mshutdown
     cpReactor_client_release(fd);
     cpConnection *conn = &(CPGS->conlist[fd]);
     //关闭连接
@@ -521,7 +465,8 @@ static int cpReactor_client_close(int fd) {//长连接 相当于mshutdown
     return SUCCESS;
 }
 
-static int cpReactor_client_receive(int fd) {
+static int cpReactor_client_receive(int fd)
+{
     int n;
     int event_size = sizeof (cpTcpEvent);
     char data[event_size];
@@ -529,42 +474,32 @@ static int cpReactor_client_receive(int fd) {
     n = cpNetRead(fd, data, event_size);
 
     cpConnection *conn = &(CPGS->conlist[fd]);
-    if (n > 0)
-    {
+    if (n > 0) {
         cpTcpEvent *event = (cpTcpEvent*) data;
-        if (event->type == CP_TCPEVENT_RELEASE)
-        {
+        if (event->type == CP_TCPEVENT_RELEASE) {
             return cpReactor_client_release(fd);
         }
-        if (conn->release == CP_FD_RELEASED)
-        {//之前释放了,或者刚进来的连接,需要争抢(这个状态不需要加锁,每个con的fd只分配给一个线程)
+        if (conn->release == CP_FD_RELEASED) {//之前释放了,或者刚进来的连接,需要争抢(这个状态不需要加锁,每个con的fd只分配给一个线程)
             cpTryGetWorkerId(conn, data, fd, n);
-            if (conn->release == CP_FD_WAITING)
-            {
+            if (conn->release == CP_FD_WAITING) {
                 return 1;
             }
-            if (conn->release == CP_FD_RELEASED)
-            {//争抢失败,fork失败
+            if (conn->release == CP_FD_RELEASED) {//争抢失败,fork失败
                 char tmp[sizeof (CP_TOO_MANY_CON_ERR) + sizeof (CP_CLIENT_EOF_STR)] = {CP_TOO_MANY_CON_ERR};
                 strcat(tmp, CP_CLIENT_EOF_STR);
                 return cpWrite(fd, tmp, strlen(tmp));
             }
         }
         return MasterSend2Client(fd, conn->worker_id, event->ClientPid);
-    } else if (n == 0)
-    {
-close_fd:
+    } else if (n == 0) {
+    close_fd:
         return cpReactor_client_close(fd);
-    } else
-    {//需要检测errno来区分是EAGAIN还是ECONNRESET
-        if (errno == EAGAIN)
-        {
+    } else {//需要检测errno来区分是EAGAIN还是ECONNRESET
+        if (errno == EAGAIN) {
             return SUCCESS;
-        } else if (errno == ECONNRESET)
-        {
+        } else if (errno == ECONNRESET) {
             goto close_fd;
-        } else
-        {
+        } else {
             cpLog("Read from socket[%d] fail. Error: %s [%d]", fd, strerror(errno), errno);
             return SUCCESS;
         }
@@ -572,7 +507,8 @@ close_fd:
     return SUCCESS;
 }
 
-int static cpReactor_thread_loop(int *id) {
+int static cpReactor_thread_loop(int *id)
+{
 
     struct timeval timeo;
     timeo.tv_sec = CP_REACTOR_TIMEO_SEC;
@@ -595,17 +531,16 @@ int static cpReactor_thread_loop(int *id) {
     return SUCCESS;
 }
 
-int cpReactor_start() {
+int cpReactor_start()
+{
     int sock, i;
-    if ((sock = cpListen()) < 0)
-    {
+    if ((sock = cpListen()) < 0) {
         cpLog("listen[1] fail");
         return FAILURE;
     }
 
     int accept_epfd = epoll_create(512); //这个参数没用
-    if (cpEpoll_add(accept_epfd, sock, EPOLLIN) < 0)
-    {
+    if (cpEpoll_add(accept_epfd, sock, EPOLLIN) < 0) {
         return FAILURE;
     };
 
@@ -616,12 +551,10 @@ int cpReactor_start() {
     timeo.tv_sec = CP_REACTOR_TIMEO_SEC;
     timeo.tv_usec = CP_REACTOR_TIMEO_USEC;
     pthread_t pidt;
-    for (i = 0; i < CPGC.reactor_num; i++)
-    {
+    for (i = 0; i < CPGC.reactor_num; i++) {
         int *index = (int*) malloc(sizeof (int));
         *index = i;
-        if (pthread_create(&pidt, NULL, (void * (*)(void *)) cpReactor_thread_loop, (void *) index) < 0)
-        {
+        if (pthread_create(&pidt, NULL, (void * (*)(void *)) cpReactor_thread_loop, (void *) index) < 0) {
             cpLog("pthread_create[tcp_reactor] fail");
         }
         pthread_detach(pidt);
@@ -635,7 +568,8 @@ int cpReactor_start() {
     return cpEpoll_wait(handles, &timeo, accept_epfd);
 }
 
-int static cpListen() {
+int static cpListen()
+{
     int sock;
     int option;
     int ret;
@@ -643,8 +577,7 @@ int static cpListen() {
     struct sockaddr_in addr_in4;
 
     sock = socket(PF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-    {
+    if (sock < 0) {
         cpLog("swSocket_listen: Create socket fail.Errno=%d", errno);
         return FAILURE;
     }
@@ -657,22 +590,19 @@ int static cpListen() {
     addr_in4.sin_family = AF_INET;
     ret = bind(sock, (struct sockaddr *) &addr_in4, sizeof (addr_in4));
 
-    if (ret < 0)
-    {
+    if (ret < 0) {
         cpLog("Bind fail.port=%d. Error: %s [%d]", CPGC.port, strerror(errno), errno);
         return FAILURE;
     }
     //开始监听套接字
     ret = listen(sock, CPGC.backlog);
-    if (ret < 0)
-    {
+    if (ret < 0) {
         cpLog("Listen fail.port=%d. Error: %s [%d]", CPGC.port, strerror(errno), errno);
         return FAILURE;
     }
     swSetNonBlock(sock);
 
-    if (sock < 0)
-    {
+    if (sock < 0) {
         return FAILURE;
     }
     int bufsize = CP_UNSOCK_BUFSIZE;
@@ -681,41 +611,39 @@ int static cpListen() {
     return sock;
 }
 
-static void cpSignalHanlde(int sig) {
+static void cpSignalHanlde(int sig)
+{
     switch (sig) {
-        case SIGTERM:
-            cpLog("stop %s", CPGC.title);
-            CPGS->running = 0;
-            int i = 0, ret;
-            for (; i < CPGS->worker_num; i++)
-            {
-                ret = kill(CPGS->workers[i].pid, SIGKILL);
-                if (ret == -1)
-                {
-                    cpLog("kill failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
-                }
+    case SIGTERM:
+        cpLog("stop %s", CPGC.title);
+        CPGS->running = 0;
+        int i = 0, ret;
+        for (; i < CPGS->worker_num; i++) {
+            ret = kill(CPGS->workers[i].pid, SIGKILL);
+            if (ret == -1) {
+                cpLog("kill failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
             }
-            ret = kill(CPGS->ping_workers->pid, SIGKILL);
-            if (ret == -1)
-            {
-                cpLog("kill ping worker failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
-            }
-            exit(1);
-            break;
-        case SIGUSR1:
-            cpLog("reload %s", CPGC.title);
-            ret = kill(CPGS->manager_pid, SIGUSR1);
-            if (ret == -1)
-            {
-                cpLog("reload failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
-            }
-            break;
-        default:
-            break;
+        }
+        ret = kill(CPGS->ping_workers->pid, SIGKILL);
+        if (ret == -1) {
+            cpLog("kill ping worker failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
+        }
+        exit(1);
+        break;
+    case SIGUSR1:
+        cpLog("reload %s", CPGC.title);
+        ret = kill(CPGS->manager_pid, SIGUSR1);
+        if (ret == -1) {
+            cpLog("reload failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
+        }
+        break;
+    default:
+        break;
     }
 }
 
-void static cpSignalInit(void) {
+void static cpSignalInit(void)
+{
     cpSignalSet(SIGHUP, SIG_IGN, 1, 0);
     cpSignalSet(SIGPIPE, SIG_IGN, 1, 0);
     cpSignalSet(SIGUSR1, cpSignalHanlde, 1, 0);
