@@ -716,7 +716,7 @@ PHP_FUNCTION(get_disable_list)
         zval_ptr_dtor(&new_md5);
         int *pid = addr + CP_PING_MD5_LEN;
         if (*pid > 0) {
-//            kill(*pid, SIGUSR1); //清空disable和probably
+            kill(*pid, SIGUSR1); //清空disable和probably
         }
         array_init(return_value);
     }
