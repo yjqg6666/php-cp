@@ -297,21 +297,15 @@ PHP_FUNCTION(pool_server_create)
             printf("create fork error!\n");
         } else if (pid == 0) {
             cpServer_init(*config, name, config_file, group_id);
-            int pid = fork();
-            if (pid < 0) {
-                printf("create fork error!\n");
-            } else if (pid == 0) {
-                cpServer_init(*config, name, config_file, group_id);
 
-                int ret = cpServer_create();
-                if (ret < 0) {
-                    zend_error(E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
-                }
+            int ret = cpServer_create();
+            if (ret < 0) {
+                zend_error(E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
+            }
 
-                ret = cpServer_start();
-                if (ret < 0) {
-                    zend_error(E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
-                }
+            ret = cpServer_start();
+            if (ret < 0) {
+                zend_error(E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
             }
         }
         group_id++;
@@ -457,7 +451,7 @@ int pdo_proxy_connect(zval *args, int flag)
     }
 }
 
-static int cp_call_user_function(zval **object, zval *fun, zval **ret_value, zval *args)
+static int cp_call_user_function(zval **object, zval *fun, zval **ret_value, zval * args)
 {
     zval **m_args;
     int count = 0;
@@ -477,7 +471,7 @@ static int cp_call_user_function(zval **object, zval *fun, zval **ret_value, zva
     }
 }
 
-static void pdo_proxy_pdo(zval *args)
+static void pdo_proxy_pdo(zval * args)
 {
     zval **data_source;
     zval **object;
@@ -543,7 +537,7 @@ static void pdo_proxy_pdo(zval *args)
     }
 }
 
-static void pdo_proxy_stmt(zval *args)
+static void pdo_proxy_stmt(zval * args)
 {
     zval **method;
     if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method"), (void **) &method) == FAILURE) {
@@ -569,7 +563,7 @@ static void pdo_proxy_stmt(zval *args)
     }
 }
 
-static void pdo_dispatch(zval *args)
+static void pdo_dispatch(zval * args)
 {
     zval **m_type;
     if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method_type"), (void **) &m_type) == SUCCESS) {
@@ -746,7 +740,7 @@ static void redis_dispatch(zval * args)
     }
 }
 
-int worker_onReceive(zval *unser_value)
+int worker_onReceive(zval * unser_value)
 {
     zval **type;
     if (zend_hash_find(Z_ARRVAL_P(unser_value), ZEND_STRS("type"), (void **) &type) == SUCCESS) {
@@ -762,7 +756,7 @@ int worker_onReceive(zval *unser_value)
     return CP_TRUE;
 }
 
-static void cp_add_fail_into_mem(zval *o_arg, zval *data_source)
+static void cp_add_fail_into_mem(zval *o_arg, zval * data_source)
 {
 
     zval *args;
