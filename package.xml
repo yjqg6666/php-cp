@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.4.11" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+http://pear.php.net/dtd/tasks-1.0.xsd
+http://pear.php.net/dtd/package-2.0
+http://pear.php.net/dtd/package-2.0.xsd">
+<name>php-cp</name>
+  <channel>pecl.php.net</channel>
+  <summary>mysql and redis proxy write with php extension</summary>
+  <description>
+   The extension start a proxy process and hold some pdo and redis connections,
+   It provide local connect pool like java.
+  </description>
+  <lead>
+    <name>xinhua.guo</name>
+    <user>Gary</user>
+    <email>gray198904@gmail.com</email>
+    <active>yes</active>
+  </lead>
+  <date>2015-01-15</date>
+  <version>
+    <release>1.1</release>
+    <api>1.1</api>
+  </version>
+  <stability>
+    <release>beta</release>
+    <api>beta</api>
+  </stability>
+  <license uri="http://www.apache.org/licenses/LICENSE-2.0.html">Apache2.0</license>
+  <notes>
+- new extension
+
+  </notes>
+ <contents>
+		<dir name="/">
+			<file role="doc" name="LICENSE" />
+			<file role="doc" name="README.md" />
+			<file role="src" name="config.m4" />
+			<dir name="include">
+				<file role="src" name="cpClientNet.h" />
+				<file role="src" name="cpFunction.h" />
+				<file role="src" name="cpMemory.h" />
+				<file role="src" name="cpNetWork.h" />
+				<file role="src" name="cpPingWorker.h" />
+				<file role="src" name="cpServer.h" />
+				<file role="src" name="cpWorker.h" />
+			</dir>
+			<file role="src" name="php_connect_pool.h" />
+			<file role="src" name="demon.php" />
+			<file role="src" name="pool.ini" />
+			<file role="src" name="pool_server" />
+			<file role="src" name="connect_pool.c" />
+			<file role="src" name="connect_pool_client.c" />
+                        <file role="src" name="cpClientNet.c" />
+			<file role="src" name="cpFunction.c" />
+			<file role="src" name="cpMemory.c" />
+			<file role="src" name="cpNetWork.c" />
+			<file role="src" name="cpPingWorker.c" />
+			<file role="src" name="cpServer.c" />
+                        <file role="src" name="cpWorker.c" />
+			<dir name="msgpack">
+                                    <dir name="msgpack">
+                                        <file role="src" name="pack_define.h" />
+                                        <file role="src" name="pack_template.h" />
+                                        <file role="src" name="sysdep.h" />
+                                        <file role="src" name="unpack_define.h" />
+                                        <file role="src" name="unpack_template.h" />
+                                        <file role="src" name="version.h" />
+                                    </dir>
+				<file role="src" name="msgpack.c" />
+				<file role="src" name="msgpack_class.c" />
+                                <file role="src" name="msgpack_class.h" />
+				<file role="src" name="msgpack_convert.c" />
+                                <file role="src" name="msgpack_convert.h" />
+				<file role="src" name="msgpack_errors.h" />
+                                <file role="src" name="msgpack_pack.c" />
+				<file role="src" name="msgpack_pack.h" />
+                                <file role="src" name="msgpack_unpack.c" />
+				<file role="src" name="msgpack_unpack.h" />
+                                <file role="src" name="pack_define.h" />
+				<file role="src" name="pack_template.h" />
+                                <file role="src" name="php_msgpack.h" />
+				<file role="src" name="sysdep.h" />
+                                <file role="src" name="unpack_define.h" />
+				<file role="src" name="unpack_template.h" />
+                                <file role="src" name="version.h" />
+			</dir>
+		</dir>
+	</contents>
+  <dependencies>
+    <required>
+      <php>
+        <min>5.3.10</min>
+      </php>
+      <pearinstaller>
+        <min>1.4.0</min>
+      </pearinstaller>
+    </required>
+  </dependencies>
+  <providesextension>php-cp</providesextension>
+  <extsrcrelease>
+  </extsrcrelease>
+  <changelog />
+</package>

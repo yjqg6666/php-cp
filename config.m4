@@ -17,46 +17,27 @@ dnl Make sure that the comment is aligned:
 dnl [  --enable-connect_pool           Enable connect_pool support])
 
 if test "$PHP_CONNECT_POOL" != "no"; then
-  dnl Write more examples of tests here...
 
-  dnl # --with-connect_pool -> check with-path
-  dnl SEARCH_PATH="/usr/local /usr"     # you might want to change this
-  dnl SEARCH_FOR="/include/connect_pool.h"  # you most likely want to change this
-  dnl if test -r $PHP_CONNECT_POOL/$SEARCH_FOR; then # path given as parameter
-  dnl   CONNECT_POOL_DIR=$PHP_CONNECT_POOL
-  dnl else # search default path list
-  dnl   AC_MSG_CHECKING([for connect_pool files in default path])
-  dnl   for i in $SEARCH_PATH ; do
-  dnl     if test -r $i/$SEARCH_FOR; then
-  dnl       CONNECT_POOL_DIR=$i
-  dnl       AC_MSG_RESULT(found in $i)
-  dnl     fi
-  dnl   done
-  dnl fi
-  dnl
-  dnl if test -z "$CONNECT_POOL_DIR"; then
-  dnl   AC_MSG_RESULT([not found])
-  dnl   AC_MSG_ERROR([Please reinstall the connect_pool distribution])
-  dnl fi
+AC_MSG_CHECKING(PHP version)
+AC_TRY_COMPILE([#include "$phpincludedir/main/php_version.h"], [
+#if PHP_MAJOR_VERSION < 5
+#error  this extension requires at least PHP version 5 or newer
+#endif
+],
+[AC_MSG_RESULT(ok)],
+[AC_MSG_ERROR([need at least PHP 5 or newer])])
 
-  dnl # --with-connect_pool -> add include path
-  dnl PHP_ADD_INCLUDE($CONNECT_POOL_DIR/include)
 
-  dnl # --with-connect_pool -> check for lib and symbol presence
-  dnl LIBNAME=connect_pool # you may want to change this
-  dnl LIBSYMBOL=connect_pool # you most likely want to change this 
+AC_MSG_CHECKING(ZTS)
+AC_TRY_COMPILE([#include "$phpincludedir/main/php_config.h"], [
+#ifdef ZTS
+#error  this extension requires no zts, please do not add ' --enable-maintainer-zts' when you configure php
+#endif
+],
+[AC_MSG_RESULT(ok)],
+[AC_MSG_ERROR([need php no zts, please do not add ' --enable-maintainer-zts' when you configure php])])
 
-  dnl PHP_CHECK_LIBRARY($LIBNAME,$LIBSYMBOL,
-  dnl [
-  dnl   PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $CONNECT_POOL_DIR/lib, CONNECT_POOL_SHARED_LIBADD)
-  dnl   AC_DEFINE(HAVE_CONNECT_POOLLIB,1,[ ])
-  dnl ],[
-  dnl   AC_MSG_ERROR([wrong connect_pool lib version or lib not found])
-  dnl ],[
-  dnl   -L$CONNECT_POOL_DIR/lib -lm
-  dnl ])
-  dnl
-  dnl PHP_SUBST(CONNECT_POOL_SHARED_LIBADD)
+
 
   PHP_NEW_EXTENSION(connect_pool, connect_pool.c cpServer.c cpWorker.c \
                     connect_pool_client.c \
