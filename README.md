@@ -23,6 +23,7 @@ phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 - Do a lot of optimization, although the request through the connection pool process forward, but no loss of QPS.
 - When the connection use out,support queue.
 - Simple! just change the new method and add release function (see demon),you used the tcp pool.
+- The connection proxy will start the ping process to monitor down list, if available will reflect to the return value of the get_disable_list(), use this function you can do some fun things,like LB.
 
 ## Example
 step 1 move the pool.ini file to /etc/ and modify it as you need.
