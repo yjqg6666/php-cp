@@ -160,6 +160,7 @@ extern "C" {
         cpWorker *ping_workers;
         volatile_int8 *workers_status;
         pthread_spinlock_t *spin_lock;
+        pthread_mutex_t  *mutex_lock;
 
         cpWaitList *WaitList; //获得失败的wait队列
         cpWaitList *WaitTail; //获得失败的wait队列队尾

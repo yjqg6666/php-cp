@@ -158,12 +158,18 @@ int cpServer_create()
         return FAILURE;
     }
 
-    //    pthread_mutex_t _lock;
-    //    pthread_mutexattr_t attr;
-    CPGS->spin_lock = (pthread_spinlock_t*) cp_mmap_calloc(sizeof (pthread_spinlock_t));
-    //worker闲忙的锁,未做兼容,只在linux用
-    if (pthread_spin_init(CPGS->spin_lock, 1) < 0) {
-        cpLog("pthread_spin_init error!. Error: %s [%d]", strerror(errno), errno);
+    //    CPGS->spin_lock = (pthread_spinlock_t*) cp_mmap_calloc(sizeof (pthread_spinlock_t));
+    //    //worker闲忙的锁,未做兼容,只在linux用
+    //    if (pthread_spin_init(CPGS->spin_lock, 1) < 0) {
+    //        cpLog("pthread_spin_init error!. Error: %s [%d]", strerror(errno), errno);
+    //        return FAILURE;
+    //    }
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+    CPGS->mutex_lock = (pthread_mutex_t*) cp_mmap_calloc(sizeof (pthread_mutex_t));
+    if (pthread_mutex_init(CPGS->mutex_lock, &attr) < 0) {
+        cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
         return FAILURE;
     }
 
@@ -207,9 +213,9 @@ int cpServer_start()
                 CPGS->workers_status[i] = CP_WORKER_IDLE;
             }
         }
-        
-        
-         //数据库坏连接检测恢复进程
+
+
+        //数据库坏连接检测恢复进程
         ret = cpCreate_ping_worker_mem();
         ping_pid = cpFork_ping_worker();
         if (ping_pid < 0 || ret < 0) {
@@ -217,8 +223,8 @@ int cpServer_start()
             return FAILURE;
         }
         CPGS->ping_workers->pid = ping_pid;
-        
-        
+
+
         //标识为管理进程
         CPGL.process_type = CP_PROCESS_MANAGER;
         CPGS->worker_num = CPGC.worker_min; //初始为min个worker
@@ -333,14 +339,14 @@ CPINLINE static int MasterSend2Client(int fd, int worker_id, int CPid)
 
 static void cpTryGetWorkerId(cpConnection *conn, char * data, int fd, int len)
 {
-    if (pthread_spin_lock(CPGS->spin_lock) == 0) {
+    if (pthread_mutex_lock(CPGS->mutex_lock) == 0) {
         int i;
         for (i = 0; i < CPGS->worker_num; i++) {
             if (CPGS->workers_status[i] == CP_WORKER_IDLE && i < CPGS->worker_max) {
                 CPGS->workers_status[i] = CP_WORKER_BUSY;
                 conn->worker_id = i;
                 conn->release = CP_FD_NRELEASED;
-                if (pthread_spin_unlock(CPGS->spin_lock) != 0) {
+                if (pthread_mutex_unlock(CPGS->mutex_lock) != 0) {
                     cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
                 }
                 return;
@@ -373,7 +379,7 @@ static void cpTryGetWorkerId(cpConnection *conn, char * data, int fd, int len)
             memcpy(node->data, data, len);
             conn->release = CP_FD_WAITING;
         }
-        if (pthread_spin_unlock(CPGS->spin_lock) != 0) {
+        if (pthread_mutex_unlock(CPGS->mutex_lock) != 0) {
             cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
         }
     } else {
@@ -386,7 +392,7 @@ static int cpReactor_client_release(int fd)
     cpConnection *conn = &(CPGS->conlist[fd]);
     if (conn->release == CP_FD_NRELEASED) {//防止too many cons&&重复release
         CPGS->workers[conn->worker_id].request++;
-        if (pthread_spin_lock(CPGS->spin_lock) == 0) {
+        if (pthread_mutex_lock(CPGS->mutex_lock) == 0) {
             if (CPGS->workers[conn->worker_id].request >= CP_MAX_REQUEST) {
                 CPGS->workers[conn->worker_id].request = 0;
                 CPGS->workers[conn->worker_id].run = 0;
@@ -413,12 +419,12 @@ static int cpReactor_client_release(int fd)
                 CPGS->workers_status[conn->worker_id] = CP_WORKER_IDLE;
                 conn->release = CP_FD_RELEASED;
             }
-            if (pthread_spin_unlock(CPGS->spin_lock) != 0) {
+            if (pthread_mutex_unlock(CPGS->mutex_lock) != 0) {
                 cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
             }
         }
     } else if (conn->release == CP_FD_WAITING) {//在队列里面,没等到分配就结束进程了,从queue里面删除
-        if (pthread_spin_lock(CPGS->spin_lock) == 0) {
+        if (pthread_mutex_lock(CPGS->mutex_lock) == 0) {
             cpWaitList *p = CPGS->WaitList;
             while (p) {
                 if (p->fd == fd) {
@@ -442,7 +448,7 @@ static int cpReactor_client_release(int fd)
                 p = p->next;
             }
             conn->release = CP_FD_RELEASED;
-            if (pthread_spin_unlock(CPGS->spin_lock) != 0) {
+            if (pthread_mutex_unlock(CPGS->mutex_lock) != 0) {
                 cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
             }
             cpLog("The fd %d is closed and remove from the queue but no conn dispatch , maybe have slow query", fd);
@@ -527,7 +533,7 @@ int static cpReactor_thread_loop(int *id)
     cpEpoll_wait(handles, &timeo, epfd);
 
     free(id);
-    pthread_exit(*id);
+    pthread_exit(0);
     return SUCCESS;
 }
 

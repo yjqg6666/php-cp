@@ -102,7 +102,7 @@ int cpFork_one_worker(int worker_id) {
 
 static void cpManagerRecycle(int sig) {
     int i, recycle_num = 0;
-    if (pthread_spin_trylock(CPGS->spin_lock) == 0)
+    if (pthread_mutex_trylock(CPGS->mutex_lock) == 0)
     {
         //                        for (i = CPGS->worker_num - 1; i >= 0; i--) {
         //                            cpLog("index is %d,pid is %d,status is %d", i, CPGS->workers[i].pid, CPGS->workers_status[i]);
@@ -137,7 +137,7 @@ static void cpManagerRecycle(int sig) {
                 }
             }
         }
-        if (pthread_spin_unlock(CPGS->spin_lock) != 0)
+        if (pthread_mutex_unlock(CPGS->mutex_lock) != 0)
         {
             cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
         }

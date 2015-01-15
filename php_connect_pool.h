@@ -59,6 +59,7 @@ typedef unsigned long int uint64_t;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <pthread.h>
 
 #include "cpMemory.h"
 #include "cpFunction.h"
