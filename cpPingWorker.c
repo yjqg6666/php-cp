@@ -69,7 +69,7 @@ static int cpPing_worker_loop()
 {
     cpSignalSet(SIGUSR1, cpPingClear, 1, 0);
     if ((CPGL.ping_mem_addr = shmat(CPGS->ping_workers->sm_obj.shmid, NULL, 0)) < 0) {
-        zend_error(E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
     }
     bzero(CPGL.ping_mem_addr, CP_PING_MEM_LEN);
     memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN, &CPGS->ping_workers->pid, CP_PING_PID_LEN);

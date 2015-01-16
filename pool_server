@@ -2,7 +2,7 @@
 <?php
 ini_set('memory_limit', '2048M'); //pdo抛异常后有內存泄露，超过10000次请求重启代理进程
 ini_set("display_errors", "On");
-set_error_handler('shit_pdo_warning_function'); //PDO连接断了只能报WARNING,需要特殊处理
+set_error_handler('pdo_warning_function_handler'); //PDO连接断了只能报WARNING,需要特殊处理
 define(PID_PRE, "/var/run/con_pool_");
 $conf = "/etc/pool.ini"; //pool_server的配置文件
 

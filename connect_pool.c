@@ -84,7 +84,7 @@ const zend_function_entry cp_functions[] = {
     PHP_FE(pool_server_reload, NULL)
     PHP_FE(pool_server_version, NULL)
     PHP_FE(get_disable_list, NULL)
-    PHP_FE(shit_pdo_warning_function, NULL)
+    PHP_FE(pdo_warning_function_handler, NULL)
     PHP_FE(redis_connect, NULL)
     PHP_FE(client_close, NULL)
     PHP_FE_END /* Must be the last line in cp_functions[] */
@@ -242,14 +242,14 @@ void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC)
         if (ret >= 0) {
             cli->released = CP_FD_RELEASED;
         } else {
-            zend_error(E_ERROR, "pdo_connect_pool: release error. Error: %s [%d]", strerror(errno), errno);
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "pdo_connect_pool: release error. Error: %s [%d]", strerror(errno), errno);
         }
     }
 }
 
-PHP_FUNCTION(shit_pdo_warning_function)
+PHP_FUNCTION(pdo_warning_function_handler)
 {
-    int errorno;
+    long errorno;
     char *errstr;
     int errlen;
     char * linstr;
@@ -273,15 +273,11 @@ PHP_FUNCTION(pool_server_create)
     char *config_file = NULL;
     int file_len = 0;
     if (strcasecmp("cli", sapi_module.name) != 0) {
-        zend_error(E_ERROR, "pool_server must run at php_cli environment.");
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server must run at php_cli environment.");
         RETURN_FALSE;
     }
-#ifdef ZTS
-    zend_error(E_ERROR, "php connect pool dot not support ZTS");
-    RETURN_FALSE;
-#endif
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &config_file, &file_len) == FAILURE) {
-        zend_error(E_ERROR, "config file error");
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "config file error");
         RETURN_FALSE;
     }
     conf = cpGetConfig(config_file);
@@ -294,18 +290,18 @@ PHP_FUNCTION(pool_server_create)
         zend_hash_get_current_key_ex(Z_ARRVAL_P(conf), &name, &keylen, NULL, 0, NULL);
         int pid = fork();
         if (pid < 0) {
-            printf("create fork error!\n");
+            php_printf("create fork error!\n");
         } else if (pid == 0) {
             cpServer_init(*config, name, config_file, group_id);
 
             int ret = cpServer_create();
             if (ret < 0) {
-                zend_error(E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
+                php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
             }
 
             ret = cpServer_start();
             if (ret < 0) {
-                zend_error(E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
+                php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
             }
         }
         group_id++;
@@ -321,7 +317,7 @@ PHP_FUNCTION(pool_server_reload)
         return;
     }
     if (kill(pid, SIGUSR1) < 0) {
-        printf("reload fail. kill -SIGUSR1 master_pid[%d] fail. Error: %s[%d]\n", pid, strerror(errno), errno);
+        php_printf("reload fail. kill -SIGUSR1 master_pid[%d] fail. Error: %s[%d]\n", pid, strerror(errno), errno);
         RETURN_FALSE;
     } else {
         RETURN_TRUE;
@@ -341,7 +337,7 @@ PHP_FUNCTION(pool_server_shutdown)
         return;
     }
     if (kill(pid, SIGTERM) < 0) {
-        printf("shutdown fail. kill -SIGTERM master_pid[%d] fail. Error: %s[%d]\n", pid, strerror(errno), errno);
+        php_printf("shutdown fail. kill -SIGTERM master_pid[%d] fail. Error: %s[%d]\n", pid, strerror(errno), errno);
         RETURN_FALSE;
     } else {
         RETURN_TRUE;
@@ -375,7 +371,7 @@ CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
         worker_event.pid = CPWG.clientPid;
         int ret = write(CPGS->workers[CPWG.id].pipe_fd_write, &worker_event, sizeof (worker_event));
         if (ret == -1) {
-            zend_error(E_ERROR, "write error Error: %s [%d]", strerror(errno), errno);
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "write error Error: %s [%d]", strerror(errno), errno);
         }
 
         return SUCCESS;

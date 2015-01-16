@@ -29,7 +29,7 @@ void cpServer_init(zval *conf, char *title, char *ini_file, int group_id)
 {
     CPGS = (cpServerGS*) cp_mmap_calloc(sizeof (cpServerGS));
     if (CPGS == NULL) {
-        printf("calloc[1] fail\n");
+        php_printf("calloc[1] fail\n");
         return;
     }
     bzero(&CPGL, sizeof (cpServerG));
@@ -113,15 +113,16 @@ void cpServer_init(zval *conf, char *title, char *ini_file, int group_id)
 int cpServer_create()
 {
     if (CPGC.worker_min < 1 || CPGC.reactor_num < 1 || CPGC.max_read_len >= CP_MAX_READ_LEN) {
-        printf("Fatal Error: worker_min < 1 or reactor_num < 1 or max_read_len >%d\n", CP_MAX_READ_LEN);
+        php_printf("Fatal Error: worker_min < 1 or reactor_num < 1 or max_read_len >%d\n", CP_MAX_READ_LEN);
         return FAILURE;
     }
 
     if (CPGC.ser_fail_hits < 1 || CPGC.max_fail_num < 1) {
-        printf("ping server conf error\n");
+        php_printf("ping server conf error\n");
         return FAILURE;
     }
 
+    cpLog_init(CPGC.log_file);
     CPGS->reactor_threads = (cpThread*) cp_mmap_calloc(CPGC.reactor_num * sizeof (cpThread));
     if (CPGS->reactor_threads == NULL) {
         cpLog("calloc[1] fail");
@@ -172,8 +173,6 @@ int cpServer_create()
         cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
         return FAILURE;
     }
-
-    cpLog_init(CPGC.log_file);
     CPGS->running = 1;
 
     return SUCCESS;

@@ -150,7 +150,7 @@ PHP_FUNCTION(pool_server_reload);
 PHP_FUNCTION(pool_server_version);
 
 PHP_FUNCTION(get_disable_list);
-PHP_FUNCTION(shit_pdo_warning_function);
+PHP_FUNCTION(pdo_warning_function_handler);
 
 PHP_FUNCTION(client_close);
 
