@@ -710,6 +710,12 @@ static void redis_dispatch(zval * args)
                 zval error_str;
                 ZVAL_STRING(&error_str, "redis no method error!", 0);
                 CP_INTERNAL_SERIALIZE_SEND_MEM(&error_str, CP_SIGEVENT_EXCEPTION);
+                return;
+            } else if (strcmp(Z_STRVAL_PP(method), "select") == 0) {
+                zval select_return;
+                ZVAL_BOOL(&select_return, 1);
+                CP_INTERNAL_SERIALIZE_SEND_MEM(&select_return, CP_SIGEVENT_TURE);
+                return;
             }
             zval * ret_value = NULL;
             if (cp_call_user_function(object, *method, &ret_value, args) == FAILURE) {
