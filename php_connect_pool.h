@@ -42,8 +42,6 @@
 #define SOCK_NONBLOCK O_NONBLOCK
 #endif
 
-typedef unsigned long int uint64_t;
-
 #include <sys/poll.h>
 #include <sys/stat.h>
 #include <fcntl.h>
