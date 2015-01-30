@@ -128,7 +128,7 @@ CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int ma
     dest.exceed = '0';
     php_msgpack_serialize(&dest, ret_value);
     if (dest.exceed == '1') {
-        php_error_docref(NULL TSRMLS_CC, E_ERROR, "data is exceed,increase max_read_len");
+        zend_throw_exception(NULL, "data is exceed,increase max_read_len", 0 TSRMLS_CC);
     } else {
         cpWorkerInfo worker_event;
         worker_event.len = dest.len;
@@ -489,8 +489,8 @@ PHP_METHOD(redis_connect_pool, __construct)
     CP_GET_PID;
     MAKE_STD_ZVAL(pool_port);
     ZVAL_LONG(pool_port, port);
-    zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), zres TSRMLS_CC);
-    zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("pool_port"), pool_port TSRMLS_CC);
+    zend_update_property(redis_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), zres TSRMLS_CC);
+    zend_update_property(redis_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("pool_port"), pool_port TSRMLS_CC);
     zval_ptr_dtor(&zres);
     zval_ptr_dtor(&pool_port);
 }
