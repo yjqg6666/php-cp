@@ -54,3 +54,4 @@ get_disable_list($redis_conf,CP_DEFAULT_REDIS_PORT); // get the redis disable ip
 
 ## contact me
 http://weibo.com/u/2661945152
+http://weibo.com/u/2661945152 test commit
