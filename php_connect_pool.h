@@ -28,10 +28,12 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_EPOLL
 #include <sys/epoll.h> //todo
 #ifndef EPOLLRDHUP
 #define EPOLLRDHUP   0x2000
 #define NO_EPOLLRDHUP
+#endif
 #endif
 
 #if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
@@ -167,7 +169,7 @@ PHP_METHOD(redis_connect_pool, __destruct);
 PHP_METHOD(redis_connect_pool, __call);
 PHP_METHOD(redis_connect_pool, release);
 PHP_METHOD(redis_connect_pool, select);
-PHP_FUNCTION(redis_connect);
+PHP_METHOD(redis_connect_pool, connect);    
 
 
 void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC);
