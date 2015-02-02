@@ -495,7 +495,7 @@ PHP_METHOD(redis_connect_pool, __construct)
     zval_ptr_dtor(&pool_port);
 }
 
-PHP_FUNCTION(redis_connect)
+PHP_METHOD(redis_connect_pool, connect)
 {
     char *ip;
     int ip_len;
@@ -520,9 +520,9 @@ PHP_FUNCTION(redis_connect)
     } else {
         ZVAL_STRING(zval_port, "6379", 1);
     }
-
-    zend_update_property(redis_connect_pool_class_entry_ptr, object, ZEND_STRL("ip"), zval_ip TSRMLS_CC); //临时标示这个连接的真实目标,根据下一步是select还是get来确定db号,可以減少一次select操作
-    zend_update_property(redis_connect_pool_class_entry_ptr, object, ZEND_STRL("port"), zval_port TSRMLS_CC);
+    //临时标示这个连接的真实目标,根据下一步是select还是get来确定db号,可以減少一次select操作
+    zend_update_property(redis_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("ip"), zval_ip TSRMLS_CC);
+    zend_update_property(redis_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("port"), zval_port TSRMLS_CC);
 
     zval_ptr_dtor(&zval_port);
     zval_ptr_dtor(&zval_ip);

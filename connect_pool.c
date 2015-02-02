@@ -85,7 +85,6 @@ const zend_function_entry cp_functions[] = {
     PHP_FE(pool_server_version, NULL)
     PHP_FE(get_disable_list, NULL)
     PHP_FE(pdo_warning_function_handler, NULL)
-    PHP_FE(redis_connect, NULL)
     PHP_FE(client_close, NULL)
     PHP_FE_END /* Must be the last line in cp_functions[] */
 };
@@ -115,8 +114,8 @@ const zend_function_entry redis_connect_pool_methods[] = {
     PHP_ME(redis_connect_pool, __call, __call_args, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, release, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, select, NULL, ZEND_ACC_PUBLIC)
-    PHP_FALIAS(connect, redis_connect, NULL)
-    PHP_FALIAS(pconnect, redis_connect, NULL)
+    PHP_ME(redis_connect_pool, connect, NULL, ZEND_ACC_PUBLIC)
+    PHP_MALIAS(redis_connect_pool, pconnect, connect, NULL, ZEND_ACC_PUBLIC)   /* pconnect 别名指向connect */
     PHP_FE_END
 };
 

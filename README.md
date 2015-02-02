@@ -15,7 +15,7 @@ phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 
 
 ##Technical characteristics:
- 
+
 - After each time fetchAll (set/get)  call release() method, release the connection to the pool, avoid that the script jammed causing connection occupy high problem.
 - The maximum and minimum number of connections configuration support.
 - Support  small pressure automatic recovery connection.
@@ -54,3 +54,4 @@ get_disable_list($redis_conf,CP_DEFAULT_REDIS_PORT); // get the redis disable ip
 
 ## contact me
 http://weibo.com/u/2661945152
+http://weibo.com/u/2661945152 test commit
