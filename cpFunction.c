@@ -149,6 +149,7 @@ void cpSettitle(char *title_name) {
     zval *name_ptr, name;
     name_ptr = &name;
     ZVAL_STRING(name_ptr, title, 1);
+    zval_add_ref(&name_ptr);
     zval *retval;
     zval **args[1];
     args[0] = &name_ptr;
