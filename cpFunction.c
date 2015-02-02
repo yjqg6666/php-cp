@@ -138,7 +138,7 @@ CPINLINE int cpNetRead(int fd, void *buf, int len) {
 
 void cpSettitle(char *title_name) {
 
-    assert(MAX_TITLE_LENGTH > strlen(title) + 5);
+//    assert(MAX_TITLE_LENGTH > strlen(title) + 5);
 
     char title[MAX_TITLE_LENGTH + 5] = {0};
     strcat(title, "pool_");

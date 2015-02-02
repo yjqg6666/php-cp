@@ -316,7 +316,7 @@ PHP_FUNCTION(pool_server_reload)
         return;
     }
     if (kill(pid, SIGUSR1) < 0) {
-        php_printf("reload fail. kill -SIGUSR1 master_pid[%d] fail. Error: %s[%d]\n", pid, strerror(errno), errno);
+        php_printf("reload fail. kill -SIGUSR1 master_pid[%d] fail. Error: %s[%d]\n", (int)pid, strerror(errno), errno);
         RETURN_FALSE;
     } else {
         RETURN_TRUE;
@@ -336,7 +336,7 @@ PHP_FUNCTION(pool_server_shutdown)
         return;
     }
     if (kill(pid, SIGTERM) < 0) {
-        php_printf("shutdown fail. kill -SIGTERM master_pid[%d] fail. Error: %s[%d]\n", pid, strerror(errno), errno);
+        php_printf("shutdown fail. kill -SIGTERM master_pid[%d] fail. Error: %s[%d]\n", (int)pid, strerror(errno), errno);
         RETURN_FALSE;
     } else {
         RETURN_TRUE;
