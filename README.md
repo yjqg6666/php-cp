@@ -52,6 +52,6 @@ get_disable_list($redis_conf,CP_DEFAULT_REDIS_PORT); // get the redis disable ip
 - if the first param changed,the disable list will be clear.
 - this function will return the fail ips.
 
-## contact me
-http://weibo.com/u/2661945152
-http://weibo.com/u/2661945152 test commit
+## contact us
+- http://weibo.com/u/2661945152
+- 83212019@qq.com
