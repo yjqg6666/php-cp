@@ -186,12 +186,17 @@ int static cpList_create()
 
 int cpServer_start()
 {
-    int i, pid, ret, ping_pid;
+    int i, pid, ret, ping_pid, sock;
     if (CPGC.daemonize > 0) {
         if (daemon(0, 0) < 0) {
             return FAILURE;
         }
     }
+    if ((sock = cpListen()) < 0) {
+        cpLog("listen[1] fail");
+        return FAILURE;
+    }
+    
     CPGS->master_pid = getpid();
     CPGL.process_type = CP_PROCESS_MASTER;
     cpList_create();
@@ -242,7 +247,7 @@ int cpServer_start()
     }
 
     cpSignalInit();
-    if (cpReactor_start() < 0) {
+    if (cpReactor_start(sock) < 0) {
         cpLog("Reactor_start[1] fail");
         return FAILURE;
     }
@@ -536,14 +541,9 @@ int static cpReactor_thread_loop(int *id)
     return SUCCESS;
 }
 
-int cpReactor_start()
+int cpReactor_start(int sock)
 {
-    int sock, i;
-    if ((sock = cpListen()) < 0) {
-        cpLog("listen[1] fail");
-        return FAILURE;
-    }
-
+    int i;
     int accept_epfd = epoll_create(512); //这个参数没用
     if (cpEpoll_add(accept_epfd, sock, EPOLLIN) < 0) {
         return FAILURE;
