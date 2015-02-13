@@ -25,6 +25,7 @@ switch ($cmd) {
             pool_server_reload((int) file_get_contents(PID_PRE . $k . ".pid"));
         }
         echo "Tips: The reload can only modify 'pool_min','pool_max','recycle_num' and 'idel_time'\n";
+        die;
         break;
     case "stop":
         foreach ($conf_arr as $k => $value) {

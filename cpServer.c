@@ -351,7 +351,7 @@ static void cpTryGetWorkerId(cpConnection *conn, char * data, int fd, int len)
                 conn->worker_id = i;
                 conn->release = CP_FD_NRELEASED;
                 if (pthread_mutex_unlock(CPGS->mutex_lock) != 0) {
-                    cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
+                    cpLog("pthread_mutex_unlock. Error: %s [%d]", strerror(errno), errno);
                 }
                 return;
             }
@@ -384,7 +384,7 @@ static void cpTryGetWorkerId(cpConnection *conn, char * data, int fd, int len)
             conn->release = CP_FD_WAITING;
         }
         if (pthread_mutex_unlock(CPGS->mutex_lock) != 0) {
-            cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
+            cpLog("pthread_mutex_unlock. Error: %s [%d]", strerror(errno), errno);
         }
     } else {
         cpLog("pthread_spin_lock. Error: %s [%d]", strerror(errno), errno);
