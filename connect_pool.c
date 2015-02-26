@@ -545,21 +545,26 @@ static void pdo_proxy_stmt(zval * args)
         ZVAL_STRING(ret_value, "call pdo stmt method error!", 0);
         CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_EXCEPTION);
     } else {
+        zval **data_source;
+        zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("data_source"), (void **) &data_source);
         if (EG(exception)) {
             zval *str;
             CP_SEND_EXCEPTION_ARGS(&str);
             char *p = strstr(Z_STRVAL_P(str), "server has gone away");
             char *p2 = strstr(Z_STRVAL_P(str), "There is already an active transaction");
             if (p || p2) {
-                zval **data_source;
-                zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("data_source"), (void **) &data_source);
                 zend_hash_del(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
             }
             zval_ptr_dtor(&str);
             zval_ptr_dtor(&pdo_stmt);
             pdo_stmt = NULL;
         } else {
-            CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
+            if (ConProxyWG.warning_gone_away) {//restart mysql will trigger this warning
+                zend_hash_del(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
+                CP_INTERNAL_ERROR_SEND("Server has gone away");
+            } else {
+                CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
+            }
         }
     }
     if (ret_value) {
