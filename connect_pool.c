@@ -115,7 +115,7 @@ const zend_function_entry redis_connect_pool_methods[] = {
     PHP_ME(redis_connect_pool, release, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, select, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, connect, NULL, ZEND_ACC_PUBLIC)
-    PHP_MALIAS(redis_connect_pool, pconnect, connect, NULL, ZEND_ACC_PUBLIC)   /* pconnect 别名指向connect */
+    PHP_MALIAS(redis_connect_pool, pconnect, connect, NULL, ZEND_ACC_PUBLIC) /* pconnect 别名指向connect */
     PHP_FE_END
 };
 
@@ -316,7 +316,7 @@ PHP_FUNCTION(pool_server_reload)
         return;
     }
     if (kill(pid, SIGUSR1) < 0) {
-        php_printf("reload fail. kill -SIGUSR1 master_pid[%d] fail. Error: %s[%d]\n", (int)pid, strerror(errno), errno);
+        php_printf("reload fail. kill -SIGUSR1 master_pid[%d] fail. Error: %s[%d]\n", (int) pid, strerror(errno), errno);
         RETURN_FALSE;
     } else {
         RETURN_TRUE;
@@ -336,7 +336,7 @@ PHP_FUNCTION(pool_server_shutdown)
         return;
     }
     if (kill(pid, SIGTERM) < 0) {
-        php_printf("shutdown fail. kill -SIGTERM master_pid[%d] fail. Error: %s[%d]\n", (int)pid, strerror(errno), errno);
+        php_printf("shutdown fail. kill -SIGTERM master_pid[%d] fail. Error: %s[%d]\n", (int) pid, strerror(errno), errno);
         RETURN_FALSE;
     } else {
         RETURN_TRUE;
@@ -546,7 +546,16 @@ static void pdo_proxy_stmt(zval * args)
         CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_EXCEPTION);
     } else {
         if (EG(exception)) {
-            CP_SEND_EXCEPTION;
+            zval *str;
+            CP_SEND_EXCEPTION_ARGS(&str);
+            char *p = strstr(Z_STRVAL_P(str), "server has gone away");
+            char *p2 = strstr(Z_STRVAL_P(str), "There is already an active transaction");
+            if (p || p2) {
+                zval **data_source;
+                zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("data_source"), (void **) &data_source);
+                zend_hash_del(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
+            }
+            zval_ptr_dtor(&str);
             zval_ptr_dtor(&pdo_stmt);
             pdo_stmt = NULL;
         } else {
