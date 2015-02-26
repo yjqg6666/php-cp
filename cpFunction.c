@@ -309,6 +309,7 @@ CPINLINE zval * cpMD5(zval *arr) {//pass in array , out md5 zval
     if (call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 1, args, 0, NULL TSRMLS_CC) != SUCCESS)
     {
         zval_ptr_dtor(&str);
+        smart_str_free(&ser_data);
         return NULL;
     }
     zval_ptr_dtor(&str);
