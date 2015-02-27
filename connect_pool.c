@@ -528,8 +528,8 @@ static void pdo_proxy_pdo(zval *args) {
                 {
                     zval *str;
                     CP_SEND_EXCEPTION_ARGS(&str);
-                    char *p = strstr(Z_STRVAL_P(str), "server has gone away");
-                    char *p2 = strstr(Z_STRVAL_P(str), "There is already an active transaction");
+                    char *p = strcasestr(Z_STRVAL_P(str), "server has gone away");
+                    char *p2 = strcasestr(Z_STRVAL_P(str), "There is already an active transaction");
                     if (p || p2)
                     {
                         zend_hash_del(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
@@ -795,8 +795,8 @@ static void redis_dispatch(zval * args) {
                 {
                     zval *str;
                     CP_SEND_EXCEPTION_ARGS(&str);
-                    char *p = strstr(Z_STRVAL_P(str), "server went away");
-                    char *p2 = strstr(Z_STRVAL_P(str), "Connection lost");
+                    char *p = strcasestr(Z_STRVAL_P(str), "server went away");
+                    char *p2 = strcasestr(Z_STRVAL_P(str), "Connection lost");
                     if (p || p2)
                     {
                         zend_hash_del(&redis_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
