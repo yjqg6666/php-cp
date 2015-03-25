@@ -28,13 +28,13 @@
 #include "config.h"
 #endif
 
-#ifdef HAVE_EPOLL
+//#ifdef HAVE_EPOLL
 #include <sys/epoll.h> //todo
 #ifndef EPOLLRDHUP
 #define EPOLLRDHUP   0x2000
 #define NO_EPOLLRDHUP
 #endif
-#endif
+//#endif
 
 #if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
 #define MAP_ANONYMOUS MAP_ANON
