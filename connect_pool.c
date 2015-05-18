@@ -156,8 +156,7 @@ zend_module_entry connect_pool_module_entry = {
 ZEND_GET_MODULE(connect_pool)
 #endif
 
-PHP_MINIT_FUNCTION(connect_pool)
-{
+PHP_MINIT_FUNCTION(connect_pool) {
 
     le_cli_connect_pool = zend_register_list_destructors_ex(send_oob2proxy, cp_destory_client, CP_RES_CLIENT_NAME, module_number); //持久
 
@@ -185,8 +184,7 @@ PHP_MINIT_FUNCTION(connect_pool)
 
 /* {{{ PHP_MSHUTDOWN_FUNCTION
  */
-PHP_MSHUTDOWN_FUNCTION(connect_pool)
-{
+PHP_MSHUTDOWN_FUNCTION(connect_pool) {
     if (pdo_stmt) {
         zval_ptr_dtor(&pdo_stmt);
     }
@@ -196,8 +194,7 @@ PHP_MSHUTDOWN_FUNCTION(connect_pool)
 
 /* {{{ PHP_MINFO_FUNCTION
  */
-PHP_MINFO_FUNCTION(connect_pool)
-{
+PHP_MINFO_FUNCTION(connect_pool) {
     php_info_print_table_start();
     php_info_print_table_header(2, "connect_poll support", "enabled");
     php_info_print_table_row(2, "Version", CP_VERSION);
@@ -208,18 +205,15 @@ PHP_MINFO_FUNCTION(connect_pool)
 
 /* }}} */
 
-PHP_RINIT_FUNCTION(connect_pool)
-{
+PHP_RINIT_FUNCTION(connect_pool) {
     return SUCCESS;
 }
 
-PHP_RSHUTDOWN_FUNCTION(connect_pool)
-{
+PHP_RSHUTDOWN_FUNCTION(connect_pool) {
     return SUCCESS;
 }
 
-static void cp_destory_client(zend_rsrc_list_entry *rsrc TSRMLS_DC)
-{
+static void cp_destory_client(zend_rsrc_list_entry *rsrc TSRMLS_DC) {
     cpClient *cli = (cpClient *) rsrc->ptr;
     if (cli->sock > 0) {
         cpClient_close(cli);
@@ -227,8 +221,7 @@ static void cp_destory_client(zend_rsrc_list_entry *rsrc TSRMLS_DC)
     }
 }
 
-void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC)
-{
+void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC) {
     cpClient *cli = (cpClient *) rsrc->ptr;
     if (cli->sock == 0) {
         pefree(cli, 1); //长连接
@@ -246,8 +239,7 @@ void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC)
     }
 }
 
-PHP_FUNCTION(pdo_warning_function_handler)
-{
+PHP_FUNCTION(pdo_warning_function_handler) {
     long errorno;
     char *errstr;
     int errlen;
@@ -266,8 +258,7 @@ PHP_FUNCTION(pdo_warning_function_handler)
 
 }
 
-PHP_FUNCTION(pool_server_create)
-{
+PHP_FUNCTION(pool_server_create) {
     zval *conf = NULL;
     char *config_file = NULL;
     int file_len = 0;
@@ -308,8 +299,7 @@ PHP_FUNCTION(pool_server_create)
     zval_ptr_dtor(&conf);
 }
 
-PHP_FUNCTION(pool_server_reload)
-{
+PHP_FUNCTION(pool_server_reload) {
     long pid;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &pid) == FAILURE) {
@@ -323,13 +313,11 @@ PHP_FUNCTION(pool_server_reload)
     }
 }
 
-PHP_FUNCTION(pool_server_version)
-{
+PHP_FUNCTION(pool_server_version) {
     RETURN_STRING(CP_VERSION, 1);
 }
 
-PHP_FUNCTION(pool_server_shutdown)
-{
+PHP_FUNCTION(pool_server_shutdown) {
     long pid;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &pid) == FAILURE) {
@@ -343,8 +331,7 @@ PHP_FUNCTION(pool_server_shutdown)
     }
 }
 
-CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
-{
+CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type) {
     cpShareMemory *sm_obj = &(CPGS->workers[CPWG.id].sm_obj);
     instead_smart dest;
     dest.len = 0;
@@ -377,8 +364,7 @@ CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
     }
 }
 
-int pdo_proxy_connect(zval *args, int flag)
-{
+int pdo_proxy_connect(zval *args, int flag) {
     zval **data_source;
     zval **object;
 
@@ -389,7 +375,11 @@ int pdo_proxy_connect(zval *args, int flag)
             zval **tmp_pass[4];
             zval *new_obj;
             MAKE_STD_ZVAL(new_obj);
-            object_init_ex(new_obj, php_pdo_get_dbh_ce());
+            zend_class_entry **pdo_ce;
+            if (zend_hash_find(CG(class_table), ZEND_STRS("PDO"), (void **) &pdo_ce) == FAILURE) {
+                CP_INTERNAL_ERROR_SEND_RETURN("pdo extension is not install");
+            }
+            object_init_ex(new_obj, *pdo_ce);
             tmp_pass[0] = data_source;
             zval **username;
             if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("username"), (void **) &username) == SUCCESS) {
@@ -446,8 +436,7 @@ int pdo_proxy_connect(zval *args, int flag)
     }
 }
 
-static int cp_call_user_function(zval **object, zval *fun, zval **ret_value, zval * args)
-{
+static int cp_call_user_function(zval **object, zval *fun, zval **ret_value, zval * args) {
     zval **m_args;
     int count = 0;
     if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("args"), (void **) &m_args) == SUCCESS) {
@@ -466,8 +455,7 @@ static int cp_call_user_function(zval **object, zval *fun, zval **ret_value, zva
     }
 }
 
-static void pdo_proxy_pdo(zval * args)
-{
+static void pdo_proxy_pdo(zval * args) {
     zval **data_source;
     zval **object;
 
@@ -532,8 +520,7 @@ static void pdo_proxy_pdo(zval * args)
     }
 }
 
-static void pdo_proxy_stmt(zval * args)
-{
+static void pdo_proxy_stmt(zval * args) {
     zval **method;
     if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method"), (void **) &method) == FAILURE) {
         CP_INTERNAL_ERROR_SEND("PDO no method!");
@@ -572,8 +559,7 @@ static void pdo_proxy_stmt(zval * args)
     }
 }
 
-static void pdo_dispatch(zval * args)
-{
+static void pdo_dispatch(zval * args) {
     zval **m_type;
     if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method_type"), (void **) &m_type) == SUCCESS) {
         if (strcmp(Z_STRVAL_PP(m_type), "connect") == 0) {
@@ -588,8 +574,7 @@ static void pdo_dispatch(zval * args)
     }
 }
 
-static int cp_redis_select(zval *new_obj, zval **db)
-{
+static int cp_redis_select(zval *new_obj, zval **db) {
     //有db并且不0那么就select
     if (strcmp("0", Z_STRVAL_PP(db)) != 0) {
         zval **tmp_pass2[1];
@@ -609,8 +594,7 @@ static int cp_redis_select(zval *new_obj, zval **db)
     return CP_TRUE;
 }
 
-int redis_proxy_connect(zval *data_source, zval *args, int flag)
-{
+int redis_proxy_connect(zval *data_source, zval *args, int flag) {
     zval *ex_arr, zdelim, **ip, **port, **db;
     MAKE_STD_ZVAL(ex_arr);
     array_init(ex_arr);
@@ -708,8 +692,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
     }
 }
 
-static void redis_dispatch(zval * args)
-{
+static void redis_dispatch(zval * args) {
     zval **data_source;
     zval **object;
     if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("data_source"), (void **) &data_source) == SUCCESS) {
@@ -755,8 +738,7 @@ static void redis_dispatch(zval * args)
     }
 }
 
-int worker_onReceive(zval * unser_value)
-{
+int worker_onReceive(zval * unser_value) {
     zval **type;
     if (zend_hash_find(Z_ARRVAL_P(unser_value), ZEND_STRS("type"), (void **) &type) == SUCCESS) {
         if (strcmp(Z_STRVAL_PP(type), "pdo") == 0) {
@@ -771,8 +753,7 @@ int worker_onReceive(zval * unser_value)
     return CP_TRUE;
 }
 
-static void cp_add_fail_into_mem(zval *o_arg, zval * data_source)
-{
+static void cp_add_fail_into_mem(zval *o_arg, zval * data_source) {
 
     zval *args;
     MAKE_STD_ZVAL(args);

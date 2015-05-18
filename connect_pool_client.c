@@ -256,7 +256,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     }
     cli_real_recv(&cli->info);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION) {
-        zend_throw_exception(php_pdo_get_exception(), Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
+        zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     } else {
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
@@ -316,7 +316,7 @@ PHP_METHOD(pdo_connect_pool, __call)
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("data_source"), *source_zval TSRMLS_CC); //标示这个连接的真实目标
         zval_ptr_dtor(&RecvData.ret_value);
     } else if (RecvData.type == CP_SIGEVENT_EXCEPTION) {
-        zend_throw_exception(php_pdo_get_exception(), Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
+        zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     } else {
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
@@ -382,7 +382,7 @@ PHP_METHOD(pdo_connect_pool, __construct)
             zval_ptr_dtor(&pass_data);
             zval exception_str;
             ZVAL_STRINGL(&exception_str, CON_FAIL_MESSAGE, strlen(CON_FAIL_MESSAGE), 0);
-            zend_throw_exception(php_pdo_get_exception(), Z_STRVAL(exception_str), 0 TSRMLS_CC);
+            zend_throw_exception(NULL, Z_STRVAL(exception_str), 0 TSRMLS_CC);
             return;
         }
     }
@@ -403,7 +403,7 @@ PHP_METHOD(pdo_connect_pool, __construct)
     }
     cli_real_recv(&cli->info);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION) {
-        zend_throw_exception(php_pdo_get_exception(), Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
+        zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
     }
     zval_ptr_dtor(&RecvData.ret_value);
     zval_ptr_dtor(&zval_source);
