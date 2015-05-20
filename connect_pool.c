@@ -376,7 +376,7 @@ int pdo_proxy_connect(zval *args, int flag) {
             zval *new_obj;
             MAKE_STD_ZVAL(new_obj);
             zend_class_entry **pdo_ce;
-            if (zend_hash_find(CG(class_table), ZEND_STRS("PDO"), (void **) &pdo_ce) == FAILURE) {
+            if (zend_hash_find(CG(class_table), ZEND_STRS("pdo"), (void **) &pdo_ce) == FAILURE) {
                 CP_INTERNAL_ERROR_SEND_RETURN("pdo extension is not install");
             }
             object_init_ex(new_obj, *pdo_ce);

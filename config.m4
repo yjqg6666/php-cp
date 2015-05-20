@@ -37,7 +37,8 @@ AC_TRY_COMPILE([#include "$phpincludedir/main/php_config.h"], [
 [AC_MSG_RESULT(ok)],
 [AC_MSG_ERROR([need php no zts, please do not add ' --enable-maintainer-zts' when you configure php])])
 
-
+    CFLAGS="-Wall -pthread $CFLAGS"
+    LDFLAGS="$LDFLAGS -lpthread"
 
   PHP_NEW_EXTENSION(connect_pool, connect_pool.c cpServer.c cpWorker.c \
                     connect_pool_client.c \
