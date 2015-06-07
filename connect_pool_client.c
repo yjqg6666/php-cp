@@ -678,7 +678,7 @@ PHP_FUNCTION(get_disable_list)
 {
     zval *conf = NULL;
     long port;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a!l!", &conf, &port) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a!l", &conf, &port) == FAILURE) {
         return;
     }
     if (!ptr_ping_addr) {
