@@ -138,7 +138,7 @@ CPINLINE int cpNetRead(int fd, void *buf, int len) {
 
 void cpSettitle(char *title_name) {
 
-    assert(MAX_TITLE_LENGTH > strlen(title) + 5);
+//    assert(MAX_TITLE_LENGTH > strlen(title) + 5);
 
     char title[MAX_TITLE_LENGTH + 5] = {0};
     strcat(title, "pool_");
@@ -148,7 +148,8 @@ void cpSettitle(char *title_name) {
 
     zval *name_ptr, name;
     name_ptr = &name;
-    ZVAL_STRING(name_ptr, title, 0);
+    ZVAL_STRING(name_ptr, title, 1);
+    zval_add_ref(&name_ptr);
     zval *retval;
     zval **args[1];
     args[0] = &name_ptr;
@@ -308,6 +309,7 @@ CPINLINE zval * cpMD5(zval *arr) {//pass in array , out md5 zval
     if (call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 1, args, 0, NULL TSRMLS_CC) != SUCCESS)
     {
         zval_ptr_dtor(&str);
+        smart_str_free(&ser_data);
         return NULL;
     }
     zval_ptr_dtor(&str);

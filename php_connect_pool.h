@@ -28,11 +28,13 @@
 #include "config.h"
 #endif
 
+//#ifdef HAVE_EPOLL
 #include <sys/epoll.h> //todo
 #ifndef EPOLLRDHUP
 #define EPOLLRDHUP   0x2000
 #define NO_EPOLLRDHUP
 #endif
+//#endif
 
 #if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
 #define MAP_ANONYMOUS MAP_ANON
@@ -41,8 +43,6 @@
 #ifndef SOCK_NONBLOCK
 #define SOCK_NONBLOCK O_NONBLOCK
 #endif
-
-typedef unsigned long int uint64_t;
 
 #include <sys/poll.h>
 #include <sys/stat.h>
@@ -59,6 +59,7 @@ typedef unsigned long int uint64_t;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <pthread.h>
 
 #include "cpMemory.h"
 #include "cpFunction.h"
@@ -149,7 +150,7 @@ PHP_FUNCTION(pool_server_reload);
 PHP_FUNCTION(pool_server_version);
 
 PHP_FUNCTION(get_disable_list);
-PHP_FUNCTION(shit_pdo_warning_function);
+PHP_FUNCTION(pdo_warning_function_handler);
 
 PHP_FUNCTION(client_close);
 
@@ -168,7 +169,7 @@ PHP_METHOD(redis_connect_pool, __destruct);
 PHP_METHOD(redis_connect_pool, __call);
 PHP_METHOD(redis_connect_pool, release);
 PHP_METHOD(redis_connect_pool, select);
-PHP_FUNCTION(redis_connect);
+PHP_METHOD(redis_connect_pool, connect);    
 
 
 void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC);

@@ -16,71 +16,78 @@
 
 #include "php_connect_pool.h"
 
-static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source) {
-    if (Z_TYPE_P(dis_arr) == IS_NULL)
-    {
-        zval *first_arr;
-        MAKE_STD_ZVAL(first_arr);
-        array_init(first_arr);
-        add_assoc_zval(first_arr, data_source, *args);
-        cp_ser_and_setdis(first_arr);
-        zval_ptr_dtor(&first_arr);
+static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source)
+{
+
+    zval *copy;
+    MAKE_STD_ZVAL(copy);
+    *copy = **args;
+    zval_copy_ctor(copy);
+
+    if (Z_TYPE_P(dis_arr) == IS_NULL) {
+        zval first_arr;
+        array_init(&first_arr);
+        add_assoc_zval(&first_arr, data_source, copy);
+        cp_ser_and_setdis(&first_arr);
+        zval_dtor(&first_arr);
         cpLog("'%s' insert into disable list", data_source);
-    } else if (Z_TYPE_P(dis_arr) != IS_BOOL)
-    {
+    } else if (Z_TYPE_P(dis_arr) != IS_BOOL) {
         zval **zval_source;
         if (zend_hash_find(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1, (void **) &zval_source) == FAILURE)//SUCCESS的跳过,证明dis后继续调用这个节点了,防止重复添加
         {
-            if (zend_hash_num_elements(Z_ARRVAL_P(dis_arr)) >= CPGC.max_fail_num)
-            {
+            if (zend_hash_num_elements(Z_ARRVAL_P(dis_arr)) >= CPGC.max_fail_num) {
+                zval_ptr_dtor(&copy);
                 cpLog("the disable count exceed");
-            } else
-            {
-                add_assoc_zval(dis_arr, data_source, *args);
+            } else {
+                add_assoc_zval(dis_arr, data_source, copy);
                 cp_ser_and_setdis(dis_arr);
                 cpLog("'%s' insert into disable list", data_source);
             }
+        } else {
+            zval_ptr_dtor(&copy);
         }
     }
+
 }
 
-static void cpPing_del_prolist(zval *pro_arr, char *data_source) {
-    zend_hash_del(Z_ARRVAL_P(pro_arr), data_source, strlen(data_source) + 1);
-    cp_ser_and_setpro(pro_arr);
+static void cpPing_del_prolist(zval *pro_arr, char *data_source)
+{
+    zval copy;
+    copy = *pro_arr;
+    zval_copy_ctor(&copy);
+    zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
+    cp_ser_and_setpro(&copy);
+    zval_dtor(&copy);
 }
 
-static void cpPingClear(int sig) {
+static void cpPingClear(int sig)
+{
     bzero(CPGL.ping_mem_addr + CP_PING_MD5_LEN + CP_PING_PID_LEN, CP_PING_DIS_LEN);
 }
 
-static int cpPing_worker_loop() {
+static int cpPing_worker_loop()
+{
     cpSignalSet(SIGUSR1, cpPingClear, 1, 0);
-    if ((CPGL.ping_mem_addr = shmat(CPGS->ping_workers->sm_obj.shmid, NULL, 0)) < 0)
-    {
-        zend_error(E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
+    if ((CPGL.ping_mem_addr = shmat(CPGS->ping_workers->sm_obj.shmid, NULL, 0)) < 0) {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
     }
     bzero(CPGL.ping_mem_addr, CP_PING_MEM_LEN);
     memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN, &CPGS->ping_workers->pid, CP_PING_PID_LEN);
 
-    while (1)
-    {
+    while (1) {
         sleep(1);
         zval *pro_arr = CP_PING_GET_PRO(CPGL.ping_mem_addr);
         zval *dis_arr = CP_PING_GET_DIS(CPGL.ping_mem_addr);
-        if (Z_TYPE_P(pro_arr) != IS_BOOL && Z_TYPE_P(pro_arr) != IS_NULL)
-        {
+        if (Z_TYPE_P(pro_arr) != IS_BOOL && Z_TYPE_P(pro_arr) != IS_NULL) {
             //检查probably里面是否有可以放入disable的
-            for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(pro_arr)); zend_hash_has_more_elements(Z_ARRVAL_P(pro_arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(pro_arr)))
-            {
+            for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(pro_arr)); zend_hash_has_more_elements(Z_ARRVAL_P(pro_arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(pro_arr))) {
                 zval **args, **zval_count;
                 zend_hash_get_current_data(Z_ARRVAL_P(pro_arr), (void**) &args);
                 char *data_source;
                 int keylen;
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(pro_arr), &data_source, &keylen, NULL, 0, NULL);
-                if (zend_hash_find(Z_ARRVAL_PP(args), ZEND_STRS("count"), (void **) &zval_count) == SUCCESS)
-                {
-                    if (Z_LVAL_PP(zval_count) >= CPGC.ser_fail_hits)
-                    {//连续错n次 放入dis列表
+                if (zend_hash_find(Z_ARRVAL_PP(args), ZEND_STRS("count"), (void **) &zval_count) == SUCCESS) {
+                    if (Z_LVAL_PP(zval_count) >= CPGC.ser_fail_hits) {//连续错n次 放入dis列表
                         cpPing_add_dislist(dis_arr, args, data_source);
                         cpPing_del_prolist(pro_arr, data_source);
                     }
@@ -90,37 +97,35 @@ static int cpPing_worker_loop() {
         zval_ptr_dtor(&dis_arr);
 
         dis_arr = CP_PING_GET_DIS(CPGL.ping_mem_addr);
-        if (Z_TYPE_P(dis_arr) != IS_BOOL && Z_TYPE_P(dis_arr) != IS_NULL)
-        {
+        zval copy;
+        copy = *dis_arr;
+        zval_copy_ctor(&copy);
+        if (Z_TYPE_P(dis_arr) != IS_BOOL && Z_TYPE_P(dis_arr) != IS_NULL) {
             //开始检测disable中是否有恢复的
-            for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(dis_arr)); zend_hash_has_more_elements(Z_ARRVAL_P(dis_arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(dis_arr)))
-            {
+            for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(dis_arr)); zend_hash_has_more_elements(Z_ARRVAL_P(dis_arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(dis_arr))) {
                 zval **args;
                 zend_hash_get_current_data(Z_ARRVAL_P(dis_arr), (void**) &args);
                 char *data_source;
                 int keylen;
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(dis_arr), &data_source, &keylen, NULL, 0, NULL);
-                if (strstr(data_source, "host"))
-                {//mysql
-                    if (pdo_proxy_connect(*args, CP_CONNECT_PING))
-                    {
-                        zend_hash_del(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1);
-                        cp_ser_and_setdis(dis_arr);
+                if (strstr(data_source, "host")) {//mysql
+                    if (pdo_proxy_connect(*args, CP_CONNECT_PING)) {
+                        zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
+                        cp_ser_and_setdis(&copy);
                         cpLog("'%s' remove from disable list", data_source);
                     }
-                } else
-                {//redis
+                } else {//redis
                     zval z_data_source;
-                    ZVAL_STRINGL(&z_data_source, data_source, keylen, 1);
-                    if (redis_proxy_connect(&z_data_source, *args, CP_CONNECT_PING))
-                    {
-                        zend_hash_del(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1);
-                        cp_ser_and_setdis(dis_arr);
+                    ZVAL_STRINGL(&z_data_source, data_source, keylen, 0);
+                    if (redis_proxy_connect(&z_data_source, *args, CP_CONNECT_PING)) {
+                        zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
+                        cp_ser_and_setdis(&copy);
                         cpLog("'%s' remove from disable list", data_source);
                     }
                 }
             }
         }
+        zval_dtor(&copy);
         zval_ptr_dtor(&dis_arr);
         zval_ptr_dtor(&pro_arr);
     }
@@ -128,15 +133,14 @@ static int cpPing_worker_loop() {
 
 }
 
-int cpFork_ping_worker() {
+int cpFork_ping_worker()
+{
     int pid, ret;
     pid = fork();
-    if (pid < 0)
-    {
+    if (pid < 0) {
         cpLog("Fork Worker failed. Error: %s [%d]", strerror(errno), errno);
         return FAILURE;
-    } else if (pid == 0)
-    {
+    } else if (pid == 0) {
         //标识为worker进程
         CPGL.process_type = CP_PROCESS_PING;
         char name[MAX_TITLE_LENGTH] = {0};
@@ -145,16 +149,15 @@ int cpFork_ping_worker() {
         cpSettitle(name);
         ret = cpPing_worker_loop();
         exit(ret);
-    } else
-    {
+    } else {
         return pid;
     }
 }
 
-CPINLINE int cpCreate_ping_worker_mem() {
+CPINLINE int cpCreate_ping_worker_mem()
+{
     cpShareMemory *sm_obj = &(CPGS->ping_workers->sm_obj);
-    if (!cpShareMemory_sysv_create(sm_obj, CP_PING_MEM_LEN, 0x2526 + CPGC.port))
-    {
+    if (!cpShareMemory_sysv_create(sm_obj, CP_PING_MEM_LEN, 0x2526 + CPGC.port)) {
         cpLog("create sys v shm. Error: %s [%d]", strerror(errno), errno);
         return FAILURE;
     }

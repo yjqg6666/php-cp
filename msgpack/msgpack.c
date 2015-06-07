@@ -82,11 +82,6 @@ static ZEND_MINIT_FUNCTION(msgpack)
 
     REGISTER_INI_ENTRIES();
 
-#if HAVE_PHP_SESSION
-    php_session_register_serializer("msgpack",
-                                    PS_SERIALIZER_ENCODE_NAME(msgpack),
-                                    PS_SERIALIZER_DECODE_NAME(msgpack));
-#endif
 
 //    msgpack_init_class();
 
@@ -141,91 +136,6 @@ zend_module_entry msgpack_module_entry = {
 ZEND_GET_MODULE(msgpack)
 #endif
 
-#if HAVE_PHP_SESSION
-PS_SERIALIZER_ENCODE_FUNC(msgpack)
-{
-    smart_str buf = {0};
-    msgpack_serialize_data_t var_hash;
-
-    msgpack_serialize_var_init(&var_hash);
-
-    msgpack_serialize_zval(&buf, PS(http_session_vars), var_hash TSRMLS_CC);
-
-    if (newlen)
-    {
-        *newlen = buf.len;
-    }
-
-    smart_str_0(&buf);
-    *newstr = buf.c;
-
-    msgpack_serialize_var_destroy(&var_hash);
-
-    return SUCCESS;
-}
-
-PS_SERIALIZER_DECODE_FUNC(msgpack)
-{
-    int ret;
-    HashTable *tmp_hash;
-    HashPosition tmp_hash_pos;
-    char *key_str;
-    ulong key_long;
-    uint key_len;
-    zval *tmp;
-    zval **value;
-    size_t off = 0;
-    msgpack_unpack_t mp;
-    msgpack_unserialize_data_t var_hash;
-
-    ALLOC_INIT_ZVAL(tmp);
-
-    template_init(&mp);
-
-    msgpack_unserialize_var_init(&var_hash);
-
-    mp.user.retval = (zval *)tmp;
-    mp.user.var_hash = (msgpack_unserialize_data_t *)&var_hash;
-
-    ret = template_execute(&mp, (char *)val, (size_t)vallen, &off);
-
-    if (ret == MSGPACK_UNPACK_EXTRA_BYTES || ret == MSGPACK_UNPACK_SUCCESS)
-    {
-        msgpack_unserialize_var_destroy(&var_hash, 0);
-
-        tmp_hash = HASH_OF(tmp);
-
-        zend_hash_internal_pointer_reset_ex(tmp_hash, &tmp_hash_pos);
-
-        while (zend_hash_get_current_data_ex(
-                   tmp_hash, (void *)&value, &tmp_hash_pos) == SUCCESS)
-        {
-            ret = zend_hash_get_current_key_ex(
-                tmp_hash, &key_str, &key_len, &key_long, 0, &tmp_hash_pos);
-            switch (ret)
-            {
-                case HASH_KEY_IS_LONG:
-                    /* ??? */
-                    break;
-                case HASH_KEY_IS_STRING:
-                    php_set_session_var(
-                        key_str, key_len - 1, *value, NULL TSRMLS_CC);
-                    php_add_session_var(key_str, key_len - 1 TSRMLS_CC);
-                    break;
-            }
-            zend_hash_move_forward_ex(tmp_hash, &tmp_hash_pos);
-        }
-    }
-    else
-    {
-        msgpack_unserialize_var_destroy(&var_hash, 1);
-    }
-
-    zval_ptr_dtor(&tmp);
-
-    return SUCCESS;
-}
-#endif
 
 PHP_MSGPACK_API void php_msgpack_serialize(instead_smart *buf, zval *val TSRMLS_DC)
 //PHP_MSGPACK_API void php_msgpack_serialize(smart_str *buf, zval *val TSRMLS_DC)
