@@ -342,7 +342,7 @@ PHP_METHOD(pdo_connect_pool, __construct)
     long port = CP_PORT_PDO;
     zval *options = NULL;
 
-    if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!s!a!l!", &data_source, &data_source_len,
+    if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!s!a!l", &data_source, &data_source_len,
             &username, &usernamelen, &password, &passwordlen, &options, &port)) {
         ZVAL_NULL(object);
         return;
@@ -678,7 +678,7 @@ PHP_FUNCTION(get_disable_list)
 {
     zval *conf = NULL;
     long port;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a!l!", &conf, &port) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "a!l", &conf, &port) == FAILURE) {
         return;
     }
     if (!ptr_ping_addr) {
