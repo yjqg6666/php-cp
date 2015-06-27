@@ -115,6 +115,7 @@ const zend_function_entry redis_connect_pool_methods[] = {
     PHP_ME(redis_connect_pool, release, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, select, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, connect, NULL, ZEND_ACC_PUBLIC)
+	PHP_MALIAS(redis_connect_pool, close, release, NULL, ZEND_ACC_PUBLIC) /* close 别名指向release*/
     PHP_MALIAS(redis_connect_pool, pconnect, connect, NULL, ZEND_ACC_PUBLIC) /* pconnect 别名指向connect */
     PHP_FE_END
 };
