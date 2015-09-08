@@ -52,6 +52,10 @@ get_disable_list($redis_conf,CP_DEFAULT_REDIS_PORT); // get the redis disable ip
 - if the first param changed,the disable list will be clear.
 - this function will return the fail ips.
 
+## 提示
+- pool_server 必须以root用户启动
+- redis不支持pub/sub方法
+
 ## contact us
 - http://weibo.com/u/2661945152
 - 83212019@qq.com
