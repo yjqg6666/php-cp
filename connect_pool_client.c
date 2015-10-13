@@ -206,6 +206,11 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data)
             php_error_docref(NULL TSRMLS_CC, E_ERROR, "send failed in GET. Error:%d", errno);
         }
         int n = cpClient_recv(cli, info, sizeof (cpMasterInfo), 1);
+        if (info->worker_id < 0)
+        {
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, CP_MULTI_PROCESS_ERR);
+            exit(-1);
+        }
         if (n > 0)
         {
             ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->semid);
@@ -389,7 +394,6 @@ PHP_METHOD(pdo_connect_pool, __destruct)
 
 PHP_METHOD(pdo_connect_pool, __construct)
 {
-    //    cpLog_init(fpm_buf);
     zval *zres, *zval_source, *pool_port;
     zval *object = getThis();
     int ret;

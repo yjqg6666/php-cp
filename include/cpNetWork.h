@@ -21,6 +21,7 @@ extern "C" {
 #define CP_CLIENT_EOF_STR          "\r\n^CON^eof\r\n"
 #define CP_TOO_MANY_CON            "not enough con"
 #define CP_TOO_MANY_CON_ERR        "ERROR!not enough con"
+#define CP_MULTI_PROCESS_ERR        "ERROR!the connection object create in parent process and use in multi process,please create in every process"
 #define CP_CLIENT_EOF_LEN          strlen(CP_CLIENT_EOF_STR)
 #define CP_HEADER_CON_SUCCESS      "CON_SUCCESS!"
 #define CP_HEADER_ERROR            "ERROR!"
@@ -33,7 +34,7 @@ extern "C" {
 
     int cpEpoll_add(int epfd, int fd, int fdtype);
     int cpEpoll_set(int fd, int fdtype);
-    int cpEpoll_del(int epfd ,int fd);
+    int cpEpoll_del(int epfd, int fd);
     int cpEpoll_wait(epoll_wait_handle*, struct timeval *timeo, int epfd);
     void cpEpoll_free();
     CPINLINE int cpEpoll_event_set(int fdtype);

@@ -56,6 +56,7 @@ static int cpWorker_loop(int worker_id)
                 break;
             }
             len = event.len;
+//            cpLog("worker %d len",len);
             CPWG.clientPid = event.pid;
         }
         if (sm_obj->mem == NULL) {
