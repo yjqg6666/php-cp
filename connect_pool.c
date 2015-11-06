@@ -383,9 +383,9 @@ CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
     dest.len = 0;
     dest.addr = sm_obj->mem;
     dest.max = CPGC.max_read_len;
-    dest.exceed = '0';
+    dest.exceed = 0;
     php_msgpack_serialize(&dest, ret_value);
-    if (dest.exceed == '1')
+    if (dest.exceed == 1)
     {
         zval exceed;
         ZVAL_STRING(&exceed, "data is exceed,increase max_read_len", 0);

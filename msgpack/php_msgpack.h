@@ -5,7 +5,7 @@
 typedef struct _instead_smart{
     int len;
     int max;
-    char exceed;
+    int exceed;
     void *addr;
 }instead_smart;
 #define MSGPACK_EXTENSION_VERSION "0.5.5"

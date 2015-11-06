@@ -145,11 +145,11 @@ CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int ma
     dest.len = 0;
     dest.addr = get_attach_buf(worker_id, semid);
     dest.max = max;
-    dest.exceed = '0';
+    dest.exceed = 0;
     php_msgpack_serialize(&dest, ret_value);
-    if (dest.exceed == '1')
+    if (dest.exceed == 1)
     {
-        zend_throw_exception(NULL, "data is exceed,increase max_read_len", 0 TSRMLS_CC);
+         php_error_docref(NULL TSRMLS_CC, E_ERROR, "data is exceed,increase max_read_len Error: %s [%d] ", strerror(errno), errno);
     }
     else
     {

@@ -22,7 +22,7 @@
             memcpy(__dest->addr+__dest->len, (const void*)(buf), (n));\
             __dest->len+=(n);\
         }else{\
-            __dest->exceed='1'; \
+            __dest->exceed=1; \
         }\
      }while(0)
 
