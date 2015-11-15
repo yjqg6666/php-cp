@@ -933,10 +933,7 @@ static void cp_add_fail_into_mem(zval *o_arg, zval * data_source)
     zval_copy_ctor(args);
     if (!CPGL.ping_mem_addr)
     {
-        if ((CPGL.ping_mem_addr = shmat(CPGS->ping_workers->sm_obj.shmid, NULL, 0)) < 0)
-        {
-            cpLog("worker attach ping worker sys mem error Error: %s [%d]", strerror(errno), errno);
-        }
+       CPGL.ping_mem_addr = CPGS->ping_workers->sm_obj.mem;
     }
     zval *arr = CP_PING_GET_PRO(CPGL.ping_mem_addr);
     if (Z_TYPE_P(arr) == IS_NULL)

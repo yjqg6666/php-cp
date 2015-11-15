@@ -376,7 +376,7 @@ CPINLINE static int MasterSend2Client(int fd, int worker_id, int CPid)
     cpMasterInfo info;
     int sizeinfo = sizeof (info);
     info.worker_id = CPGC.group_id * CP_GROUP_LEN + worker_id;
-    info.semid = CPGS->workers[worker_id].sm_obj.shmid;
+    strcpy(info.mmap_name, CPGS->workers[worker_id].sm_obj.mmap_name);
     info.ping_pid = CPGS->ping_workers->pid;
     info.max = CPGC.max_read_len;
     CPGS->workers[worker_id].CPid = CPid;
@@ -568,7 +568,7 @@ static int cpReactor_client_receive(int fd)
     if (n > 0)
     {
         cpTcpEvent *event = (cpTcpEvent*) data;
-//        cpLog("evetn %d con %d",event->type,conn->release);
+//                cpLog("evetn %d con %d",event->type,conn->release);
         if (event->type == CP_TCPEVENT_GET && conn->release == CP_FD_NRELEASED)
         {//动作是获得连接但是状态是未释放，父进程连的然后在子进程和父进程中都用这个连接，会出现这种情况
             cpMasterInfo info = {0};

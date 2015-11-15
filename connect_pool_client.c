@@ -111,7 +111,7 @@ static int get_readfd(int worker_id)
     return pipe_fd_read;
 }
 
-static void* get_attach_buf(int worker_id, int semid)
+static void* get_attach_buf(int worker_id, int max, char *mm_name)
 {
     if (semid2attbuf == NULL)
     {
@@ -124,7 +124,12 @@ static void* get_attach_buf(int worker_id, int semid)
     void* buf = NULL;
     if (semid2attbuf[worker_id] == 0)
     {
-        if ((buf = shmat(semid, NULL, 0)) < 0)
+        int fd = open(mm_name, O_RDWR);
+        if (fd == -1)
+        {
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "open error Error: %s [%d]", strerror(errno), errno);
+        }
+        if ((buf = mmap(NULL, max, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) < 0)
         {
             php_error_docref(NULL TSRMLS_CC, E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
         }
@@ -138,18 +143,18 @@ static void* get_attach_buf(int worker_id, int semid)
     return buf;
 }
 
-CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int max, int semid)
+CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int max, char *mm_name)
 {
     int pipe_fd_write = get_writefd(worker_id);
     instead_smart dest;
     dest.len = 0;
-    dest.addr = get_attach_buf(worker_id, semid);
+    dest.addr = get_attach_buf(worker_id, max, mm_name);
     dest.max = max;
     dest.exceed = 0;
     php_msgpack_serialize(&dest, ret_value);
     if (dest.exceed == 1)
     {
-         php_error_docref(NULL TSRMLS_CC, E_ERROR, "data is exceed,increase max_read_len Error: %s [%d] ", strerror(errno), errno);
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "data is exceed,increase max_read_len Error: %s [%d] ", strerror(errno), errno);
     }
     else
     {
@@ -213,7 +218,7 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data)
         }
         if (n > 0)
         {
-            ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->semid);
+            ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->mmap_name);
             if (ret == SUCCESS)
             {
                 cli->released = CP_FD_NRELEASED;
@@ -231,7 +236,7 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data)
     }
     else
     {
-        ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->semid);
+        ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->mmap_name);
     }
     return ret;
 }
@@ -252,7 +257,7 @@ static int cli_real_recv(cpMasterInfo *info)
 
     zval *ret_value;
     ALLOC_INIT_ZVAL(ret_value);
-    php_msgpack_unserialize(ret_value, get_attach_buf(info->worker_id, info->semid), event.len);
+    php_msgpack_unserialize(ret_value, get_attach_buf(info->worker_id, info->max, info->mmap_name), event.len);
     RecvData.type = event.type;
     RecvData.ret_value = ret_value;
     return SUCCESS;
@@ -823,16 +828,23 @@ PHP_FUNCTION(get_disable_list)
     void *addr = NULL;
     if (FAILURE == zend_hash_index_find(ptr_ping_addr, port, &addr))
     {
-        int shmid;
-        if ((shmid = shmget(0x2526 + port, CP_PING_MD5_LEN, SHM_R | SHM_W | 0666)) < 0)
+
+        char ping_mm_name[CP_PING_MD5_LEN] = {0};
+        sprintf(ping_mm_name, "%s_%d", CP_MMAP_NAME_PRE, 0x2526 + port);
+        int fd = open(ping_mm_name, O_RDWR | O_CREAT, S_IROTH | S_IWOTH);
+        if (fd == -1)
         {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, "shmget sys mem error Error: %s [%d]", strerror(errno), errno);
-            RETURN_FALSE
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "open error Error: %s [%d]", strerror(errno), errno);
         }
-        addr = shmat(shmid, NULL, 0);
-        if (!addr)
+        ftruncate(fd, CP_PING_MD5_LEN); //extend 黑洞
+        addr = mmap(NULL, CP_PING_MD5_LEN, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+#ifdef MAP_FAILED
+        if (addr == MAP_FAILED)
+#else
+        if (!mem)
+#endif
         {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "mmap failed: %s [%d]", strerror(errno), errno);
             RETURN_FALSE
         }
         zend_hash_index_update(ptr_ping_addr, port, addr, sizeof (void *), NULL);

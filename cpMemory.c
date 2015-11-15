@@ -10,13 +10,14 @@
   | to obtain it through the world-wide-web, please send a note to       |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | original: Tianfeng Han    modify:Xinhua Guo  <woshiguo35@sina.com>|
+  | Xinhua Guo  <woshiguo35@sina.com>|
   +----------------------------------------------------------------------+
  */
 
 #include "php_connect_pool.h"
 
-void *cp_mmap_calloc(int size) {
+void *cp_mmap_calloc(int size)
+{
     void *mem;
     int tmpfd = -1;
     int flag = MAP_SHARED;
@@ -54,34 +55,47 @@ void *cp_mmap_calloc(int size) {
     }
 }
 
-int cpShareMemory_sysv_create(cpShareMemory *object, int size, int key) {
-    int shmid;
-    void *mem = NULL;
-    bzero(object, sizeof (cpShareMemory));
+int cp_create_mmap_file(cpShareMemory *object){
 
-    if (key == 0)
+    umask(0);
+    int fd = open(object->mmap_name, O_RDWR | O_CREAT,S_IROTH|S_IWOTH);
+    if (fd == -1)
     {
-        key = IPC_PRIVATE;
+        cpLog("open fail. Error: %s[%d]", strerror(errno), errno);
+        return  - 1;
+    
     }
-    if ((shmid = shmget(key, size, SHM_R | SHM_W | IPC_CREAT | 0666)) < 0)
+    ftruncate(fd, object->size);//extend 黑洞
+    return 0;
+};
+
+void* cp_mmap_calloc_with_file(cpShareMemory *object)
+{
+
+    int fd = open(object->mmap_name, O_RDWR );
+    if (fd == -1)
     {
-        cpLog("shmget Error: %s[%d]", strerror(errno), errno);
-        return 0;
+        cpLog("open fail. Error: %s[%d]", strerror(errno), errno);
+        return  NULL;
+    
     }
-    object->key = key;
-    object->shmid = shmid;
-    object->size = size;
-    object->mem = mem;
-    return shmid;
+    void *mem = mmap(NULL, object->size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+#ifdef MAP_FAILED
+    if (mem == MAP_FAILED)
+#else
+    if (!mem)
+#endif
+    {
+        cpLog("mmap fail. Error: %s[%d]", strerror(errno), errno);
+        return NULL;
+    }
+    else
+    {
+//        bzero(mem, object->size);
+        object->mem = mem;
+        return mem;
+    }
+
 }
 
-int cpShareMemory_sysv_free(cpShareMemory *object, int rm) {
-    int ret = shmdt(object->mem);
-    if (rm == 1)
-    {
-        shmctl(object->shmid, IPC_RMID, NULL);
-    }
-    object->mem = NULL;
-    return ret;
-}
 

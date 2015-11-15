@@ -17,19 +17,12 @@ extern "C" {
 
     typedef struct _cpShareMemory {
         int size;
-        int key;
-        int shmid;
+        char mmap_name[CP_MMAP_NAME_LEN];
         void *mem;
     } cpShareMemory;
 
-    typedef struct _cpSendMem {
-        int semid;
-        int len;
-        int type; //0正常，-1 抛异常
-    } cpSendMem;
-
     typedef struct _cpMasterInfo {//获取连接,master进程返回的信息
-        int semid;
+        char mmap_name[CP_MMAP_NAME_LEN];
         int ping_pid;
         int worker_id;
         int max;//数据包max
@@ -47,9 +40,9 @@ extern "C" {
     } cpTcpEvent;
 
 
-    int cpShareMemory_sysv_create(cpShareMemory *object, int size, int key);
-    int cpShareMemory_sysv_free(cpShareMemory *object, int rm);
     void *cp_mmap_calloc(int size);
+    void* cp_mmap_calloc_with_file(cpShareMemory *object);
+    int cp_create_mmap_file(cpShareMemory *object);
 
 
 #ifdef	__cplusplus
