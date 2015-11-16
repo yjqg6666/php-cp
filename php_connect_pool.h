@@ -184,7 +184,7 @@ extern int pdo_proxy_connect(zval *args, int flag);
 
 int worker_onReceive(zval *data);
 CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type);
-CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int pid, int max, int semid);
+CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int pid, int max, char *mm_name);
 extern cpServerG ConProxyG;
 extern cpServerGS *ConProxyGS;
 extern cpWorkerG ConProxyWG;
