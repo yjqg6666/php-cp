@@ -546,7 +546,7 @@ static void pdo_proxy_pdo(zval * args)
             zval **con_args;
             zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("con_args"), (void **) &con_args);
             pdo_proxy_connect(*con_args, CP_CONNECT_RECONNECT);
-        }//超过n次被kill
+        }//max request killed
 
         if (zend_hash_find(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void **) &object) == SUCCESS)
         {//intended dont use else
