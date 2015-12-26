@@ -43,6 +43,36 @@ $redis = new Redis();
 =》$redis = new redis_connect_pool();//dont use pconnect
 
 tips:use $db/$redis->release() to release the connection  as early as you can;
+
+
+//*******************use master slave(最新版本支持了读写分离和从库的负载均衡 用法如下)***********************/
+$config = array(
+    'master' => array(
+        'data_source' => "mysql:host=192.168.1.19;dbname=db1",
+        'username' => "public_user",
+        'pwd' => "1qa2ws3ed",
+    ),
+    'slave' => array(
+        "0" => array(
+            'data_source' => "mysql:host=192.168.1.18;dbname=db1",
+            'username' => "public_user",
+            'pwd' => "1qa2ws3ed",
+        ),
+        "1" => array(
+            'data_source' => "mysql:host=192.168.1.17;dbname=db1",
+            'username' => "public_user",
+            'pwd' => "1qa2ws3ed",
+        ),
+    ),
+);
+$obj1 = new pdo_connect_pool($config);
+$rs = $obj1->query("select * from test limit 1");
+var_dump($rs->fetchAll());//走随机从库
+$obj1->release();
+$sql = "insert into `test` (tid) values (5)";
+$rs = $obj1->exec($sql);//走主库
+$obj1->release();
+
 ?>
 ```
 
