@@ -39,6 +39,7 @@ static void **semid2attbuf = NULL;
 static HashTable ping_addr;
 static HashTable *ptr_ping_addr = NULL;
 static int cpPid = 0;
+static int dev_random_fd = -1;
 #define CP_GET_PID if(cpPid==0)cpPid=getpid()
 
 static int php_pdo_connect_pool_close(cpClient *cli)
@@ -51,6 +52,29 @@ static int php_pdo_connect_pool_close(cpClient *cli)
         return FAILURE;
     }
     return SUCCESS;
+}
+
+static void release_worker(zval *object)
+{
+    zend_rsrc_list_entry *p_sock_le;
+    zval **pool_port;
+    if (zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("pool_port"), (void **) &pool_port) == SUCCESS)
+    {
+        char str[100] = {0};
+        CON_FORMART_KEY(str, (int) Z_LVAL_PP(pool_port));
+        if (zend_hash_find(&EG(persistent_list), str, strlen(str), (void **) &p_sock_le) == SUCCESS)
+        {
+            send_oob2proxy(p_sock_le);
+        }
+        else
+        {
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "p_sock_le can not find");
+        }
+    }
+    else
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_port can not find");
+    }
 }
 
 static int get_writefd(int worker_id)
@@ -169,6 +193,7 @@ CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int ma
         }
         return SUCCESS;
     }
+    return FAILURE;
 }
 
 void* connect_pool_perisent(zval* zres, int port)
@@ -202,9 +227,12 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data, zval *this, zend_clas
     cpMasterInfo *info = &cli->info;
     if (cli->released == CP_FD_RELEASED)
     {
+        zval **data_source;
+        zend_hash_find(Z_ARRVAL_P(send_data), ZEND_STRS("data_source"), (void **) &data_source);
         cpTcpEvent event;
         event.type = CP_TCPEVENT_GET;
         event.ClientPid = cpPid;
+        strcpy(event.data_source, Z_STRVAL_PP(data_source));
         int ret = cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
         if (ret < 0)
         {
@@ -226,8 +254,8 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data, zval *this, zend_clas
         }
         else if (n == 0)
         {
-//            php_pdo_connect_pool_close(cli);
-             cpClient_close(cli);
+            //            php_pdo_connect_pool_close(cli);
+            cpClient_close(cli);
             zval *zres = NULL;
             MAKE_STD_ZVAL(zres);
             cpClient *cli_retry = NULL;
@@ -279,6 +307,151 @@ static int cli_real_recv(cpMasterInfo *info)
     return SUCCESS;
 }
 
+static char* php_check_ms(char *cmd, zval *z_args, zval* object)
+{
+    zval **last_type, **enable_slave, **sql;
+    char *lt = NULL, *cur_type;
+    zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("enable_slave"), (void **) &enable_slave);
+    // compare with last_type
+    if (zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("last_type"), (void **) &last_type) == SUCCESS)
+    {
+        lt = Z_STRVAL_PP(last_type);
+    }
+
+    if (strcmp("query", cmd) == 0 || strcmp("exec", cmd) == 0)
+    {
+        zend_hash_index_find(Z_ARRVAL_P(z_args), 0, (void**) &sql);
+        convert_to_string_ex(sql);
+        char pre[8] = {0};
+        strncpy(pre, Z_STRVAL_PP(sql), 6);
+        int i = 0;
+        for (; i < 6; i++)
+        {
+            if (pre[i] == ' ')
+            {
+                pre[i] = '\0';
+                break;
+            }
+            pre[i] = tolower(pre[i]);
+        }
+        if (strcmp(pre, "select") == 0 || strcmp(pre, "show") == 0)
+        {
+            cur_type = "s";
+        }
+        else
+        {
+            cur_type = "m";
+        }
+    }
+    else
+    { // 不是query exec 还是用上一次的
+        cur_type = lt;
+    }
+    // exchange 
+    if (cur_type != lt)
+    {
+        if (lt)
+            release_worker(object); //release current worker
+        zend_update_property_string(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("last_type"), cur_type TSRMLS_CC);
+    }
+    return cur_type;
+}
+
+int cp_system_random(int min, int max)
+{
+    char *next_random_byte;
+    int bytes_to_read;
+    unsigned random_value;
+
+    assert(max > min);
+
+    if (dev_random_fd == -1)
+    {
+        dev_random_fd = open("/dev/urandom", O_RDONLY);
+        assert(dev_random_fd != -1);
+    }
+
+    next_random_byte = (char *) &random_value;
+    bytes_to_read = sizeof (random_value);
+
+    if (read(dev_random_fd, next_random_byte, bytes_to_read) < 0)
+    {
+        return -1;
+    }
+    return min + (random_value % (max - min + 1));
+}
+
+
+//create the pass args that pass to mysql
+
+static zval* create_pass_data(char* cmd, zval* z_args, zval* object, char* cur_type, zval **ret_data_source)
+{
+    zval **data_source, **username, **pwd, **options, *pass_data, *zval_conf, **real_data_srouce_arr;
+    zval_conf = zend_read_property(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("config"), 0 TSRMLS_DC);
+
+    if (*cur_type == 's')
+    {
+        zval **slave;
+        zval *start_prt, start, end, *end_prt;
+        start_prt = &start;
+        end_prt = &end;
+
+        zend_hash_find(Z_ARRVAL_P(zval_conf), ZEND_STRS("slave"), (void **) &slave);
+        int slave_cnt;
+        slave_cnt = zend_hash_num_elements(Z_ARRVAL_P(*slave));
+
+        if (slave_cnt > 0)
+        {
+            int index;
+            index = cp_system_random(0, (slave_cnt - 1));
+
+            if (zend_hash_index_find(Z_ARRVAL_PP(slave), index, (void **) &real_data_srouce_arr) != SUCCESS)
+            {
+                php_error_docref(NULL TSRMLS_CC, E_ERROR, "not find slave ,check config");
+            }
+        }
+    }
+    else
+    {
+        if (zend_hash_find(Z_ARRVAL_P(zval_conf), ZEND_STRS("master"), (void **) &real_data_srouce_arr) != SUCCESS)
+        {
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "not find master ,check config");
+        }
+    }
+    // find args
+    zend_hash_find(Z_ARRVAL_PP(real_data_srouce_arr), ZEND_STRS("data_source"), (void **) &data_source);
+    zend_hash_find(Z_ARRVAL_PP(real_data_srouce_arr), ZEND_STRS("username"), (void **) &username);
+    zend_hash_find(Z_ARRVAL_PP(real_data_srouce_arr), ZEND_STRS("pwd"), (void **) &pwd);
+
+    MAKE_STD_ZVAL(pass_data);
+    array_init(pass_data);
+    add_assoc_string(pass_data, "type", "pdo", 1);
+    add_assoc_string(pass_data, "method_type", "connect", 1);
+    add_assoc_string(pass_data, "method", cmd, 1);
+    add_assoc_string(pass_data, "data_source", Z_STRVAL_PP(data_source), 1);
+    *ret_data_source = *data_source;
+    add_assoc_string(pass_data, "username", Z_STRVAL_PP(username), 1);
+    add_assoc_string(pass_data, "password", Z_STRVAL_PP(pwd), 1);
+    zval_add_ref(&z_args);
+    add_assoc_zval(pass_data, "args", z_args);
+    if (zend_hash_find(Z_ARRVAL_PP(real_data_srouce_arr), ZEND_STRS("options"), (void **) &options) != SUCCESS)
+    {
+        zval *new_option = NULL;
+        MAKE_STD_ZVAL(new_option);
+        array_init(new_option);
+        add_index_long(new_option, PDO_ATTR_ERRMODE, PDO_ERRMODE_EXCEPTION);
+        add_index_string(new_option, PDO_ATTR_DRIVER_SPECIFIC + 2, "SET SESSION wait_timeout=2147483", 1);
+        add_assoc_zval(pass_data, "options", new_option);
+    }
+    else
+    {
+        zval_add_ref(options);
+        add_index_long(*options, PDO_ATTR_ERRMODE, PDO_ERRMODE_EXCEPTION); //set exception mode for delete pdo object from pool when gone away
+        add_index_string(*options, PDO_ATTR_DRIVER_SPECIFIC + 2, "SET SESSION wait_timeout=2147483", 1);
+        add_assoc_zval(pass_data, "options", *options);
+    }
+    return pass_data;
+}
 
 PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
 {
@@ -319,7 +492,6 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     add_assoc_zval(pass_data, "args", z_args);
     add_assoc_string(pass_data, "method_type", "PDOStatement", 1);
     add_assoc_string(pass_data, "type", "pdo", 1);
-
     int ret = cli_real_send(cli, pass_data, getThis(), pdo_connect_pool_PDOStatement_class_entry_ptr);
     if (ret < 0)
     {
@@ -340,11 +512,8 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
 
 PHP_METHOD(pdo_connect_pool, __call)
 {
-    zval *z_args;
-    zval *pass_data;
-    zval *object;
-    zval **zres, **source_zval, **con_args_zval;
-    char *cmd;
+    zval *z_args, *pass_data, *object, **zres, *source_zval, **use_ms;
+    char *cmd, *cur_type;
     int cmd_len;
 
     if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osa", &object, pdo_connect_pool_class_entry_ptr, &cmd, &cmd_len, &z_args) == FAILURE)
@@ -362,28 +531,16 @@ PHP_METHOD(pdo_connect_pool, __call)
         php_error_docref(NULL TSRMLS_CC, E_WARNING, "pdo_connect_pool: object is not instanceof pdo_connect_pool. ");
         RETURN_FALSE;
     }
-    if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("data_source"), (void **) &source_zval) == FAILURE)
-    {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "pdo_connect_pool: get data_source name failed!");
-        RETURN_FALSE;
-    }
-    if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("con_args"), (void **) &con_args_zval) == FAILURE)
-    {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "pdo_connect_pool: get con_args name failed!");
-        RETURN_FALSE;
-    }
 
-    MAKE_STD_ZVAL(pass_data);
-    array_init(pass_data);
-    add_assoc_string(pass_data, "data_source", Z_STRVAL_PP(source_zval), 1);
-    add_assoc_string(pass_data, "method", cmd, 1);
-    zval_add_ref(&z_args);
-    add_assoc_zval(pass_data, "args", z_args);
-    zval_add_ref(con_args_zval);
-    add_assoc_zval(pass_data, "con_args", *con_args_zval);
-    add_assoc_string(pass_data, "method_type", "others", 1);
-    add_assoc_string(pass_data, "type", "pdo", 1);
-
+    if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("use_ms"), (void **) &use_ms) == SUCCESS)
+    {
+        cur_type = "m";
+    }
+    else
+    {
+        cur_type = php_check_ms(cmd, z_args, object);
+    }
+    pass_data = create_pass_data(cmd, z_args, object, cur_type, &source_zval);
     int ret = cli_real_send(cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
     if (ret < 0)
     {
@@ -395,7 +552,7 @@ PHP_METHOD(pdo_connect_pool, __call)
     {//返回一个模拟pdo类
         object_init_ex(return_value, pdo_connect_pool_PDOStatement_class_entry_ptr);
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("cli"), *zres TSRMLS_CC);
-        zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("data_source"), *source_zval TSRMLS_CC); //标示这个连接的真实目标
+        zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("data_source"), source_zval TSRMLS_CC); //标示这个连接的真实目标
         zval_ptr_dtor(&RecvData.ret_value);
     }
     else if (RecvData.type == CP_SIGEVENT_EXCEPTION)
@@ -416,54 +573,20 @@ PHP_METHOD(pdo_connect_pool, __destruct)
 
 PHP_METHOD(pdo_connect_pool, __construct)
 {
-    zval *zres, *zval_source, *pool_port;
+     cpLog_init("/tmp/fuck");
+    zval *zres, *zval_conf, *data_source, *options = NULL, *master = NULL;
     zval *object = getThis();
-    int ret;
-
-    char *data_source;
-    int data_source_len;
     char *username = NULL, *password = NULL;
     int usernamelen, passwordlen;
-    long port = CP_PORT_PDO;
-    zval *options = NULL;
+    int port = CP_PORT_PDO;
 
-    if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|s!s!a!l!", &data_source, &data_source_len,
+    if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "z|s!s!a!l!", &data_source,
             &username, &usernamelen, &password, &passwordlen, &options, &port))
     {
         ZVAL_NULL(object);
         return;
     }
     CP_GET_PID;
-    zval *pass_data;
-    MAKE_STD_ZVAL(pass_data);
-    array_init(pass_data);
-    add_assoc_string(pass_data, "type", "pdo", 1);
-    add_assoc_string(pass_data, "method_type", "connect", 1);
-    add_assoc_string(pass_data, "data_source", data_source, 1);
-    if (username != NULL)
-    {
-        add_assoc_string(pass_data, "username", username, 1);
-    }
-    if (password != NULL)
-    {
-        add_assoc_string(pass_data, "password", password, 1);
-    }
-    if (options != NULL)
-    {
-        zval_add_ref(&options);
-        add_index_long(options, PDO_ATTR_ERRMODE, PDO_ERRMODE_EXCEPTION);//set exception mode for delete pdo object from pool when gone away
-        add_index_string(options, PDO_ATTR_DRIVER_SPECIFIC + 2, "SET SESSION wait_timeout=2147483", 1);
-        add_assoc_zval(pass_data, "options", options);
-    }
-    else
-    {
-        MAKE_STD_ZVAL(options);
-        array_init(options);
-        add_index_long(options, PDO_ATTR_ERRMODE, PDO_ERRMODE_EXCEPTION);
-        add_index_string(options, PDO_ATTR_DRIVER_SPECIFIC + 2, "SET SESSION wait_timeout=2147483", 1);
-        add_assoc_zval(pass_data, "options", options);
-    }
-
     MAKE_STD_ZVAL(zres);
     cpClient *cli;
     zend_rsrc_list_entry *p_sock_le;
@@ -473,15 +596,13 @@ PHP_METHOD(pdo_connect_pool, __construct)
     if (zend_hash_find(&EG(persistent_list), str, strlen(str), (void **) &p_sock_le) == SUCCESS)
     {
         cli = (cpClient*) p_sock_le->ptr;
-        //        zend_hash_index_del(&EG(regular_list),Z_RESVAL_P(file_resource));
         ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
     }
     else
-    {//这个fpm进程第一次创建连接
+    {//create long connect to pool_server
         if ((cli = connect_pool_perisent(zres, port)) == NULL)
-        {//没连上
+        {// error
             efree(zres);
-            zval_ptr_dtor(&pass_data);
             zval exception_str;
             ZVAL_STRINGL(&exception_str, CON_FAIL_MESSAGE, strlen(CON_FAIL_MESSAGE), 0);
             zend_throw_exception(NULL, Z_STRVAL(exception_str), 0 TSRMLS_CC);
@@ -489,30 +610,33 @@ PHP_METHOD(pdo_connect_pool, __construct)
         }
     }
 
-    MAKE_STD_ZVAL(zval_source);
-    ZVAL_STRING(zval_source, data_source, 1);
-    MAKE_STD_ZVAL(pool_port);
-    ZVAL_LONG(pool_port, port);
-    zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), zres TSRMLS_CC);
-    zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("pool_port"), pool_port TSRMLS_CC);
-    zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), zval_source TSRMLS_CC); //标示这个连接的真实目标
-    zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("con_args"), pass_data TSRMLS_CC); //用于重连
+    switch (Z_TYPE_P(data_source))
+    {
+        case IS_STRING:
+            MAKE_STD_ZVAL(zval_conf);
+            MAKE_STD_ZVAL(master);
+            array_init(zval_conf);
+            array_init(master);
 
-    //    cpQueueSignalSet(CP_SIG_EVENT, HandleRecv);
-    ret = cli_real_send(cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
-    if (ret < 0)
-    {
-        php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
+            add_assoc_string(master, "data_source", Z_STRVAL_P(data_source), 1);
+            add_assoc_string(master, "username", username, 1);
+            add_assoc_string(master, "pwd", password, 1);
+            if (options != NULL)
+            {
+                add_assoc_zval(master, "options", options);
+            }
+            add_assoc_zval(zval_conf, "master", master);
+            zend_update_property_bool(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("use_ms"), 0 TSRMLS_CC);
+            zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("config"), zval_conf TSRMLS_CC);
+            break;
+        case IS_ARRAY:
+            zval_add_ref(&data_source);
+            zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("config"), data_source TSRMLS_CC);
+            break;
     }
-    cli_real_recv(&cli->info);
-    if (RecvData.type == CP_SIGEVENT_EXCEPTION)
-    {
-        zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
-    }
-    zval_ptr_dtor(&RecvData.ret_value);
-    zval_ptr_dtor(&zval_source);
-    zval_ptr_dtor(&pass_data);
-    zval_ptr_dtor(&pool_port);
+    zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), zres TSRMLS_CC);
+    zend_update_property_long(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("pool_port"), port TSRMLS_CC);
+    zend_update_property_bool(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("enable_slave"), 1 TSRMLS_CC);
     zval_ptr_dtor(&zres);
 }
 
@@ -535,34 +659,14 @@ PHP_FUNCTION(client_close)
 }
 
 PHP_METHOD(pdo_connect_pool, release)
-{// relase方法
-    zend_rsrc_list_entry *p_sock_le;
-    zval **pool_port;
-    if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("pool_port"), (void **) &pool_port) == SUCCESS)
-    {
-        char str[100] = {0};
-        CON_FORMART_KEY(str, (int) Z_LVAL_PP(pool_port));
-        if (zend_hash_find(&EG(persistent_list), str, strlen(str), (void **) &p_sock_le) == SUCCESS)
-        {
-            send_oob2proxy(p_sock_le);
-        }
-    }
+{
+    release_worker(getThis());
     CP_CHECK_RETURN(1);
 }
 
 PHP_METHOD(redis_connect_pool, release)
-{//todo 提出来
-    zend_rsrc_list_entry *p_sock_le;
-    zval **pool_port;
-    if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("pool_port"), (void **) &pool_port) == SUCCESS)
-    {
-        char str[100] = {0};
-        CON_FORMART_KEY(str, (int) Z_LVAL_PP(pool_port));
-        if (zend_hash_find(&EG(persistent_list), str, strlen(str), (void **) &p_sock_le) == SUCCESS)
-        {
-            send_oob2proxy(p_sock_le);
-        }
-    }
+{
+    release_worker(getThis());
     CP_CHECK_RETURN(1);
 }
 
@@ -577,7 +681,7 @@ PHP_METHOD(redis_connect_pool, __construct)
     MAKE_STD_ZVAL(zres);
     cpClient *cli;
     zend_rsrc_list_entry *p_sock_le;
-    long port = CP_PORT_REDIS;
+    int port = CP_PORT_REDIS;
     if (FAILURE == zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|l", &port))
     {
         return;
@@ -842,7 +946,7 @@ PHP_FUNCTION(get_disable_list)
     {
 
         char ping_mm_name[CP_PING_MD5_LEN] = {0};
-        sprintf(ping_mm_name, "%s_%d", CP_MMAP_NAME_PRE, 0x2526 + port);
+        sprintf(ping_mm_name, "%s_%d", CP_MMAP_NAME_PRE, 0x2526 + (int) port);
         int fd = open(ping_mm_name, O_RDWR | O_CREAT, S_IROTH | S_IWOTH);
         if (fd == -1)
         {

@@ -24,6 +24,7 @@ phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 - When the connection use out,support queue.
 - Simple! just change the new method and add release function (see demon),you used the tcp pool.
 - The connection proxy will start the ping process to monitor down list, if available will reflect to the return value of the get_disable_list(), use this function you can do some fun things,like LB.
+- support Read / write separate and slave load balancing
 
 ## Example
 step 1 move the pool.ini file to /etc/ and modify it as you need.
@@ -44,13 +45,6 @@ $redis = new Redis();
 tips:use $db/$redis->release() to release the connection  as early as you can;
 ?>
 ```
-##API
-get_disable_list($pdo_config,CP_DEFAULT_PDO_PORT);// get the pdo disable ips;
-get_disable_list($redis_conf,CP_DEFAULT_REDIS_PORT); // get the redis disable ips;
-
-- first param is you ip list.
-- if the first param changed,the disable list will be clear.
-- this function will return the fail ips.
 
 ## 提示
 - pool_server 必须以root用户启动

@@ -37,6 +37,7 @@ extern "C" {
     typedef struct _cpTcpEvent {
         int type;
         int ClientPid;
+        char data_source[100];
     } cpTcpEvent;
 
 

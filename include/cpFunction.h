@@ -68,7 +68,9 @@ extern "C" {
     zval * cpGetConfig(char *filename);
     zval * cpMD5(zval *arr);
     CPINLINE void cp_ser_and_setpro(zval *arr);
-
+    CPINLINE int cpNetRead(int fd, void *buf, int len);
+    CPINLINE int cpCreateFifo(char *file);
+    CPINLINE int cpFifoRead(int pipe_fd_read, void *buf, int len);
 
 
 #ifdef	__cplusplus

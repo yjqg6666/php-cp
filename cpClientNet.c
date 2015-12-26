@@ -16,7 +16,8 @@
 #include "php_connect_pool.h"
 #include <netdb.h>
 
-int cpClient_close(cpClient *cli) {
+int cpClient_close(cpClient *cli)
+{
     int ret, fd = cli->sock;
     cli->sock = 0;
     ret = close(fd);
@@ -27,7 +28,8 @@ int cpClient_close(cpClient *cli) {
     return ret;
 }
 
-int cpClient_recv(cpClient *cli, void *data, int len, int waitall) {
+int cpClient_recv(cpClient *cli, void *data, int len, int waitall)
+{
     //    int flag = 0, ret;
     //    if (waitall == 1) {
     //        flag = MSG_WAITALL;
@@ -45,7 +47,8 @@ int cpClient_recv(cpClient *cli, void *data, int len, int waitall) {
     return cpNetRead(cli->sock, data, len);
 }
 
-int cpClient_send(int sock, char *data, int length, int flag) {
+int cpClient_send(int sock, char *data, int length, int flag)
+{
     int written = 0;
     int n;
 
@@ -79,7 +82,8 @@ int cpClient_send(int sock, char *data, int length, int flag) {
     return written;
 }
 
-int cpClient_create(cpClient *cli) {
+int cpClient_create(cpClient *cli)
+{
     bzero(cli, sizeof (cpClient));
     cli->sock = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -93,7 +97,8 @@ int cpClient_create(cpClient *cli) {
     return SUCCESS;
 }
 
-static int swClient_inet_addr(struct sockaddr_in *sin, char *string) {
+static int swClient_inet_addr(struct sockaddr_in *sin, char *string)
+{
     struct in_addr tmp;
     struct hostent *host_entry;
 
@@ -118,7 +123,8 @@ static int swClient_inet_addr(struct sockaddr_in *sin, char *string) {
     return SUCCESS;
 }
 
-int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int nonblock) {
+int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int nonblock)
+{
     int ret;
     cli->serv_addr.sin_family = AF_INET;
     cli->serv_addr.sin_port = htons(port);

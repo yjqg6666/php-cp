@@ -20,8 +20,8 @@ extern "C" {
 #define CP_REACTOR_TIMEO_SEC     3
 #define CP_REACTOR_TIMEO_USEC    0
 #define CP_MAX_FDS               (1024*10) //最大fd值,暂不支持扩容
-#define CP_MAX_REQUEST           20000
-    //    #define CP_MAX_REQUEST           1000
+    //#define CP_MAX_REQUEST           20000
+#define CP_MAX_REQUEST           0
 #define CP_MAX_WORKER            100
 #define CP_MIN_WORKER            2
 #define CP_IDEL_TIME             2
@@ -63,7 +63,7 @@ extern "C" {
 #define CP_FD_RELEASED           0
 #define CP_FD_NRELEASED          2
 #define CP_FD_WAITING            1
-    
+
 #define CP_TRUE                  1
 #define CP_FALSE                 0
 
@@ -87,7 +87,6 @@ extern "C" {
     typedef struct _cpConfig {
         uint16_t backlog;
         uint16_t reactor_num;
-        uint16_t worker_min;
         uint16_t recycle_num;
         uint16_t port;
 
@@ -108,9 +107,7 @@ extern "C" {
         int timeout_sec;
         int timeout_usec;
         int max_request;
-        int group_id;
 
-        char title[MAX_TITLE_LENGTH];
         char ini_file[MAX_INI_LENGTH];
         char log_file[128]; //日志文件
     } cpConfig;
@@ -139,16 +136,29 @@ extern "C" {
         //        struct sockaddr_in addr; //socket的地址
 
         uint16_t worker_id; //指定当前连接在用哪个worker
+        uint16_t group_id; //指定当前连接在用哪个group
         uint8_t release; //方式重复release
         uint16_t pth_id; //thread id
     } cpConnection;
+
+    typedef struct _cpGroup {
+        int id; //Current worker group  id 0,1,2,3...n
+        uint32_t worker_num;
+        uint32_t worker_min;
+        uint32_t worker_max;
+        cpWorker *workers;
+        volatile_int8 *workers_status;
+        pthread_mutex_t *mutex_lock;
+        cpWaitList *WaitList; //获得失败的wait队列
+        cpWaitList *WaitTail; //获得失败的wait队列队尾
+        char name[100]; //group name
+    } cpGroup;
 
     typedef struct _cpServerGS {
         pid_t master_pid;
         pid_t manager_pid;
 
-        uint32_t worker_num;
-        uint32_t worker_max;
+
         uint32_t connect_count;
         uint16_t reactor_next_i;
         //        uint16_t reactor_round_i;
@@ -156,28 +166,24 @@ extern "C" {
         cpConnection *conlist;
         uint32_t *workerfd2clientfd_list; //workerfd和客户端fd的对应关系
 
-        cpWorker *workers;
         cpWorker *ping_workers;
-        volatile_int8 *workers_status;
-        pthread_spinlock_t *spin_lock;
-        pthread_mutex_t  *mutex_lock;
-
-        cpWaitList *WaitList; //获得失败的wait队列
-        cpWaitList *WaitTail; //获得失败的wait队列队尾
 
         cpThread *reactor_threads;
 
         int running;
+        cpGroup G[100]; //group TODO extend
+        zval* group;
+        int group_num;
     } cpServerGS;
 
     typedef struct _cpWorkerG {
         int id; //Current Proccess Worker's id 0,1,2,3...n
         int clientPid;
+        int gid; //current worker's group id
         uint64_t max_read_len;
-        int warning_gone_away;
     } cpWorkerG;
 
-    void cpServer_init(zval *conf, char *title, char *ini_file, int group_id);
+    void cpServer_init(zval *conf, char *ini_file);
     int cpServer_create();
     int cpServer_start();
 

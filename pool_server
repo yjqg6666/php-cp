@@ -20,21 +20,15 @@ switch ($cmd) {
         pool_server_create($conf);
         break;
     case "reload":
-        foreach ($conf_arr as $k => $value) {
-            pool_server_reload((int) file_get_contents(PID_PRE . $k . ".pid"));
-        }
+        pool_server_reload((int) file_get_contents(PID_PRE . ".pid"));
         echo "Tips: The reload can only modify 'pool_min','pool_max','recycle_num' and 'idel_time'\n";
         die;
         break;
     case "stop":
-        foreach ($conf_arr as $k => $value) {
-            pool_server_shutdown((int) file_get_contents(PID_PRE . $k . ".pid"));
-        }
+        pool_server_shutdown((int) file_get_contents(PID_PRE . ".pid"));
         break;
     case "restart":
-        foreach ($conf_arr as $k => $value) {
-            pool_server_shutdown((int) file_get_contents(PID_PRE . $k . ".pid"));
-        }
+        pool_server_shutdown((int) file_get_contents(PID_PRE . ".pid"));
         sleep(1);
         pool_server_create($conf);
         break;

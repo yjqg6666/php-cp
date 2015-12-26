@@ -91,7 +91,6 @@ const zend_function_entry cp_functions[] = {
     PHP_FE(pool_server_reload, NULL)
     PHP_FE(pool_server_version, NULL)
     PHP_FE(get_disable_list, NULL)
-    PHP_FE(pdo_warning_function_handler, NULL)
     PHP_FE(client_close, NULL)
     PHP_FE_END /* Must be the last line in cp_functions[] */
 };
@@ -245,7 +244,6 @@ void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC)
     }
     else if (cli->released == CP_FD_NRELEASED)
     {//防止release后rshutdown的重复释放
-        //        ret = cpClient_send(cli->sock, CP_RELEASE_HEADER, CP_RELEASE_HEADER_LEN, MSG_OOB);
         cpTcpEvent event;
         event.type = CP_TCPEVENT_RELEASE;
         event.ClientPid = 0;
@@ -259,28 +257,6 @@ void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC)
             php_error_docref(NULL TSRMLS_CC, E_ERROR, "pdo_connect_pool: release error. Error: %s [%d]", strerror(errno), errno);
         }
     }
-}
-
-PHP_FUNCTION(pdo_warning_function_handler)
-{
-    long errorno;
-    char *errstr;
-    int errlen;
-    char * linstr;
-    int linlen;
-    char * filestr;
-    int filelen;
-    zval *what;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "lsss|z", &errorno, &errstr, &errlen, &filestr, &filelen, &linstr, &linlen, &what) == FAILURE)
-    {
-        return;
-    }
-    char *p = strstr(errstr, "server has gone away");
-    if (p)
-    {
-        ConProxyWG.warning_gone_away = 1;
-    }
-
 }
 
 PHP_FUNCTION(pool_server_create)
@@ -299,36 +275,18 @@ PHP_FUNCTION(pool_server_create)
         RETURN_FALSE;
     }
     conf = cpGetConfig(config_file);
-    int group_id = 0;
-    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(conf)); zend_hash_has_more_elements(Z_ARRVAL_P(conf)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(conf)))
+    cpServer_init(conf, config_file);
+
+    int ret = cpServer_create();
+    if (ret < 0)
     {
-        zval **config;
-        zend_hash_get_current_data(Z_ARRVAL_P(conf), (void**) &config);
-        char *name;
-        int keylen;
-        zend_hash_get_current_key_ex(Z_ARRVAL_P(conf), &name, &keylen, NULL, 0, NULL);
-        int pid = fork();
-        if (pid < 0)
-        {
-            php_printf("create fork error!\n");
-        }
-        else if (pid == 0)
-        {
-            cpServer_init(*config, name, config_file, group_id);
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
+    }
 
-            int ret = cpServer_create();
-            if (ret < 0)
-            {
-                php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
-            }
-
-            ret = cpServer_start();
-            if (ret < 0)
-            {
-                php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
-            }
-        }
-        group_id++;
+    ret = cpServer_start();
+    if (ret < 0)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
     }
     zval_ptr_dtor(&conf);
 }
@@ -378,7 +336,7 @@ PHP_FUNCTION(pool_server_shutdown)
 
 CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
 {
-    cpShareMemory *sm_obj = &(CPGS->workers[CPWG.id].sm_obj);
+    cpShareMemory *sm_obj = &(CPGS->G[CPWG.gid].workers[CPWG.id].sm_obj);
     instead_smart dest;
     dest.len = 0;
     dest.addr = sm_obj->mem;
@@ -404,7 +362,7 @@ CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
         worker_event.len = dest.len;
         worker_event.type = __type;
         worker_event.pid = CPWG.clientPid;
-        int ret = write(CPGS->workers[CPWG.id].pipe_fd_write, &worker_event, sizeof (worker_event));
+        int ret = write(CPGS->G[CPWG.gid].workers[CPWG.id].pipe_fd_write, &worker_event, sizeof (worker_event));
         if (ret == -1)
         {
             php_error_docref(NULL TSRMLS_CC, E_ERROR, "write error Error: %s [%d]", strerror(errno), errno);
@@ -423,7 +381,8 @@ int pdo_proxy_connect(zval *args, int flag)
     {
         if (zend_hash_find(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void **) &object) == SUCCESS)
         {
-            CP_INTERNAL_NORMAL_SEND_RETURN("CON_SUCCESS!");
+            pdo_proxy_pdo(args);
+            return 1;
         }
         else
         {
@@ -461,7 +420,6 @@ int pdo_proxy_connect(zval *args, int flag)
             zval *null_arr = NULL;
             if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("options"), (void **) &options) == SUCCESS)
             {
-                //                zend_print_zval_r(*options,0);
                 tmp_pass[3] = options;
             }
             else
@@ -495,7 +453,10 @@ int pdo_proxy_connect(zval *args, int flag)
                 if (zend_hash_add(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void*) &new_obj, sizeof (zval *), NULL) == SUCCESS)
                 {
                     if (flag == CP_CONNECT_NORMAL)
-                        CP_INTERNAL_NORMAL_SEND_RETURN("CON_SUCCESS!");
+                    {
+                        pdo_proxy_pdo(args);
+                        return 1;
+                    }
                 }
                 else
                 {
@@ -508,6 +469,7 @@ int pdo_proxy_connect(zval *args, int flag)
     {
         CP_INTERNAL_ERROR_SEND_RETURN("PDO no datasource!");
     }
+    return CP_FALSE;
 }
 
 static int cp_call_user_function(zval **object, zval *fun, zval **ret_value, zval * args)
@@ -541,15 +503,8 @@ static void pdo_proxy_pdo(zval * args)
 
     if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("data_source"), (void **) &data_source) == SUCCESS)
     {
-        if (zend_hash_find(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void **) &object) == FAILURE)
-        {
-            zval **con_args;
-            zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("con_args"), (void **) &con_args);
-            pdo_proxy_connect(*con_args, CP_CONNECT_RECONNECT);
-        }//max request killed
-
         if (zend_hash_find(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void **) &object) == SUCCESS)
-        {//intended dont use else
+        {
             zval **method;
             if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method"), (void **) &method) == FAILURE)
             {
@@ -571,13 +526,7 @@ static void pdo_proxy_pdo(zval * args)
                     if (p || p2)
                     {//del reconnect and retry
                         zend_hash_del(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
-                        zval **con_args;
-                        zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("con_args"), (void **) &con_args);
-                        pdo_proxy_connect(*con_args, CP_CONNECT_RECONNECT);
-                        if (zend_hash_find(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void **) &object) == SUCCESS)
-                        { // reconnect success
-                            pdo_proxy_pdo(args);
-                        }
+                        pdo_proxy_connect(args, CP_CONNECT_RECONNECT);
                     }
                     else
                     {
@@ -615,6 +564,10 @@ static void pdo_proxy_pdo(zval * args)
                     }
                 }
             }
+        }
+        else
+        {
+            CP_INTERNAL_ERROR_SEND("no connect to mysql");
         }
     }
     else
@@ -933,7 +886,7 @@ static void cp_add_fail_into_mem(zval *o_arg, zval * data_source)
     zval_copy_ctor(args);
     if (!CPGL.ping_mem_addr)
     {
-       CPGL.ping_mem_addr = CPGS->ping_workers->sm_obj.mem;
+        CPGL.ping_mem_addr = CPGS->ping_workers->sm_obj.mem;
     }
     zval *arr = CP_PING_GET_PRO(CPGL.ping_mem_addr);
     if (Z_TYPE_P(arr) == IS_NULL)

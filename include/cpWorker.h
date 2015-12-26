@@ -18,20 +18,21 @@ extern "C" {
         int last_from_id;
         pid_t pid;
         int pipe_fd_write;
-        int pre_len;
-        pid_t pre_pid;
+//        int pre_len;
+//        pid_t pre_pid;
         
         int fd;//当前worker服务于哪个fd
         int CPid;//当前worker服务于哪个pid
+//        int Gid;//当前worker属于哪个group
         
-        uint8_t  run;
+//        uint8_t  run;
         cpShareMemory sm_obj;
     } cpWorker;
 
-    int cpFork_one_worker(int id);
+    int cpFork_one_worker(int id,int gid);
     int cpWorker_manager_loop();
-    CPINLINE int cpCreate_worker_mem(int worker_id);
-    CPINLINE int cpWorker_attach_mem(int worker_id);
+    CPINLINE int cpCreate_worker_mem(int worker_id,int group_id);
+    CPINLINE int cpWorker_attach_mem(int worker_id,int group_id);
     
 
 #ifdef	__cplusplus

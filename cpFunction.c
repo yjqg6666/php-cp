@@ -39,7 +39,7 @@ int cpLog_init(char *logfile) {
 
 int pid_init() {
     char pid_name[512] = {0};
-    sprintf(pid_name, "%s%s.pid", PID_FILE_PATH, CPGC.title);
+    sprintf(pid_name, "%s.pid", PID_FILE_PATH);
     pid_fn = fopen(pid_name, "w+");
     if (pid_fn == NULL)
     {

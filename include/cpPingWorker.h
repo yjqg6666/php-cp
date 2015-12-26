@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
     int cpFork_ping_worker();
-    int cpCreate_worker_mem();
+    int cpCreate_ping_worker_mem();
 
 #ifdef	__cplusplus
 }

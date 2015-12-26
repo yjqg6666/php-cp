@@ -29,6 +29,7 @@ int cpClient_close(cpClient *cli);
 int cpClient_send(int sock, char *data, int length, int flag);
 int cpClient_create(cpClient *cli);
 int cpClient_recv(cpClient *cli, void *data, int len, int waitall) ;
+int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int nonblock);
 
 #ifdef	__cplusplus
 }

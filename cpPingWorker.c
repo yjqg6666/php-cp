@@ -93,7 +93,7 @@ static int cpPing_worker_loop()
                 zval **args, **zval_count;
                 zend_hash_get_current_data(Z_ARRVAL_P(pro_arr), (void**) &args);
                 char *data_source;
-                int keylen;
+                uint keylen;
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(pro_arr), &data_source, &keylen, NULL, 0, NULL);
                 if (zend_hash_find(Z_ARRVAL_PP(args), ZEND_STRS("count"), (void **) &zval_count) == SUCCESS)
                 {
@@ -119,7 +119,7 @@ static int cpPing_worker_loop()
                 zval **args;
                 zend_hash_get_current_data(Z_ARRVAL_P(dis_arr), (void**) &args);
                 char *data_source;
-                int keylen;
+                uint keylen;
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(dis_arr), &data_source, &keylen, NULL, 0, NULL);
                 if (strstr(data_source, "host"))
                 {//mysql
@@ -165,8 +165,7 @@ int cpFork_ping_worker()
         //标识为worker进程
         CPGL.process_type = CP_PROCESS_PING;
         char name[MAX_TITLE_LENGTH] = {0};
-        strcat(name, "ping_");
-        strcat(name, CPGC.title);
+        strcat(name, "ping_worker");
         cpSettitle(name);
         ret = cpPing_worker_loop();
         exit(ret);

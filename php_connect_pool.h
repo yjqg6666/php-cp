@@ -67,6 +67,7 @@
 #include "cpServer.h"
 #include "cpNetWork.h"
 #include "cpClientNet.h"
+#include "cpPingWorker.h"
 
 #include "ext/pdo/php_pdo_driver.h"
 #include "ext/standard/php_smart_str.h"
@@ -150,7 +151,6 @@ PHP_FUNCTION(pool_server_reload);
 PHP_FUNCTION(pool_server_version);
 
 PHP_FUNCTION(get_disable_list);
-PHP_FUNCTION(pdo_warning_function_handler);
 
 PHP_FUNCTION(client_close);
 
