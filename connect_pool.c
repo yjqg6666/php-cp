@@ -634,7 +634,7 @@ static void pdo_dispatch(zval * args)
             pdo_proxy_stmt(args);
         }
         else
-        {
+        {//not use now
             pdo_proxy_pdo(args);
         }
     }

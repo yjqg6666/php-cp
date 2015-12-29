@@ -350,8 +350,6 @@ static char* php_check_ms(char *cmd, zval *z_args, zval* object)
     // exchange 
     if (cur_type != lt)
     {
-        if (lt)
-            release_worker(object); //release current worker
         zend_update_property_string(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("last_type"), cur_type TSRMLS_CC);
     }
     return cur_type;
@@ -573,7 +571,6 @@ PHP_METHOD(pdo_connect_pool, __destruct)
 
 PHP_METHOD(pdo_connect_pool, __construct)
 {
-     cpLog_init("/tmp/fuck");
     zval *zres, *zval_conf, *data_source, *options = NULL, *master = NULL;
     zval *object = getThis();
     char *username = NULL, *password = NULL;

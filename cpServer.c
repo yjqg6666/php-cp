@@ -213,7 +213,7 @@ int cpServer_create()
 
 int cpServer_start()
 {
-    int w, pid, ret, ping_pid, sock, g;
+    int w, pid, ret, sock, g;
     if (CPGC.daemonize > 0)
     {
         if (daemon(0, 0) < 0)
@@ -572,7 +572,8 @@ static int cpReactor_client_receive(int fd)
     {
         cpTcpEvent *event = (cpTcpEvent*) data;
         if (event->type == CP_TCPEVENT_GET && conn->release == CP_FD_NRELEASED)
-        {//动作是获得连接但是状态是未释放，父进程连的然后在子进程和父进程中都用这个连接，会出现这种情况
+        {
+            //动作是获得连接但是状态是未释放，父进程连的然后在子进程和父进程中都用这个连接，会出现这种情况
             cpMasterInfo info;
             int sizeinfo = sizeof (info);
             info.worker_id = -1; //todo define it
@@ -591,12 +592,12 @@ static int cpReactor_client_receive(int fd)
             else
             {
                 cpLog("can not find the datasource %s from the ini", event->data_source);
-                return -1;
+                return FAILURE;
             }
             cpTryGetWorkerId(conn, data, fd, n, gid);
             if (conn->release == CP_FD_WAITING)
             {
-                return 1;
+                return SUCCESS;
             }
             if (conn->release == CP_FD_RELEASED)
             {//争抢失败,fork失败
@@ -686,7 +687,7 @@ int static cpReactor_start(int sock)
     handles[EPOLLIN] = cpServer_master_onAccept;
 
     usleep(50000);
-    cpLog("start %s success");
+    cpLog("start  success");
     return cpEpoll_wait(handles, &timeo, accept_epfd);
 }
 

@@ -16,7 +16,7 @@ extern "C" {
 #define CP_BACKLOG               512
 #define CP_PIPES_NUM             (CP_WORKER_NUM/CP_WRITER_NUM + 1) //每个写线程pipes数组大小
 #define CP_PORT_PDO              6253
-#define CP_PORT_REDIS            6254
+#define CP_PORT_REDIS            6253
 #define CP_REACTOR_TIMEO_SEC     3
 #define CP_REACTOR_TIMEO_USEC    0
 #define CP_MAX_FDS               (1024*10) //最大fd值,暂不支持扩容
