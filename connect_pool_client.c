@@ -307,15 +307,31 @@ static int cli_real_recv(cpMasterInfo *info)
     return SUCCESS;
 }
 
-static char* php_check_ms(char *cmd, zval *z_args, zval* object)
-{
-    zval **last_type, **enable_slave, **sql;
-    char *lt = NULL, *cur_type;
-    zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("enable_slave"), (void **) &enable_slave);
+static void check_need_exchange(zval * object, char *cur_type)
+{//修复:用了ms  但切换的时候忘记release了会导致一个worker多个连接的问题
+    char *lt = NULL;
+    zval **last_type;
     // compare with last_type
     if (zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("last_type"), (void **) &last_type) == SUCCESS)
     {
         lt = Z_STRVAL_PP(last_type);
+    }
+    // exchange 
+    if (cur_type != lt)
+    {
+        release_worker(object);
+        zend_update_property_string(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("last_type"), cur_type TSRMLS_CC);
+    }
+}
+
+static char* php_check_ms(char *cmd, zval *z_args, zval* object)
+{
+    zval **enable_slave, **sql;
+    char *cur_type = "m";
+    zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("enable_slave"), (void **) &enable_slave);
+    if (!Z_BVAL_PP(enable_slave))
+    {
+        return cur_type;
     }
 
     if (strcmp("query", cmd) == 0 || strcmp("exec", cmd) == 0)
@@ -342,15 +358,6 @@ static char* php_check_ms(char *cmd, zval *z_args, zval* object)
         {
             cur_type = "m";
         }
-    }
-    else
-    { // 不是query exec 还是用上一次的
-        cur_type = lt;
-    }
-    // exchange 
-    if (cur_type != lt)
-    {
-        zend_update_property_string(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("last_type"), cur_type TSRMLS_CC);
     }
     return cur_type;
 }
@@ -537,6 +544,7 @@ PHP_METHOD(pdo_connect_pool, __call)
     else
     {
         cur_type = php_check_ms(cmd, z_args, object);
+        check_need_exchange(getThis(), cur_type);
     }
     pass_data = create_pass_data(cmd, z_args, object, cur_type, &source_zval);
     int ret = cli_real_send(cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
@@ -620,6 +628,7 @@ PHP_METHOD(pdo_connect_pool, __construct)
             add_assoc_string(master, "pwd", password, 1);
             if (options != NULL)
             {
+                zval_add_ref(&options);
                 add_assoc_zval(master, "options", options);
             }
             add_assoc_zval(zval_conf, "master", master);
