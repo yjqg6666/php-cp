@@ -334,7 +334,7 @@ static char* php_check_ms(char *cmd, zval *z_args, zval* object)
         return cur_type;
     }
 
-    if (strcmp("query", cmd) == 0 || strcmp("exec", cmd) == 0)
+    if (strcasecmp("query", cmd) == 0 || strcasecmp("exec", cmd) == 0||strcasecmp("prepare", cmd) == 0)
     {
         zend_hash_index_find(Z_ARRVAL_P(z_args), 0, (void**) &sql);
         convert_to_string_ex(sql);
