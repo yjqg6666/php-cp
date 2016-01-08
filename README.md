@@ -51,24 +51,48 @@ $config = array(
         'data_source' => "mysql:host=192.168.1.19;dbname=db1",
         'username' => "public_user",
         'pwd' => "1qa2ws3ed",
+        'options' => array(
+            PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_TIMEOUT => 3,
+            PDO::ATTR_CASE =>PDO::CASE_UPPER,
+        ),
     ),
     'slave' => array(
         "0" => array(
-            'data_source' => "mysql:host=192.168.1.18;dbname=db1",
+            'data_source' => "mysql:host=192.168.1.20;dbname=db2",
             'username' => "public_user",
             'pwd' => "1qa2ws3ed",
+            'options' => array(
+                PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_TIMEOUT => 3,
+                PDO::ATTR_CASE =>PDO::CASE_UPPER,
+            ),
         ),
         "1" => array(
-            'data_source' => "mysql:host=192.168.1.17;dbname=db1",
+            'data_source' => "mysql:host=192.168.1.21;dbname=db3",
             'username' => "public_user",
             'pwd' => "1qa2ws3ed",
+            'options' => array(
+                PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_TIMEOUT => 3,
+                PDO::ATTR_CASE =>PDO::CASE_LOWER,
+            ),
         ),
     ),
 );
+/***************************"select"和"show"开头的语句 走随机从库***********/
 $obj1 = new pdo_connect_pool($config);
 $rs = $obj1->query("select * from test limit 1");
 var_dump($rs->fetchAll());//走随机从库
 $obj1->release();
+
+/****************************读强行走主库****************************/
+$obj1->enable_slave = false;
+$rs = $obj1->query("select * from test limit 1");
+var_dump($rs->fetchAll());//读主库
+$obj1->release();
+
+/***************************除了"select"和"show"开头的语句 都走主库***********/
 $sql = "insert into `test` (tid) values (5)";
 $rs = $obj1->exec($sql);//走主库
 $obj1->release();

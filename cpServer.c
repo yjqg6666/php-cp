@@ -592,7 +592,10 @@ static int cpReactor_client_receive(int fd)
             else
             {
                 cpLog("can not find the datasource %s from the ini", event->data_source);
-                return FAILURE;
+                cpMasterInfo info;
+                int sizeinfo = sizeof (info);
+                info.worker_id = -2; //todo define it
+                return cpWrite(fd, &info, sizeinfo);
             }
             cpTryGetWorkerId(conn, data, fd, n, gid);
             if (conn->release == CP_FD_WAITING)

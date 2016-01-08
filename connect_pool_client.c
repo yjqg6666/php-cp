@@ -221,9 +221,10 @@ void* connect_pool_perisent(zval* zres, int port)
     return cli;
 }
 
-CPINLINE int cli_real_send(cpClient *cli, zval *send_data, zval *this, zend_class_entry *ce)
+CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zend_class_entry *ce)
 {
     int ret = 0;
+    cpClient *cli = *real_cli;
     cpMasterInfo *info = &cli->info;
     if (cli->released == CP_FD_RELEASED)
     {
@@ -239,9 +240,14 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data, zval *this, zend_clas
             php_error_docref(NULL TSRMLS_CC, E_ERROR, "send failed in GET. Error:%d", errno);
         }
         int n = cpClient_recv(cli, info, sizeof (cpMasterInfo), 1);
-        if (info->worker_id < 0)
+        if (info->worker_id == -1)
         {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, CP_MULTI_PROCESS_ERR);
+            zend_throw_exception(NULL, CP_MULTI_PROCESS_ERR, 0 TSRMLS_CC);
+            exit(-1);
+        }
+        if (info->worker_id == -2)
+        {
+            zend_throw_exception(NULL, "can not find datasource from pool.ini", 0 TSRMLS_CC);
             exit(-1);
         }
         if (n > 0)
@@ -254,23 +260,21 @@ CPINLINE int cli_real_send(cpClient *cli, zval *send_data, zval *this, zend_clas
         }
         else if (n == 0)
         {
-            //            php_pdo_connect_pool_close(cli);
-            cpClient_close(cli);
+            ret = cpClient_close(cli);
             zval *zres = NULL;
             MAKE_STD_ZVAL(zres);
             cpClient *cli_retry = NULL;
             if ((cli_retry = connect_pool_perisent(zres, cli->port)) == NULL)
             {
                 efree(zres);
-                zval exception_str;
-                ZVAL_STRINGL(&exception_str, CON_FAIL_MESSAGE, strlen(CON_FAIL_MESSAGE), 0);
-                zend_throw_exception(NULL, Z_STRVAL(exception_str), 0 TSRMLS_CC);
-                return -1;
+                zend_throw_exception(NULL,CON_FAIL_MESSAGE, 0 TSRMLS_CC);
+                exit(-1);
             }
             else
             {
                 zend_update_property(ce, this, ZEND_STRL("cli"), zres TSRMLS_CC);
-                return cli_real_send(cli_retry, send_data, this, ce);
+                *real_cli = cli_retry;
+                return cli_real_send(&cli_retry, send_data, this, ce);
             }
         }
         else
@@ -334,7 +338,7 @@ static char* php_check_ms(char *cmd, zval *z_args, zval* object)
         return cur_type;
     }
 
-    if (strcasecmp("query", cmd) == 0 || strcasecmp("exec", cmd) == 0||strcasecmp("prepare", cmd) == 0)
+    if (strcasecmp("query", cmd) == 0 || strcasecmp("exec", cmd) == 0 || strcasecmp("prepare", cmd) == 0)
     {
         zend_hash_index_find(Z_ARRVAL_P(z_args), 0, (void**) &sql);
         convert_to_string_ex(sql);
@@ -497,7 +501,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     add_assoc_zval(pass_data, "args", z_args);
     add_assoc_string(pass_data, "method_type", "PDOStatement", 1);
     add_assoc_string(pass_data, "type", "pdo", 1);
-    int ret = cli_real_send(cli, pass_data, getThis(), pdo_connect_pool_PDOStatement_class_entry_ptr);
+    int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_PDOStatement_class_entry_ptr);
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
@@ -547,7 +551,7 @@ PHP_METHOD(pdo_connect_pool, __call)
         check_need_exchange(getThis(), cur_type);
     }
     pass_data = create_pass_data(cmd, z_args, object, cur_type, &source_zval);
-    int ret = cli_real_send(cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
+    int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
@@ -579,6 +583,7 @@ PHP_METHOD(pdo_connect_pool, __destruct)
 
 PHP_METHOD(pdo_connect_pool, __construct)
 {
+//     cpLog_init("/tmp/fpmlog");
     zval *zres, *zval_conf, *data_source, *options = NULL, *master = NULL;
     zval *object = getThis();
     char *username = NULL, *password = NULL;
@@ -608,9 +613,7 @@ PHP_METHOD(pdo_connect_pool, __construct)
         if ((cli = connect_pool_perisent(zres, port)) == NULL)
         {// error
             efree(zres);
-            zval exception_str;
-            ZVAL_STRINGL(&exception_str, CON_FAIL_MESSAGE, strlen(CON_FAIL_MESSAGE), 0);
-            zend_throw_exception(NULL, Z_STRVAL(exception_str), 0 TSRMLS_CC);
+            zend_throw_exception(NULL, CON_FAIL_MESSAGE, 0 TSRMLS_CC);
             return;
         }
     }
@@ -705,9 +708,7 @@ PHP_METHOD(redis_connect_pool, __construct)
         if ((cli = connect_pool_perisent(zres, port)) == NULL)
         {//没连上
             efree(zres);
-            zval exception_str;
-            ZVAL_STRINGL(&exception_str, CON_FAIL_MESSAGE, strlen(CON_FAIL_MESSAGE), 0);
-            zend_throw_exception(NULL, Z_STRVAL(exception_str), 0 TSRMLS_CC);
+            zend_throw_exception(NULL, CON_FAIL_MESSAGE, 0 TSRMLS_CC);
             return;
         }
     }
@@ -827,7 +828,7 @@ PHP_METHOD(redis_connect_pool, select)
     add_assoc_string(z_args, "db", db, 1);
     add_assoc_zval(pass_data, "args", z_args);
 
-    int ret = cli_real_send(cli, pass_data, getThis(), redis_connect_pool_class_entry_ptr);
+    int ret = cli_real_send(&cli, pass_data, getThis(), redis_connect_pool_class_entry_ptr);
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
@@ -915,7 +916,7 @@ PHP_METHOD(redis_connect_pool, __call)
         add_assoc_string(pass_data, "data_source", source_char, 1);
     }
 
-    int ret = cli_real_send(cli, pass_data, getThis(), redis_connect_pool_class_entry_ptr);
+    int ret = cli_real_send(&cli, pass_data, getThis(), redis_connect_pool_class_entry_ptr);
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
