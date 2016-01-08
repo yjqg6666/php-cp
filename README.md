@@ -48,7 +48,7 @@ tips:use $db/$redis->release() to release the connection  as early as you can;
 //*******************use master slave(最新版本支持了读写分离和从库的负载均衡 用法如下)***********************/
 $config = array(
     'master' => array(
-        'data_source' => "mysql:host=192.168.1.19;dbname=db1",
+        'data_source' => "mysql:host=192.168.1.19;dbname=db1;charset=utf8",
         'username' => "public_user",
         'pwd' => "1qa2ws3ed",
         'options' => array(
@@ -59,7 +59,7 @@ $config = array(
     ),
     'slave' => array(
         "0" => array(
-            'data_source' => "mysql:host=192.168.1.20;dbname=db2",
+            'data_source' => "mysql:host=192.168.1.20;dbname=db2;charset=utf8",
             'username' => "public_user",
             'pwd' => "1qa2ws3ed",
             'options' => array(
@@ -69,7 +69,7 @@ $config = array(
             ),
         ),
         "1" => array(
-            'data_source' => "mysql:host=192.168.1.21;dbname=db3",
+            'data_source' => "mysql:host=192.168.1.21;dbname=db3;charset=utf8",
             'username' => "public_user",
             'pwd' => "1qa2ws3ed",
             'options' => array(
