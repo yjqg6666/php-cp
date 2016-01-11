@@ -243,12 +243,12 @@ CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zen
         if (info->worker_id == -1)
         {
             zend_throw_exception(NULL, CP_MULTI_PROCESS_ERR, 0 TSRMLS_CC);
-            exit(-1);
+            return -1;
         }
         if (info->worker_id == -2)
         {
             zend_throw_exception(NULL, "can not find datasource from pool.ini", 0 TSRMLS_CC);
-            exit(-1);
+            return -1;
         }
         if (n > 0)
         {
@@ -267,8 +267,8 @@ CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zen
             if ((cli_retry = connect_pool_perisent(zres, cli->port)) == NULL)
             {
                 efree(zres);
-                zend_throw_exception(NULL,CON_FAIL_MESSAGE, 0 TSRMLS_CC);
-                exit(-1);
+                zend_throw_exception(NULL, CON_FAIL_MESSAGE, 0 TSRMLS_CC);
+                return -1;
             }
             else
             {
@@ -583,7 +583,7 @@ PHP_METHOD(pdo_connect_pool, __destruct)
 
 PHP_METHOD(pdo_connect_pool, __construct)
 {
-//     cpLog_init("/tmp/fpmlog");
+    //     cpLog_init("/tmp/fpmlog");
     zval *zres, *zval_conf, *data_source, *options = NULL, *master = NULL;
     zval *object = getThis();
     char *username = NULL, *password = NULL;

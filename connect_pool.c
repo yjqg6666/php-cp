@@ -880,6 +880,7 @@ int worker_onReceive(zval * unser_value)
 static void cp_add_fail_into_mem(zval *o_arg, zval * data_source)
 {
 
+    return;
     zval *args;
     MAKE_STD_ZVAL(args);
     *args = *o_arg;
