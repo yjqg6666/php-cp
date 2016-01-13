@@ -68,6 +68,7 @@ extern "C" {
 #define CP_FALSE                 0
 
 #define CP_START_SLEEP           usleep(50000);
+#define CP_PING_SLEEP             60
 
     typedef volatile int8_t volatile_int8;
 

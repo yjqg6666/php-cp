@@ -23,6 +23,7 @@
 static HashTable pdo_object_table;
 static HashTable redis_object_table;
 static zval* pdo_stmt = NULL;
+extern zval* pdo_object;
 
 cpServerG ConProxyG;
 cpServerGS *ConProxyGS;
@@ -506,6 +507,7 @@ static void pdo_proxy_pdo(zval * args)
         if (zend_hash_find(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source), (void **) &object) == SUCCESS)
         {
             zval **method;
+            pdo_object = *object;
             if (zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method"), (void **) &method) == FAILURE)
             {
                 CP_INTERNAL_ERROR_SEND("PDO no method!");
@@ -526,7 +528,7 @@ static void pdo_proxy_pdo(zval * args)
                     if (p || p2)
                     {//del reconnect and retry
                         zend_hash_del(&pdo_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
-                        pdo_proxy_connect(args, CP_CONNECT_RECONNECT);
+                        pdo_proxy_connect(args, CP_CONNECT_NORMAL);
                     }
                     else
                     {

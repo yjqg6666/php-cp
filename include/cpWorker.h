@@ -31,6 +31,7 @@ extern "C" {
 
     int cpFork_one_worker(int id,int gid);
     int cpWorker_manager_loop();
+    void cpWorker_do_ping();
     CPINLINE int cpCreate_worker_mem(int worker_id,int group_id);
     CPINLINE int cpWorker_attach_mem(int worker_id,int group_id);
     

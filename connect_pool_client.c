@@ -449,14 +449,14 @@ static zval* create_pass_data(char* cmd, zval* z_args, zval* object, char* cur_t
         MAKE_STD_ZVAL(new_option);
         array_init(new_option);
         add_index_long(new_option, PDO_ATTR_ERRMODE, PDO_ERRMODE_EXCEPTION);
-        add_index_string(new_option, PDO_ATTR_DRIVER_SPECIFIC + 2, "SET SESSION wait_timeout=2147483", 1);
+        add_index_string(new_option, PDO_ATTR_DRIVER_SPECIFIC + 2, "SET SESSION wait_timeout=31536000", 1);
         add_assoc_zval(pass_data, "options", new_option);
     }
     else
     {
         zval_add_ref(options);
         add_index_long(*options, PDO_ATTR_ERRMODE, PDO_ERRMODE_EXCEPTION); //set exception mode for delete pdo object from pool when gone away
-        add_index_string(*options, PDO_ATTR_DRIVER_SPECIFIC + 2, "SET SESSION wait_timeout=2147483", 1);
+        add_index_string(*options, PDO_ATTR_DRIVER_SPECIFIC + 2, "SET SESSION wait_timeout=31536000", 1);
         add_assoc_zval(pass_data, "options", *options);
     }
     return pass_data;

@@ -17,6 +17,7 @@
 #include "php_connect_pool.h"
 #include <signal.h>
 #include <sys/wait.h>
+zval *pdo_object = NULL;
 
 static int cpWorker_loop(int worker_id, int group_id)
 {
@@ -37,6 +38,8 @@ static int cpWorker_loop(int worker_id, int group_id)
     int ret, len = 0;
     int event_len = sizeof (event);
     cpSettitle(G->name);
+    cpSignalSet(SIGALRM, cpWorker_do_ping, 1, 0);
+    alarm(CP_PING_SLEEP);
     while (CPGS->running)
     {
         zval *ret_value;
@@ -351,4 +354,23 @@ CPINLINE int cpWorker_attach_mem(int worker_id, int group_id)
         return FAILURE;
     }
     return SUCCESS;
+}
+
+//fix the gone away
+void cpWorker_do_ping()
+{
+    zval * ret_value = NULL;
+    zval method, **args[1], *sql;
+    ZVAL_STRING(&method, "query", 0);
+    MAKE_STD_ZVAL(sql);
+    ZVAL_STRING(sql, "select 1", 0);
+    args[0] = &sql;
+    if (pdo_object != NULL)
+    {
+        call_user_function_ex(NULL, &pdo_object, &method, &ret_value, 1, args, 0, NULL TSRMLS_CC);
+        if (ret_value)
+            zval_ptr_dtor(&ret_value);
+    }
+    efree(sql);
+    alarm(CP_PING_SLEEP);
 }
