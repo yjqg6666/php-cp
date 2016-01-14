@@ -52,6 +52,7 @@ static int cpWorker_loop(int worker_id, int group_id)
                 cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
             }
         } while (event.pid != G->workers[worker_id].CPid); //有可能有脏数据  读出来
+        CPWG.working = 1;
         len = event.len;
         CPWG.clientPid = event.pid;
         if (ret < 0)
@@ -60,6 +61,7 @@ static int cpWorker_loop(int worker_id, int group_id)
         }
         php_msgpack_unserialize(ret_value, sm_obj->mem, len);
         worker_onReceive(ret_value);
+        CPWG.working = 0;
     }
     return SUCCESS;
 }
@@ -357,19 +359,20 @@ CPINLINE int cpWorker_attach_mem(int worker_id, int group_id)
 }
 
 //fix the gone away
+
 void cpWorker_do_ping()
 {
-    zval * ret_value = NULL;
+    zval * stmt_value = NULL;
     zval method, **args[1], *sql;
     ZVAL_STRING(&method, "query", 0);
     MAKE_STD_ZVAL(sql);
     ZVAL_STRING(sql, "select 1", 0);
     args[0] = &sql;
-    if (pdo_object != NULL)
+    if (pdo_object != NULL &&  CPWG.working == 0)
     {
-        call_user_function_ex(NULL, &pdo_object, &method, &ret_value, 1, args, 0, NULL TSRMLS_CC);
-        if (ret_value)
-            zval_ptr_dtor(&ret_value);
+        call_user_function_ex(NULL, &pdo_object, &method, &stmt_value, 1, args, 0, NULL TSRMLS_CC);
+        if (stmt_value)
+            zval_ptr_dtor(&stmt_value);
     }
     efree(sql);
     alarm(CP_PING_SLEEP);

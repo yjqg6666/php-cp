@@ -68,7 +68,7 @@ extern "C" {
 #define CP_FALSE                 0
 
 #define CP_START_SLEEP           usleep(50000);
-#define CP_PING_SLEEP             60
+#define CP_PING_SLEEP            60
 
     typedef volatile int8_t volatile_int8;
 
@@ -181,6 +181,7 @@ extern "C" {
         int id; //Current Proccess Worker's id 0,1,2,3...n
         int clientPid;
         int gid; //current worker's group id
+        int working;
         uint64_t max_read_len;
     } cpWorkerG;
 
