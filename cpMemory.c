@@ -55,29 +55,30 @@ void *cp_mmap_calloc(int size)
     }
 }
 
-int cp_create_mmap_file(cpShareMemory *object){
-
+int cp_create_mmap_file(cpShareMemory *object)
+{
     umask(0);
-    int fd = open(object->mmap_name, O_RDWR | O_CREAT,S_IROTH|S_IWOTH);
+    int fd = open(object->mmap_name, O_RDWR | O_CREAT, S_IROTH | S_IWOTH);
     if (fd == -1)
     {
         cpLog("open fail. Error: %s[%d]", strerror(errno), errno);
-        return  - 1;
-    
+        return -1;
+
     }
-    ftruncate(fd, object->size);//extend 黑洞
+    ftruncate(fd, object->size); //extend 黑洞
+    close(fd);
     return 0;
 };
 
 void* cp_mmap_calloc_with_file(cpShareMemory *object)
 {
 
-    int fd = open(object->mmap_name, O_RDWR );
+    int fd = open(object->mmap_name, O_RDWR);
     if (fd == -1)
     {
         cpLog("open fail. Error: %s[%d]", strerror(errno), errno);
-        return  NULL;
-    
+        return NULL;
+
     }
     void *mem = mmap(NULL, object->size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 #ifdef MAP_FAILED
@@ -91,7 +92,7 @@ void* cp_mmap_calloc_with_file(cpShareMemory *object)
     }
     else
     {
-//        bzero(mem, object->size);
+        //        bzero(mem, object->size);
         object->mem = mem;
         return mem;
     }
