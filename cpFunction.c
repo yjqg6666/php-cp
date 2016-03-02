@@ -129,9 +129,9 @@ CPINLINE int cpNetRead(int fd, void *buf, int len) {
         {
             return 0;
         }
-        //        else {
-        //            cpLog("worker recive error %d,len %d\n", errno, n);
-        //        }
+//                else {
+//                    cpLog("worker recive error %d,len %d,%d\n", errno, n,fd);
+//                }
     } while ((n < 0 && errno == EINTR) || n > 0);
     return total;
 }

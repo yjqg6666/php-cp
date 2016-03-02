@@ -38,7 +38,7 @@ static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
-#define CP_VERSION "1.1"
+#define CP_VERSION "1.5"
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
@@ -232,7 +232,6 @@ static void cp_destory_client(zend_rsrc_list_entry *rsrc TSRMLS_DC)
     if (cli->sock > 0)
     {
         cpClient_close(cli);
-        //        pefree(cli, 1); //长连接
     }
 }
 
@@ -362,8 +361,8 @@ CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
         cpWorkerInfo worker_event;
         worker_event.len = dest.len;
         worker_event.type = __type;
-        worker_event.pid = CPWG.clientPid;
-        int ret = write(CPGS->G[CPWG.gid].workers[CPWG.id].pipe_fd_write, &worker_event, sizeof (worker_event));
+        worker_event.pid = CPWG.event.pid;
+        int ret = write(CPWG.pipe_fd_write, &worker_event, sizeof (worker_event));
         if (ret == -1)
         {
             php_error_docref(NULL TSRMLS_CC, E_ERROR, "write error Error: %s [%d]", strerror(errno), errno);

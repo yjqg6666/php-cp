@@ -276,6 +276,7 @@ CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zen
                 *real_cli = cli_retry;
                 return cli_real_send(&cli_retry, send_data, this, ce);
             }
+
         }
         else
         {
@@ -294,12 +295,19 @@ static int cli_real_recv(cpMasterInfo *info)
     int pipe_fd_read = get_readfd(info->worker_id);
     cpWorkerInfo event;
     int ret = 0;
+
     do
     {
         ret = cpFifoRead(pipe_fd_read, &event, sizeof (event));
         if (ret < 0)
         {
             php_error_docref(NULL TSRMLS_CC, E_ERROR, "fifo read Error: %s [%d]", strerror(errno), errno);
+        }
+        if (event.pid != cpPid)
+        {
+            ret = write(pipe_fd_read, &event, sizeof (event)); //写回去 给其他的fpm
+            exit(-1);
+
         }
     } while (event.pid != cpPid); //有可能有脏数据  读出来
 
@@ -556,7 +564,6 @@ PHP_METHOD(pdo_connect_pool, __call)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
-
     cli_real_recv(&cli->info);
     if (RecvData.type == CP_SIGEVENT_PDO)
     {//返回一个模拟pdo类
@@ -583,7 +590,6 @@ PHP_METHOD(pdo_connect_pool, __destruct)
 
 PHP_METHOD(pdo_connect_pool, __construct)
 {
-    //     cpLog_init("/tmp/fpmlog");
     zval *zres, *zval_conf, *data_source, *options = NULL, *master = NULL;
     zval *object = getThis();
     char *username = NULL, *password = NULL;
@@ -607,9 +613,14 @@ PHP_METHOD(pdo_connect_pool, __construct)
     {
         cli = (cpClient*) p_sock_le->ptr;
         ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
+        if (cli->released == CP_FD_NRELEASED)
+        {
+            zend_throw_exception(NULL, "you must release current pdo or redis connection before you get a new connection", 0 TSRMLS_CC);
+        }
     }
     else
     {//create long connect to pool_server
+//        cpLog_init("/tmp/fpmlog");
         if ((cli = connect_pool_perisent(zres, port)) == NULL)
         {// error
             efree(zres);
@@ -702,6 +713,10 @@ PHP_METHOD(redis_connect_pool, __construct)
     {
         cli = (cpClient*) p_sock_le->ptr;
         ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
+        if (cli->released == CP_FD_NRELEASED)
+        {
+            zend_throw_exception(NULL, "you must release current pdo or redis connection before you get a new connection", 0 TSRMLS_CC);
+        }
     }
     else
     {//这个fpm进程第一次创建连接

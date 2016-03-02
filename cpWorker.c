@@ -19,47 +19,62 @@
 #include <sys/wait.h>
 zval *pdo_object = NULL;
 
-static int cpWorker_loop(int worker_id, int group_id)
+static void cpWorker_do_stop()
 {
+    cpGroup *G = &CPGS->G[CPWG.gid];
+    if (G->workers[CPWG.id].pid != CPWG.pid && CPWG.event.pid != 0)//G->workers[CPWG.id].pid IS 0 or new pid
+    {//i am die already
+        int ret = write(CPWG.pipe_fd_read, &CPWG.event, sizeof (cpWorkerInfo)); //write back give the real worker
+        if (ret < 0)
+        {
+            cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
+        }
+    }
+    exit(0);
+}
+
+static void cpWorker_init(int worker_id, int group_id)
+{
+    //标识为worker进程
+    CPGL.process_type = CP_PROCESS_WORKER;
+    cpWorker_attach_mem(worker_id, group_id);
+
     CPWG.id = worker_id;
     CPWG.gid = group_id;
-    cpGroup *G = &CPGS->G[group_id];
+    CPWG.pid = getpid();
+
     char fifo_name[CP_FIFO_NAME_LEN] = {0};
     sprintf(fifo_name, "%s_%d", CP_FIFO_NAME_PRE, group_id * CP_GROUP_LEN + worker_id); //client 2 worker
-    int pipe_fd_read = cpCreateFifo(fifo_name);
+    CPWG.pipe_fd_read = cpCreateFifo(fifo_name);
 
     sprintf(fifo_name, "%s_%d_1", CP_FIFO_NAME_PRE, group_id * CP_GROUP_LEN + worker_id); //worker 2 client
     int pipe_fd_write = cpCreateFifo(fifo_name);
-    G->workers[worker_id].pipe_fd_write = pipe_fd_write;
+    CPWG.pipe_fd_write = pipe_fd_write;
+}
+
+static int cpWorker_loop(int worker_id, int group_id)
+{
+    cpWorker_init(worker_id, group_id);
+    cpGroup *G = &CPGS->G[group_id];
     cpShareMemory *sm_obj = &(G->workers[worker_id].sm_obj);
 
-    cpWorkerInfo event;
-    bzero(&event, sizeof (event));
-    int ret, len = 0;
-    int event_len = sizeof (event);
+    int ret;
     cpSettitle(G->name);
     cpSignalSet(SIGALRM, cpWorker_do_ping, 1, 0);
+    cpSignalSet(SIGTERM, cpWorker_do_stop, 1, 0);
     alarm(CP_PING_SLEEP);
     while (CPGS->running)
     {
         zval *ret_value;
         ALLOC_INIT_ZVAL(ret_value);
-        do
-        {
-            ret = cpFifoRead(pipe_fd_read, &event, event_len);
-            if (ret < 0)
-            {
-                cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
-            }
-        } while (event.pid != G->workers[worker_id].CPid); //有可能有脏数据  读出来
-        CPWG.working = 1;
-        len = event.len;
-        CPWG.clientPid = event.pid;
+        bzero(&CPWG.event, sizeof (cpWorkerInfo));
+        ret = cpFifoRead(CPWG.pipe_fd_read, &CPWG.event, sizeof (cpWorkerInfo));
         if (ret < 0)
         {
             cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
         }
-        php_msgpack_unserialize(ret_value, sm_obj->mem, len);
+        CPWG.working = 1;
+        php_msgpack_unserialize(ret_value, sm_obj->mem, CPWG.event.len);
         worker_onReceive(ret_value);
         CPWG.working = 0;
     }
@@ -77,9 +92,6 @@ int cpFork_one_worker(int worker_id, int group_id)
     }
     else if (pid == 0)
     {
-        //标识为worker进程
-        CPGL.process_type = CP_PROCESS_WORKER;
-        cpWorker_attach_mem(worker_id, group_id);
         ret = cpWorker_loop(worker_id, group_id);
         exit(ret);
     }
@@ -97,9 +109,11 @@ static void cpManagerRecycle(int sig)
         cpGroup *G = &CPGS->G[j];
         if (pthread_mutex_trylock(G->mutex_lock) == 0)
         {
-            //                                for (i = CPGS->worker_num - 1; i >= 0; i--) {
-            //                                    cpLog("index is %d,pid is %d,status is %d", i, CPGS->workers[i].pid, CPGS->workers_status[i]);
-            //                                }
+//            for (i = G->worker_num - 1; i >= 0; i--)
+//            {
+//                cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
+//            }
+//            cpLog("________________");
             for (i = G->worker_num - 1; i >= G->worker_min; i--)
             {
                 if (G->workers_status[i] == CP_WORKER_BUSY)
@@ -368,7 +382,7 @@ void cpWorker_do_ping()
     MAKE_STD_ZVAL(sql);
     ZVAL_STRING(sql, "select 1", 0);
     args[0] = &sql;
-    if (pdo_object != NULL &&  CPWG.working == 0)
+    if (pdo_object != NULL && CPWG.working == 0)
     {
         call_user_function_ex(NULL, &pdo_object, &method, &stmt_value, 1, args, 0, NULL TSRMLS_CC);
         if (stmt_value)

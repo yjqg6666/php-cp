@@ -47,6 +47,7 @@ extern "C" {
 
 #define CP_UNSOCK_BUFSIZE        (4*1024*1024)
 
+#define CP_WORKER_STARTING       5
 #define CP_WORKER_RESTART        4    
 #define CP_WORKER_DELING         3
 #define CP_WORKER_BUSY           2
@@ -179,10 +180,13 @@ extern "C" {
 
     typedef struct _cpWorkerG {
         int id; //Current Proccess Worker's id 0,1,2,3...n
-        int clientPid;
         int gid; //current worker's group id
+        int pid;
         int working;
         uint64_t max_read_len;
+        int pipe_fd_read;
+        int pipe_fd_write;
+        cpWorkerInfo event;
     } cpWorkerG;
 
     void cpServer_init(zval *conf, char *ini_file);
