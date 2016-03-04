@@ -138,7 +138,7 @@ int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int no
 
     if (nonblock == 1)
     {
-        swSetNonBlock(cli->sock);
+        cpSetNonBlock(cli->sock);
     }
     else
     {

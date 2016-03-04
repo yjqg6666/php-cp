@@ -107,7 +107,7 @@ static void cpManagerRecycle(int sig)
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
-        if (pthread_mutex_trylock(G->mutex_lock) == 0)
+        if (G->tryLock(G) == 0)
         {
 //            for (i = G->worker_num - 1; i >= 0; i--)
 //            {
@@ -145,10 +145,7 @@ static void cpManagerRecycle(int sig)
                     }
                 }
             }
-            if (pthread_mutex_unlock(G->mutex_lock) != 0)
-            {
-                cpLog("pthread_spin_unlock. Error: %s [%d]", strerror(errno), errno);
-            }
+            G->unLock(G);
         }
     }
 
@@ -213,7 +210,7 @@ static void cpManagerReload(int sig)
                     cpLog("can not add datasource when the server runing,if you want add it please restart");
                     return;
                 }
-                if (pthread_mutex_lock(G->mutex_lock) == 0)
+                if (G->lock(G) == 0)
                 {
                     if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
                     {
@@ -245,10 +242,7 @@ static void cpManagerReload(int sig)
                         G->worker_min = new_min;
                     }
 
-                    if (pthread_mutex_unlock(G->mutex_lock) != 0)
-                    {
-                        cpLog("pthread_mutex_unlock. Error: %s [%d]", strerror(errno), errno);
-                    }
+                    G->unLock(G);
                 }
             }
             else

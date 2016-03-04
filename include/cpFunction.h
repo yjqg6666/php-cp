@@ -56,9 +56,7 @@ extern "C" {
     int cpLog_init(char *logfile);
     int pid_init();
     int set_pid(int pid);
-    void swLog_free(void);
-    CPINLINE void swSetNonBlock(int sock);
-    CPINLINE void swSetBlock(int sock);
+    CPINLINE void cpSetNonBlock(int sock);
     void swSingalNone();
     CPINLINE int cpWrite(int fd, void *buf, int count);
     CPINLINE int cpSetTimeout(int sock, double timeout);

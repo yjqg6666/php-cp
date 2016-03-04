@@ -12,14 +12,14 @@ $rs = $obj->query("show tables");
 var_dump($rs->fetchAll());
 
 //*****************use pool（使用了连接池）*********************************/
-$obj = new redis_connect_pool();
+$obj = new redisProxy();
 $rs = $obj->connect("192.168.20.130");
 $obj->select(5);
 $obj->set("test", '1111');
 var_dump($obj->get("test"));
 $obj->release();
 
-$obj1 = new pdo_connect_pool('mysql:host=192.168.20.131;dbname=db1', "admin", "admin");
+$obj1 = new pdoProxy('mysql:host=192.168.20.131;dbname=db1', "admin", "admin");
 $rs = $obj1->query("show tables");
 var_dump($rs->fetchAll());
 $obj1->release();
@@ -62,7 +62,7 @@ $config = array(
     ),
 );
 /***************************"select"和"show"开头的语句 走随机从库***********/
-$obj1 = new pdo_connect_pool($config);
+$obj1 = new pdoProxy($config);
 $rs = $obj1->query("select * from test limit 1");
 var_dump($rs->fetchAll());//走随机从库
 $obj1->release();

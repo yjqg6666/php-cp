@@ -58,10 +58,6 @@ int set_pid(int pid) {
     return SUCCESS;
 }
 
-void swLog_free(void) {
-    fclose(cp_log_fn);
-}
-
 CPINLINE int cpWrite(int fd, void *buf, int count) {
     int nwritten = 0, totlen = 0;
     while (totlen != count)
@@ -177,7 +173,7 @@ void cpSettitle(char *title_name) {
 
 //将套接字设置为非阻塞方式
 
-CPINLINE void swSetNonBlock(int sock) {
+CPINLINE void cpSetNonBlock(int sock) {
     int opts, ret;
     do
     {
@@ -188,28 +184,6 @@ CPINLINE void swSetNonBlock(int sock) {
         cpLog("fcntl(sock,GETFL) fail");
     }
     opts = opts | O_NONBLOCK;
-    do
-    {
-        ret = fcntl(sock, F_SETFL, opts);
-    } while (ret < 0 && errno == EINTR);
-    if (ret < 0)
-    {
-        cpLog("fcntl(sock,SETFL,opts) fail");
-    }
-}
-
-CPINLINE void swSetBlock(int sock) {
-    int opts, ret;
-    do
-    {
-        opts = fcntl(sock, F_GETFL);
-    } while (opts < 0 && errno == EINTR);
-
-    if (opts < 0)
-    {
-        cpLog("fcntl(sock,GETFL) fail");
-    }
-    opts = opts & ~O_NONBLOCK;
     do
     {
         ret = fcntl(sock, F_SETFL, opts);

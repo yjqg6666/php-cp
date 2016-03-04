@@ -154,6 +154,10 @@ extern "C" {
         cpWaitList *WaitList; //获得失败的wait队列
         cpWaitList *WaitTail; //获得失败的wait队列队尾
         char name[100]; //group name
+
+        int (*lock)(struct _cpGroup *);
+        int (*unLock)(struct _cpGroup *);
+        int (*tryLock)(struct _cpGroup *);
     } cpGroup;
 
     typedef struct _cpServerGS {
@@ -192,6 +196,10 @@ extern "C" {
     void cpServer_init(zval *conf, char *ini_file);
     int cpServer_create();
     int cpServer_start();
+    int cpMutexLock(cpGroup *);
+    int cpMutexUnLock(cpGroup *);
+    int cpMutexTryLock(cpGroup *);
+
 
 #ifdef	__cplusplus
 }

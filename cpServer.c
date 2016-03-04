@@ -156,6 +156,9 @@ void cpServer_init(zval *conf, char *ini_file)
                 cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
                 return;
             }
+            CPGS->G[group_num].lock = cpMutexLock;
+            CPGS->G[group_num].unLock = cpMutexUnLock;
+            CPGS->G[group_num].tryLock = cpMutexTryLock;
             CPGS->G[group_num].WaitList = CPGS->G[group_num].WaitTail = NULL;
             CPGS->group_num++;
             group_num++;
@@ -451,30 +454,31 @@ static int cpReactor_client_get(int fd, void *data)
     {
         gid = Z_LVAL_PP(gid_ptr);
         cpGroup *G = &CPGS->G[gid];
-        if (pthread_mutex_lock(G->mutex_lock) == 0)
+        if (G->lock(G) == 0)
         {
-             cpServer_try_get_worker(conn, data, fd, gid);
+            cpServer_try_get_worker(conn, data, fd, gid);
             switch (conn->release)
             {
                 case CP_FD_WAITING:
+                    G->unLock(G);
                     ret = SUCCESS;
                     break;
                 case CP_FD_RELEASED:
                 {
+                    G->unLock(G);
                     char tmp[sizeof (CP_TOO_MANY_CON_ERR) + sizeof (CP_CLIENT_EOF_STR)] = {CP_TOO_MANY_CON_ERR};
                     strcat(tmp, CP_CLIENT_EOF_STR);
                     ret = cpWrite(fd, tmp, strlen(tmp));
                     break;
                 }
                 case CP_FD_NRELEASED:
+                    G->unLock(G);
                     ret = cpServer_send2client(fd, conn->worker_id, event->ClientPid, gid);
                     break;
                 default:
+                    G->unLock(G);
+                    cpLog("wrong conn satus %d", conn->release);
                     break;
-            }
-            if (pthread_mutex_unlock(G->mutex_lock) != 0)
-            {
-                cpLog("pthread_mutex_unlock. Error: %s [%d]", strerror(errno), errno);
             }
         }
     }
@@ -600,13 +604,10 @@ static int cpReactor_client_receive(int fd)
         if (event->type == CP_TCPEVENT_RELEASE)
         {
             cpGroup *G = &CPGS->G[conn->group_id];
-            if (pthread_mutex_lock(G->mutex_lock) == 0)
+            if (G->lock(G) == 0)
             {
                 ret = cpReactor_client_release(fd);
-                if (pthread_mutex_unlock(G->mutex_lock) != 0)
-                {
-                    cpLog("pthread_mutex_unlock. Error: %s [%d]", strerror(errno), errno);
-                }
+                G->unLock(G);
             }
         }
         else
@@ -734,7 +735,7 @@ int static cpListen()
         cpLog("Listen fail.port=%d. Error: %s [%d]", CPGC.port, strerror(errno), errno);
         return FAILURE;
     }
-    swSetNonBlock(sock);
+    cpSetNonBlock(sock);
 
     if (sock < 0)
     {
@@ -784,6 +785,36 @@ static void cpSignalHanlde(int sig)
         default:
             break;
     }
+}
+
+int cpMutexLock(cpGroup *G)
+{
+    if (pthread_mutex_lock(G->mutex_lock) != 0)
+    {
+        cpLog("pthread_mutex_lock. Error: %s [%d]", strerror(errno), errno);
+        return -1;
+    }
+    return 0;
+}
+
+int cpMutexUnLock(cpGroup *G)
+{
+    if (pthread_mutex_unlock(G->mutex_lock) != 0)
+    {
+        cpLog("pthread_mutex_unlock. Error: %s [%d]", strerror(errno), errno);
+        return -1;
+    }
+    return 0;
+}
+
+int cpMutexTryLock(cpGroup *G)
+{
+    if (pthread_mutex_trylock(G->mutex_lock) != 0)
+    {
+        cpLog("pthread_mutex_trylock. Error: %s [%d]", strerror(errno), errno);
+        return -1;
+    }
+    return 0;
 }
 
 void static cpSignalInit(void)
