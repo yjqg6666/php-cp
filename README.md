@@ -103,7 +103,10 @@ $obj1->release();
 ## 提示
 - pool_server 必须以root用户启动
 - redis不支持pub/sub方法
+- 关于异常“you must release current pdo or redis connection before you get a new connection”   在新的版本中当你用完一个连接后（例如：fetchAll调用结束）没有调用release方法就再次new了其他的数据源会报这个错  
+这样做的目的是提醒你不要同时占用2个连接，这样是对资源的浪费，解决方案是在框架层每次fetch（或者get/set）用完之后调用release方法。
 
 ## contact us
 - http://weibo.com/u/2661945152
 - 83212019@qq.com
+- qq群号 538716391
