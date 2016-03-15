@@ -28,6 +28,7 @@ extern "C" {
 #define CP_RECYCLE_NUM           2
 #define CP_DEF_MAX_READ_LEN      (1024*1024*5)
 #define CP_MAX_READ_LEN          (1024*1024*20)
+#define CP_SOURCE_LEN            200
 
 #define CP_PING_MEM_LEN          1024*1024
 #define CP_PING_DIS_LEN          409600  //disable list mem

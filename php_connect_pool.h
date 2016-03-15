@@ -110,6 +110,13 @@ extern zend_module_entry connect_pool_module_entry;
 
 #define CP_TCPEVENT_GET         1
 #define CP_TCPEVENT_RELEASE     2
+#define CP_GET_PID if(cpPid==0)cpPid=getpid()
+
+typedef struct _cpRecvEvent
+{
+    zval *ret_value;
+    uint8_t type;
+} cpRecvEvent;
 
 #define CP_SIGEVENT_TURE         1//01
 #define CP_SIGEVENT_EXCEPTION    2//10
@@ -150,9 +157,6 @@ PHP_FUNCTION(pool_server_shutdown);
 PHP_FUNCTION(pool_server_reload);
 PHP_FUNCTION(pool_server_version);
 
-PHP_FUNCTION(get_disable_list);
-
-PHP_FUNCTION(client_close);
 
 
 

@@ -15,14 +15,14 @@ typedef struct _cpClient
 {
 	int sock;
         int released;
-        int port;
+//        int port;
 	double timeout;
         
         struct sockaddr_in serv_addr;
 	struct sockaddr_in remote_addr;
         
         cpMasterInfo info;
-        
+//        char data_source[CP_SOURCE_LEN];
 } cpClient;
 
 int cpClient_close(cpClient *cli);

@@ -91,8 +91,6 @@ const zend_function_entry cp_functions[] = {
     PHP_FE(pool_server_shutdown, NULL)
     PHP_FE(pool_server_reload, NULL)
     PHP_FE(pool_server_version, NULL)
-    PHP_FE(get_disable_list, NULL)
-    PHP_FE(client_close, NULL)
     PHP_FE_END /* Must be the last line in cp_functions[] */
 };
 
@@ -250,7 +248,7 @@ void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC)
     }
     else if (cli->released == CP_FD_NRELEASED)
     {//防止release后rshutdown的重复释放
-        cpTcpEvent event;
+        cpTcpEvent event = {0};
         event.type = CP_TCPEVENT_RELEASE;
         event.ClientPid = 0;
         int ret = cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);

@@ -104,16 +104,19 @@ int cpFork_one_worker(int worker_id, int group_id)
 static void cpManagerRecycle(int sig)
 {
     int i, recycle_num = 0, j;
+    cpLog("monitor:start___________________");
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
+        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num,G->worker_max,G->worker_min);
         if (G->tryLock(G) == 0)
         {
-//            for (i = G->worker_num - 1; i >= 0; i--)
-//            {
-//                cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
-//            }
-//            cpLog("________________");
+//                        for (i = G->worker_num - 1; i >= 0; i--)
+//                        {
+//                            cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
+//                        }
+//                        cpLog("________________");
+
             for (i = G->worker_num - 1; i >= G->worker_min; i--)
             {
                 if (G->workers_status[i] == CP_WORKER_BUSY)
@@ -148,7 +151,7 @@ static void cpManagerRecycle(int sig)
             G->unLock(G);
         }
     }
-
+    cpLog("monitor:end___________________\n");
     alarm(CPGC.idel_time);
 }
 
