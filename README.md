@@ -37,10 +37,10 @@ step 3 modify you php script:
 ```
 <?php
 $db = new PDO(xxxxx);
-=> $db = new pdo_connect_pool(xxxx);//dont use persistent
+=> $db = new pdoProxy(xxxx);//dont use persistent
 
 $redis = new Redis();
-=》$redis = new redis_connect_pool();//dont use pconnect
+=》$redis = new redisProxy();//dont use pconnect
 
 tips:use $db/$redis->release() to release the connection  as early as you can;
 
@@ -81,7 +81,7 @@ $config = array(
     ),
 );
 /***************************"select"和"show"开头的语句 走随机从库***********/
-$obj1 = new pdo_connect_pool($config);
+$obj1 = new pdoProxy($config);
 $rs = $obj1->query("select * from test limit 1");
 var_dump($rs->fetchAll());//走随机从库
 $obj1->release();
