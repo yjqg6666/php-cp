@@ -38,7 +38,7 @@ static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
-#define CP_VERSION "1.5"
+#define CP_VERSION "1.4.2"
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
@@ -213,7 +213,7 @@ PHP_MINFO_FUNCTION(connect_pool)
     php_info_print_table_start();
     php_info_print_table_header(2, "connect_poll support", "enabled");
     php_info_print_table_row(2, "Version", CP_VERSION);
-    php_info_print_table_row(2, "Author", "郭新华");
+    php_info_print_table_row(2, "Author", "郭新华，张磊");
     php_info_print_table_row(2, "email", "woshiguo35@sina.com");
     php_info_print_table_end();
 }
