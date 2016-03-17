@@ -318,7 +318,7 @@ static int cli_real_recv(cpMasterInfo *info)
 }
 
 static void check_need_exchange(zval * object, char *cur_type)
-{//修复:用了ms  但切换的时候忘记release了会导致一个worker多个连接的问题
+{
     char *lt = NULL;
     zval **last_type;
     // compare with last_type
@@ -329,7 +329,6 @@ static void check_need_exchange(zval * object, char *cur_type)
     // exchange 
     if (cur_type != lt)
     {
-        release_worker(object);
         zend_update_property_string(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("last_type"), cur_type TSRMLS_CC);
     }
 }
@@ -536,16 +535,6 @@ PHP_METHOD(pdo_connect_pool, __call)
         RETURN_FALSE;
     }
 
-    cpClient *cli;
-    if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
-    {
-        ZEND_FETCH_RESOURCE(cli, cpClient*, zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-    }
-    else
-    {
-        php_error_docref(NULL TSRMLS_CC, E_WARNING, "pdo_connect_pool: object is not instanceof pdo_connect_pool. ");
-        RETURN_FALSE;
-    }
 
     if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("use_ms"), (void **) &use_ms) == SUCCESS)
     {
@@ -557,6 +546,23 @@ PHP_METHOD(pdo_connect_pool, __call)
         check_need_exchange(getThis(), cur_type);
     }
     pass_data = create_pass_data(cmd, z_args, object, cur_type, &source_zval);
+
+    cpClient *cli;
+    if (zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
+    {
+        ZEND_FETCH_RESOURCE(cli, cpClient*, zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
+    }
+    else
+    {
+        zval *tmp;
+        tmp = cpConnect_pool_server(source_zval);
+         zend_update_property_string(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), Z_STRVAL_P(source_zval) TSRMLS_CC);
+        zres = &tmp;
+        zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), tmp TSRMLS_CC);
+        ZEND_FETCH_RESOURCE(cli, cpClient*, &tmp, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
+        zval_ptr_dtor(&tmp);
+    }
+
     int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
     if (ret < 0)
     {
@@ -588,7 +594,7 @@ PHP_METHOD(pdo_connect_pool, __destruct)
 
 PHP_METHOD(pdo_connect_pool, __construct)
 {
-    zval *zres, *zval_conf, *data_source, *options = NULL, *master = NULL;
+    zval *zval_conf, *data_source, *options = NULL, *master = NULL;
     zval *object = getThis();
     char *username = NULL, *password = NULL;
     int usernamelen, passwordlen;
@@ -601,7 +607,6 @@ PHP_METHOD(pdo_connect_pool, __construct)
         return;
     }
     CP_GET_PID;
-    zres = cpConnect_pool_server(data_source);
     switch (Z_TYPE_P(data_source))
     {
         case IS_STRING:
@@ -621,16 +626,14 @@ PHP_METHOD(pdo_connect_pool, __construct)
             add_assoc_zval(zval_conf, "master", master);
             zend_update_property_bool(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("use_ms"), 0 TSRMLS_CC);
             zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("config"), zval_conf TSRMLS_CC);
+            zend_update_property_string(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), Z_STRVAL_P(data_source) TSRMLS_CC);
             break;
         case IS_ARRAY:
             zval_add_ref(&data_source);
             zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("config"), data_source TSRMLS_CC);
             break;
     }
-    zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), zres TSRMLS_CC);
-    zend_update_property_string(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), Z_STRVAL_P(data_source) TSRMLS_CC);
     zend_update_property_bool(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("enable_slave"), 1 TSRMLS_CC);
-    zval_ptr_dtor(&zres);
 }
 
 PHP_METHOD(pdo_connect_pool, release)
