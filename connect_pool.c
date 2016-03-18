@@ -174,7 +174,7 @@ PHP_MINIT_FUNCTION(connect_pool)
 
     INIT_CLASS_ENTRY(redis_connect_pool_ce, "redis_connect_pool", redis_connect_pool_methods);
     redis_connect_pool_class_entry_ptr = zend_register_internal_class(&redis_connect_pool_ce TSRMLS_CC);
-    
+
     INIT_CLASS_ENTRY(redis_connect_pool_ce, "redisProxy", redis_connect_pool_methods);
     redis_connect_pool_class_entry_ptr = zend_register_internal_class(&redis_connect_pool_ce TSRMLS_CC);
 
@@ -835,7 +835,8 @@ static void redis_dispatch(zval * args)
                     CP_SEND_EXCEPTION_ARGS(&str);
                     char *p = strstr(Z_STRVAL_P(str), "server went away");
                     char *p2 = strstr(Z_STRVAL_P(str), "Connection lost");
-                    if (p || p2)
+                    char *p3 = strstr(Z_STRVAL_P(str), "read error on connection");
+                    if (p || p2 || p3)
                     {
                         zend_hash_del(&redis_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
                     }

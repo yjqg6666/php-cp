@@ -293,7 +293,7 @@ static int cli_real_recv(cpMasterInfo *info)
     int pipe_fd_read = get_readfd(info->worker_id);
     cpWorkerInfo event;
     int ret = 0;
-
+    int i = 0;
     do
     {
         ret = cpFifoRead(pipe_fd_read, &event, sizeof (event));
@@ -303,9 +303,14 @@ static int cli_real_recv(cpMasterInfo *info)
         }
         if (event.pid != cpPid)
         {
-            ret = write(pipe_fd_read, &event, sizeof (event)); //写回去 给其他的fpm
+            if (kill(event.pid, SIGINT) != -1)
+            {//查看进程是否存在
+                ret = write(pipe_fd_read, &event, sizeof (event)); //写回去 给其他的fpm
+            }
+        }
+        if (++i > 1000)
+        {
             exit(-1);
-
         }
     } while (event.pid != cpPid); //有可能有脏数据  读出来
 
@@ -556,7 +561,7 @@ PHP_METHOD(pdo_connect_pool, __call)
     {
         zval *tmp;
         tmp = cpConnect_pool_server(source_zval);
-         zend_update_property_string(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), Z_STRVAL_P(source_zval) TSRMLS_CC);
+        zend_update_property_string(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), Z_STRVAL_P(source_zval) TSRMLS_CC);
         zres = &tmp;
         zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), tmp TSRMLS_CC);
         ZEND_FETCH_RESOURCE(cli, cpClient*, &tmp, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
