@@ -73,6 +73,11 @@ static int cpWorker_loop(int worker_id, int group_id)
         {
             cpLog("fifo read Error: %s [%d]", strerror(errno), errno);
         }
+        if (CPWG.event.pid != G->workers[CPWG.id].CPid)
+        {
+            cpLog("warning: read a wrong event,maybe you restart the pool server");
+            continue;
+        }
         CPWG.working = 1;
         php_msgpack_unserialize(ret_value, sm_obj->mem, CPWG.event.len);
         worker_onReceive(ret_value);
@@ -108,14 +113,14 @@ static void cpManagerRecycle(int sig)
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
-        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num,G->worker_max,G->worker_min);
+        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
         if (G->tryLock(G) == 0)
         {
-//                        for (i = G->worker_num - 1; i >= 0; i--)
-//                        {
-//                            cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
-//                        }
-//                        cpLog("________________");
+            //                        for (i = G->worker_num - 1; i >= 0; i--)
+            //                        {
+            //                            cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
+            //                        }
+            //                        cpLog("________________");
 
             for (i = G->worker_num - 1; i >= G->worker_min; i--)
             {
