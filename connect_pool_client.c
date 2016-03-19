@@ -68,7 +68,6 @@ static zval * cpConnect_pool_server(zval *data_source)
     }
     else
     {//create long connect to pool_server
-        //        cpLog_init("/tmp/fpmlog");
         if (connect_pool_perisent(zres, data_source) == NULL)
         {// error
             efree(zres);
@@ -174,7 +173,7 @@ static void* get_attach_buf(int worker_id, int max, char *mm_name)
         int fd = open(mm_name, O_RDWR);
         if (fd == -1)
         {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, "open error Error: %s [%d]", strerror(errno), errno);
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "open error Error: %s [%d],%s", strerror(errno), errno, mm_name);
         }
         if ((buf = mmap(NULL, max, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) < 0)
         {
@@ -340,11 +339,20 @@ static void check_need_exchange(zval * object, char *cur_type)
 
 static char* php_check_ms(char *cmd, zval *z_args, zval* object)
 {
-    zval **enable_slave, **sql;
+    zval **enable_slave, **sql, **in_tran;
     char *cur_type = "m";
-    zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("enable_slave"), (void **) &enable_slave);
-    if (!Z_BVAL_PP(enable_slave))
+    if (strcasecmp("beginTransaction", cmd) == 0)
     {
+        zend_update_property_bool(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("in_tran"), 1 TSRMLS_CC);
+    }
+    if (strcasecmp("commit", cmd) == 0 || strcasecmp("rollback", cmd) == 0)
+    {
+        zend_update_property_bool(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("in_tran"), 0 TSRMLS_CC);
+    }
+    zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("enable_slave"), (void **) &enable_slave);
+    zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("in_tran"), (void **) &in_tran);
+    if (!Z_BVAL_PP(enable_slave) || Z_BVAL_PP(in_tran))
+    {//todo 
         return cur_type;
     }
 
@@ -638,6 +646,7 @@ PHP_METHOD(pdo_connect_pool, __construct)
             zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("config"), data_source TSRMLS_CC);
             break;
     }
+    zend_update_property_bool(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("in_tran"), 0 TSRMLS_CC);
     zend_update_property_bool(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("enable_slave"), 1 TSRMLS_CC);
 }
 
