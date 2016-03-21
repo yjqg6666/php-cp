@@ -836,7 +836,8 @@ static void redis_dispatch(zval * args)
                     char *p = strstr(Z_STRVAL_P(str), "server went away");
                     char *p2 = strstr(Z_STRVAL_P(str), "Connection lost");
                     char *p3 = strstr(Z_STRVAL_P(str), "read error on connection");
-                    if (p || p2 || p3)
+                    char *p4 = strstr(Z_STRVAL_P(str), "Connection closed");
+                    if (p || p2 || p3 || p4)
                     {
                         zend_hash_del(&redis_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
                     }

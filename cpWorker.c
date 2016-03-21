@@ -116,11 +116,11 @@ static void cpManagerRecycle(int sig)
         cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
         if (G->tryLock(G) == 0)
         {
-            //                        for (i = G->worker_num - 1; i >= 0; i--)
-            //                        {
-            //                            cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
-            //                        }
-            //                        cpLog("________________");
+//                                    for (i = G->worker_num - 1; i >= 0; i--)
+//                                    {
+//                                        cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
+//                                    }
+//                                    cpLog("________________");
 
             for (i = G->worker_num - 1; i >= G->worker_min; i--)
             {
