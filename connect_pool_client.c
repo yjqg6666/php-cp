@@ -249,11 +249,8 @@ CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zen
         }
         if (n > 0)
         {
+            cli->released = CP_FD_NRELEASED;
             ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->mmap_name);
-            if (ret == SUCCESS)
-            {
-                cli->released = CP_FD_NRELEASED;
-            }
         }
         else if (n == 0)
         {

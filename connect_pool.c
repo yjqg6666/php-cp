@@ -718,7 +718,6 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
     ZVAL_STRING(&pcon_fun_name, "connect", 0);
     call_user_function_ex(NULL, &new_obj, &pcon_fun_name, &ret_redis_obj, 3, tmp_pass, 0, NULL TSRMLS_CC);
     efree(timeout);
-
     if (ret_redis_obj)
     {
         if (Z_BVAL_P(ret_redis_obj) == FALSE)
@@ -784,6 +783,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
             }
             else
             {
+                zend_hash_del(&redis_object_table, Z_STRVAL_P(data_source), Z_STRLEN_P(data_source));
                 CP_SEND_EXCEPTION;
             }
         }
@@ -833,14 +833,15 @@ static void redis_dispatch(zval * args)
                 {
                     zval *str;
                     CP_SEND_EXCEPTION_ARGS(&str);
-                    char *p = strstr(Z_STRVAL_P(str), "server went away");
-                    char *p2 = strstr(Z_STRVAL_P(str), "Connection lost");
-                    char *p3 = strstr(Z_STRVAL_P(str), "read error on connection");
-                    char *p4 = strstr(Z_STRVAL_P(str), "Connection closed");
-                    if (p || p2 || p3 || p4)
-                    {
-                        zend_hash_del(&redis_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
-                    }
+                    //                    char *p = strstr(Z_STRVAL_P(str), "server went away");
+                    //                    char *p2 = strstr(Z_STRVAL_P(str), "Connection lost");
+                    //                    char *p3 = strstr(Z_STRVAL_P(str), "read error on connection");
+                    //                    char *p4 = strstr(Z_STRVAL_P(str), "Connection closed");
+                    //                    if (p || p2 || p3 || p4)
+                    //                    {
+                    zend_hash_del(&redis_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
+                    //                    }
+//                    cpLog("fuck %s",Z_STRVAL_P(str));
                     zval_ptr_dtor(&str);
                 }
                 else

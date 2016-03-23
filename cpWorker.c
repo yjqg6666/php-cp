@@ -115,7 +115,7 @@ static void cpManagerRecycle(int sig)
         cpGroup *G = &CPGS->G[j];
         recycle_num = 0;
         cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
-        if (G->tryLock(G) == 0)
+        if (G->lock(G) == 0)
         {
 //                                    for (i = G->worker_num - 1; i >= 0; i--)
 //                                    {

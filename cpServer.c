@@ -91,7 +91,8 @@ void cpServer_init(zval *conf, char *ini_file)
     }
     bzero(&CPGL, sizeof (cpServerG));
     CPGC.backlog = CP_BACKLOG;
-    CPGC.reactor_num = CP_CPU_NUM;
+//    CPGC.reactor_num = CP_CPU_NUM;
+    CPGC.reactor_num = 2;
     CPGC.timeout_sec = CP_REACTOR_TIMEO_SEC;
     CPGC.timeout_usec = CP_REACTOR_TIMEO_USEC;
     CPGC.max_conn = CP_MAX_FDS;
