@@ -25,10 +25,11 @@ int cpClient_close(cpClient *cli)
     {
         cpLog("client close fail. Error: %s[%d]", strerror(errno), errno);
     }
+    CPGS = NULL;
     return ret;
 }
 
-int cpClient_recv(cpClient *cli, void *data, int len, int waitall)
+int cpClient_recv(int sock, void *data, int len, int waitall)
 {
     //    int flag = 0, ret;
     //    if (waitall == 1) {
@@ -44,7 +45,7 @@ int cpClient_recv(cpClient *cli, void *data, int len, int waitall)
     //            return SUCCESS;
     //        }
     //    }
-    return cpNetRead(cli->sock, data, len);
+    return cpNetRead(sock, data, len);
 }
 
 int cpClient_send(int sock, char *data, int length, int flag)
@@ -161,10 +162,6 @@ int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int no
             //            }
         }
         break;
-    }
-    if (ret >= 0)
-    {
-        cli->released = CP_FD_RELEASED;
     }
     return ret;
 }

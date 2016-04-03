@@ -18,7 +18,6 @@
 int static cpListen();
 void static cpSignalHanlde(int sig);
 void static cpSignalInit(void);
-void static cpServer_try_get_worker(cpConnection *conn, char * data, int fd, int group_id);
 int static cpReactor_client_close(int fd);
 static int cpReactor_client_receive(int fd);
 static int cpReactor_client_release(int fd);
@@ -61,12 +60,6 @@ void cpServer_init_common(zval *conf)
         CPGC.idel_time = (int) Z_LVAL_PP(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("use_wait_queue"), (void **) &v) == SUCCESS)
-    {
-        convert_to_long(*v);
-        CPGC.use_wait_queue = (int) Z_LVAL_PP(v);
-    }
-
     if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ser_fail_hits"), (void **) &v) == SUCCESS)
     {
         convert_to_long(*v);
@@ -83,16 +76,29 @@ void cpServer_init_common(zval *conf)
 void cpServer_init(zval *conf, char *ini_file)
 {
     size_t group_num = 0;
-    CPGS = (cpServerGS*) cp_mmap_calloc(sizeof (cpServerGS));
-    if (CPGS == NULL)
+    cpShareMemory shm = {0};
+    shm.size = sizeof (cpServerGS);
+    strncpy(shm.mmap_name, CP_SERVER_MMAP_FILE, strlen(CP_SERVER_MMAP_FILE));
+    if (cp_create_mmap_file(&shm) == 0)
+    {
+        CPGS = (cpServerGS*) cp_mmap_calloc_with_file(&shm);
+        bzero(CPGS, shm.size);
+        if (CPGS == NULL)
+        {
+            php_printf("calloc[1] fail\n");
+            return;
+        }
+    }
+    else
     {
         php_printf("calloc[1] fail\n");
         return;
     }
+
     bzero(&CPGL, sizeof (cpServerG));
     CPGC.backlog = CP_BACKLOG;
-//    CPGC.reactor_num = CP_CPU_NUM;
-    CPGC.reactor_num = 2;
+    //    CPGC.reactor_num = CP_CPU_NUM;
+    CPGC.reactor_num = 4;
     CPGC.timeout_sec = CP_REACTOR_TIMEO_SEC;
     CPGC.timeout_usec = CP_REACTOR_TIMEO_USEC;
     CPGC.max_conn = CP_MAX_FDS;
@@ -104,8 +110,8 @@ void cpServer_init(zval *conf, char *ini_file)
     CPGC.max_fail_num = 2;
 
     strcpy(CPGC.ini_file, ini_file);
-    MAKE_STD_ZVAL(CPGS->group);
-    array_init(CPGS->group);
+    //    MAKE_STD_ZVAL(CPGS->group);
+    //    array_init(CPGS->group);
 
     for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(conf)); zend_hash_has_more_elements(Z_ARRVAL_P(conf)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(conf)))
     {
@@ -121,7 +127,6 @@ void cpServer_init(zval *conf, char *ini_file)
         else
         {
             zval **v;
-            add_assoc_long(CPGS->group, name, group_num);
             strcpy(CPGS->G[group_num].name, name);
             if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
             {
@@ -133,26 +138,12 @@ void cpServer_init(zval *conf, char *ini_file)
                 convert_to_long(*v);
                 CPGS->G[group_num].worker_max = Z_LVAL_PP(v);
             }
-
-            CPGS->G[group_num].workers_status = (volatile_int8*) cp_mmap_calloc(sizeof (volatile_int8) * CP_GROUP_LEN);
-            if (CPGS->G[group_num].workers_status == NULL)
-            {
-                cpLog("alloc for worker_status fail");
-                return;
-            }
-
-            CPGS->G[group_num].workers = (cpWorker*) cp_mmap_calloc(CP_GROUP_LEN * sizeof (cpWorker));
-            if (CPGS->G[group_num].workers == NULL)
-            {
-                cpLog("[Main] calloc[workers] fail");
-                return;
-            }
+            CPGS->max_buffer_len = CPGC.max_read_len;
 
             pthread_mutexattr_t attr;
             pthread_mutexattr_init(&attr);
             pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-            CPGS->G[group_num].mutex_lock = (pthread_mutex_t*) cp_mmap_calloc(sizeof (pthread_mutex_t));
-            if (pthread_mutex_init(CPGS->G[group_num].mutex_lock, &attr) < 0)
+            if (pthread_mutex_init(&CPGS->G[group_num].mutex_lock, &attr) < 0)
             {
                 cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
                 return;
@@ -160,7 +151,7 @@ void cpServer_init(zval *conf, char *ini_file)
             CPGS->G[group_num].lock = cpMutexLock;
             CPGS->G[group_num].unLock = cpMutexUnLock;
             CPGS->G[group_num].tryLock = cpMutexTryLock;
-            CPGS->G[group_num].WaitList = CPGS->G[group_num].WaitTail = NULL;
+            //            CPGS->G[group_num].WaitList = CPGS->G[group_num].WaitTail = NULL;
             CPGS->group_num++;
             group_num++;
         }
@@ -184,20 +175,6 @@ int cpServer_create()
     cpLog_init(CPGC.log_file);
     CPGS->reactor_threads = (cpThread*) cp_mmap_calloc(CPGC.reactor_num * sizeof (cpThread));
     if (CPGS->reactor_threads == NULL)
-    {
-        cpLog("calloc[1] fail");
-        return FAILURE;
-    }
-
-    CPGS->conlist = (cpConnection*) cp_mmap_calloc(CPGC.max_conn * sizeof (cpConnection));
-    if (CPGS->conlist == NULL)
-    {
-        cpLog("calloc[1] fail");
-        return FAILURE;
-    }
-
-    CPGS->workerfd2clientfd_list = (uint32_t*) cp_mmap_calloc(CPGC.max_conn * sizeof (uint32_t));
-    if (CPGS->workerfd2clientfd_list == NULL)
     {
         cpLog("calloc[1] fail");
         return FAILURE;
@@ -379,195 +356,32 @@ static int cpServer_master_onAccept(int fd)
     return SUCCESS;
 }
 
-CPINLINE static int cpServer_send2client(int fd, int worker_id, int CPid, int group_id)
-{
-    CPGS->G[group_id].workers[worker_id].fd = fd;
-    cpMasterInfo info;
-    int sizeinfo = sizeof (info);
-    info.worker_id = group_id * CP_GROUP_LEN + worker_id;
-    strcpy(info.mmap_name, CPGS->G[group_id].workers[worker_id].sm_obj.mmap_name);
-    info.ping_pid = CPGS->ping_workers->pid;
-    info.max = CPGC.max_read_len;
-    CPGS->G[group_id].workers[worker_id].CPid = CPid;
-    return cpWrite(fd, &info, sizeinfo);
-}
-
-static void cpServer_try_get_worker(cpConnection *conn, char * data, int fd, int group_id)
-{
-    cpGroup *G = &CPGS->G[group_id];
-    int i, len;
-    for (i = 0; i < G->worker_num; i++)
-    {
-        if (G->workers_status[i] == CP_WORKER_IDLE && i < G->worker_max)
-        {
-            G->workers_status[i] = CP_WORKER_BUSY;
-            conn->worker_id = i;
-            conn->group_id = group_id;
-            conn->release = CP_FD_NRELEASED;
-            return;
-        }
-    }
-    if (G->worker_num < G->worker_max)
-    {//ADD WORKER
-        conn->release = CP_FD_NRELEASED;
-        conn->worker_id = G->worker_num;
-        conn->group_id = group_id;
-        cpCreate_worker_mem(G->worker_num, group_id);
-        G->workers_status[G->worker_num] = CP_WORKER_BUSY;
-        G->worker_num++; //先加 线程安全
-        int ret = kill(CPGS->manager_pid, SIGRTMIN);
-        if (ret < 0)
-        {
-            G->worker_num--; //todo 
-            cpLog("send sig error. Error: %s [%d]", strerror(errno), errno);
-        }
-    }
-    else if (CPGC.use_wait_queue)
-    {
-        len = sizeof (cpTcpEvent);
-        cpWaitList *node = (cpWaitList*) emalloc(sizeof (cpWaitList) + len);
-        node->fd = fd;
-        node->len = len;
-        node->next = NULL;
-        if (G->WaitList)
-        {
-            G->WaitTail->next = node;
-            node->pre = G->WaitTail;
-            G->WaitTail = node;
-        }
-        else
-        {
-            node->pre = NULL;
-            G->WaitList = G->WaitTail = node;
-        }
-        memcpy(node->data, data, len);
-        conn->release = CP_FD_WAITING;
-    }
-}
-
-static int cpReactor_client_get(int fd, void *data)
-{
-    int gid, ret;
-    zval **gid_ptr;
-    cpConnection *conn = &(CPGS->conlist[fd]);
-    cpTcpEvent *event = (cpTcpEvent*) data;
-    if (zend_hash_find(Z_ARRVAL_P(CPGS->group), event->data_source, strlen(event->data_source) + 1, (void **) &gid_ptr) == SUCCESS)
-    {
-        gid = Z_LVAL_PP(gid_ptr);
-        cpGroup *G = &CPGS->G[gid];
-        if (G->lock(G) == 0)
-        {
-            cpServer_try_get_worker(conn, data, fd, gid);
-            switch (conn->release)
-            {
-                case CP_FD_WAITING:
-                    G->unLock(G);
-                    ret = SUCCESS;
-                    break;
-                case CP_FD_RELEASED:
-                {
-                    G->unLock(G);
-                    char tmp[sizeof (CP_TOO_MANY_CON_ERR) + sizeof (CP_CLIENT_EOF_STR)] = {CP_TOO_MANY_CON_ERR};
-                    strcat(tmp, CP_CLIENT_EOF_STR);
-                    ret = cpWrite(fd, tmp, strlen(tmp));
-                    break;
-                }
-                case CP_FD_NRELEASED:
-                    G->unLock(G);
-                    ret = cpServer_send2client(fd, conn->worker_id, event->ClientPid, gid);
-                    break;
-                default:
-                    G->unLock(G);
-                    cpLog("wrong conn satus %d", conn->release);
-                    break;
-            }
-        }
-    }
-    else
-    {
-        cpLog("can not find the datasource %s from the ini", event->data_source);
-        cpMasterInfo info;
-        int sizeinfo = sizeof (info);
-        info.worker_id = -2; //todo define it
-        ret = cpWrite(fd, &info, sizeinfo);
-    }
-    return ret;
-}
-
 static int cpReactor_client_release(int fd)
 {
     cpConnection *conn = &(CPGS->conlist[fd]);
     cpGroup *G = &CPGS->G[conn->group_id];
+
     if (conn->release == CP_FD_NRELEASED)
     {//防止too many cons&&重复release
-        if (G->WaitList && CPGC.use_wait_queue && conn->worker_id <= G->worker_max)
-        {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
-
-            cpConnection *wait_conn = &(CPGS->conlist[G->WaitList->fd]); //等待队列的连接
-            wait_conn->worker_id = conn->worker_id;
-            wait_conn->group_id = conn->group_id;
-            wait_conn->release = CP_FD_NRELEASED;
-            conn->release = CP_FD_RELEASED;
-            cpWaitList *tmp = G->WaitList;
-            if (G->WaitList->next)
-            {
-                G->WaitList = G->WaitList->next;
-                G->WaitList->pre = NULL;
+        if (G->lock(G) == 0)
+        {
+            if (G->first_wait_id && conn->worker_index <= G->worker_max)
+            {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
+                int wait_pid = cpPopWaitQueue(G, conn);
+                G->unLock(G);
+                if (kill(wait_pid, SIGRTMIN) < 0)
+                {
+                    return cpReactor_client_release(fd);
+                    cpLog("send sig 2 %d error. Error: %s [%d]", wait_pid, strerror(errno), errno);
+                }
             }
             else
             {
-                G->WaitList = G->WaitTail = NULL;
+                CPGS->G[conn->group_id].workers_status[conn->worker_index] = CP_WORKER_IDLE;
+                G->unLock(G);
             }
-            cpTcpEvent *wait_event = (cpTcpEvent*) tmp->data;
-            if (cpServer_send2client(wait_conn->fd, wait_conn->worker_id, wait_event->ClientPid, wait_conn->group_id) < 0)
-            {
-                cpLog("Write in cpReactor_client_release. Error: %s [%d]", strerror(errno), errno);
-            }
-            efree(tmp);
-        }
-        else
-        {
-            G->workers_status[conn->worker_id] = CP_WORKER_IDLE;
-            conn->release = CP_FD_RELEASED;
         }
     }
-    else if (conn->release == CP_FD_WAITING)
-    {//在队列里面,没等到分配就结束进程了,从queue里面删除
-        cpWaitList *p = G->WaitList;
-        while (p)
-        {
-            if (p->fd == fd)
-            {
-                if (p == G->WaitList)
-                {
-                    if (p->next)
-                    {
-                        p->next->pre = NULL;
-                        G->WaitList = p->next;
-                    }
-                    else
-                    {//only one
-                        G->WaitList = G->WaitTail = NULL;
-                    }
-                }
-                else if (p == G->WaitTail)
-                {
-                    p->pre->next = NULL;
-                    G->WaitTail = p->pre;
-                }
-                else
-                {
-                    p->pre->next = p->next;
-                    p->next->pre = p->pre;
-                }
-                efree(p);
-                break;
-            }
-            p = p->next;
-        }
-        conn->release = CP_FD_RELEASED;
-    }
-
     return SUCCESS;
 
 }
@@ -590,30 +404,28 @@ static int cpReactor_client_receive(int fd)
     char data[event_size];
     //非ET模式会持续通知
     n = cpNetRead(fd, data, event_size);
-    cpConnection *conn = &(CPGS->conlist[fd]);
     if (n > 0)
     {
         cpTcpEvent *event = (cpTcpEvent*) data;
-        if (event->type == CP_TCPEVENT_GET && conn->release == CP_FD_NRELEASED)
+        switch (event->type)
         {
-            //动作是获得连接但是状态是未释放，父进程连的然后在子进程和父进程中都用这个连接，会出现这种情况
-            cpMasterInfo info;
-            int sizeinfo = sizeof (info);
-            info.worker_id = -1; //todo define it
-            return cpWrite(fd, &info, sizeinfo);
-        }
-        if (event->type == CP_TCPEVENT_RELEASE)
-        {
-            cpGroup *G = &CPGS->G[conn->group_id];
-            if (G->lock(G) == 0)
+            case CP_TCPEVENT_ADD:
+                ret = kill(CPGS->manager_pid, SIGRTMIN);
+                if (ret < 0)
+                {//TODO 
+                    cpLog("send sig error. Error: %s [%d]", strerror(errno), errno);
+                }
+                break;
+            case CP_TCPEVENT_GETFD:
             {
-                ret = cpReactor_client_release(fd);
-                G->unLock(G);
+                cpMasterInfo info;
+                info.server_fd = fd;
+                ret = cpWrite(fd, &info, sizeof (info));
+                break;
             }
-        }
-        else
-        {
-            ret = cpReactor_client_get(fd, data);
+            default:
+                cpLog("wrong type");
+                break;
         }
         return ret;
 
@@ -790,7 +602,7 @@ static void cpSignalHanlde(int sig)
 
 int cpMutexLock(cpGroup *G)
 {
-    if (pthread_mutex_lock(G->mutex_lock) != 0)
+    if (pthread_mutex_lock(&G->mutex_lock) != 0)
     {
         cpLog("pthread_mutex_lock. Error: %s [%d]", strerror(errno), errno);
         return -1;
@@ -800,7 +612,7 @@ int cpMutexLock(cpGroup *G)
 
 int cpMutexUnLock(cpGroup *G)
 {
-    if (pthread_mutex_unlock(G->mutex_lock) != 0)
+    if (pthread_mutex_unlock(&G->mutex_lock) != 0)
     {
         cpLog("pthread_mutex_unlock. Error: %s [%d]", strerror(errno), errno);
         return -1;
@@ -810,12 +622,34 @@ int cpMutexUnLock(cpGroup *G)
 
 int cpMutexTryLock(cpGroup *G)
 {
-    if (pthread_mutex_trylock(G->mutex_lock) != 0)
+    if (pthread_mutex_trylock(&G->mutex_lock) != 0)
     {
         cpLog("pthread_mutex_trylock. Error: %s [%d]", strerror(errno), errno);
         return -1;
     }
     return 0;
+}
+
+int cpPopWaitQueue(cpGroup *G, cpConnection *conn)
+{
+    cpConnection *wait_conn = &CPGS->conlist[G->first_wait_id]; //等待队列的连接
+    wait_conn->worker_id = conn->worker_id;
+    wait_conn->worker_index = conn->worker_index;
+    wait_conn->group_id = conn->group_id;
+    wait_conn->release = CP_FD_NRELEASED;
+    if (wait_conn->next_wait_id)
+    {
+        G->first_wait_id = wait_conn->next_wait_id;
+        wait_conn->next_wait_id = 0;
+    }
+    else
+    {
+        G->first_wait_id = G->last_wait_id = 0;
+    }
+    int wait_pid = wait_conn->wait_fpm_pid;
+    wait_conn->wait_fpm_pid = 0;
+    CPGS->G[wait_conn->group_id].workers[wait_conn->worker_index].CPid = wait_pid;
+    return wait_pid;
 }
 
 void static cpSignalInit(void)

@@ -357,7 +357,7 @@ CPINLINE int cpCreate_worker_mem(int worker_id, int group_id)
 {
     cpShareMemory *sm_obj = &(CPGS->G[group_id].workers[worker_id].sm_obj);
     sprintf(sm_obj->mmap_name, "%s_%d", CP_MMAP_NAME_PRE, group_id * CP_GROUP_LEN + worker_id);
-    sm_obj->size = CPGC.max_read_len;
+    sm_obj->size = CPGS->max_buffer_len;
     if (cp_create_mmap_file(sm_obj) < 0)
     {
         return FAILURE;

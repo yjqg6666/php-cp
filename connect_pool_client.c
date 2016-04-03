@@ -23,18 +23,39 @@ extern zend_class_entry *pdo_connect_pool_class_entry_ptr;
 extern zend_class_entry *redis_connect_pool_class_entry_ptr;
 extern zend_class_entry *pdo_connect_pool_PDOStatement_class_entry_ptr;
 
-#define CON_FORMART_KEY(str,port) sprintf((str), "connect_pool_sock%s" , (port));
-#define CON_FAIL_MESSAGE                         "connect to pool_server fail"
-
 cpRecvEvent RecvData;
 static int *workerid2writefd = NULL;
 static int *workerid2readfd = NULL;
 static void **semid2attbuf = NULL;
 static int cpPid = 0;
+static int manager_pid = 0;
 static int dev_random_fd = -1;
+
+static void cpClient_weekup(int sig)
+{// do noting now
+}
+
+static void cpClient_attach_mem()
+{
+    if (!CPGS)
+    {
+        int fd = open(CP_SERVER_MMAP_FILE, O_RDWR);
+        if (fd == -1)
+        {
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "open error Error: %s [%d],%s", strerror(errno), errno, CP_SERVER_MMAP_FILE);
+        }
+        if ((CPGS = mmap(NULL, sizeof (cpServerGS), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)) < 0)
+        {
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "attach sys mem error Error: %s [%d]", strerror(errno), errno);
+        }
+        manager_pid = CPGS->manager_pid;
+        cpSignalSet(SIGRTMIN, cpClient_weekup, 1, 0);
+    }
+}
 
 static void* connect_pool_perisent(zval* zres, zval* data_source)
 {
+//    cpLog_init("/tmp/pool_client.log");
     zend_rsrc_list_entry sock_le;
     int ret;
     cpClient* cli = (cpClient*) pecalloc(sizeof (cpClient), 1, 1);
@@ -52,6 +73,21 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
     sock_le.ptr = cli;
     ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
     zend_hash_update(&EG(persistent_list), Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void*) &sock_le, sizeof (zend_rsrc_list_entry), NULL);
+    cli->lock = cpMutexLock;
+    cli->unLock = cpMutexUnLock;
+
+    cpTcpEvent event = {0};
+    event.type = CP_TCPEVENT_GETFD;
+    cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
+    cpMasterInfo info;
+    ret = cpClient_recv(cli->sock, &info, sizeof (cpMasterInfo), 1);
+    if (ret < 0)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "recv from pool server error  [%d],%s", errno, strerror(errno));
+    }
+    cli->server_fd = info.server_fd;
+    cpClient_attach_mem();
+    CONN(cli)->release = CP_FD_RELEASED;
     return cli;
 }
 
@@ -189,13 +225,13 @@ static void* get_attach_buf(int worker_id, int max, char *mm_name)
     return buf;
 }
 
-CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int max, char *mm_name)
+CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, cpClient *cli)
 {
-    int pipe_fd_write = get_writefd(worker_id);
+    int pipe_fd_write = get_writefd(CONN(cli)->worker_id);
     instead_smart dest;
     dest.len = 0;
-    dest.addr = get_attach_buf(worker_id, max, mm_name);
-    dest.max = max;
+    dest.addr = get_attach_buf(CONN(cli)->worker_id, CPGS->max_buffer_len, CPGS->G[CONN(cli)->group_id].workers[CONN(cli)->worker_index].sm_obj.mmap_name);
+    dest.max = CPGS->max_buffer_len;
     dest.exceed = 0;
     php_msgpack_serialize(&dest, ret_value);
     if (dest.exceed == 1)
@@ -218,42 +254,88 @@ CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int worker_id, int ma
     return FAILURE;
 }
 
+CPINLINE cpGroup * cpGet_worker(cpClient *cli, zval **data_source)
+{
+    cpGroup *G = NULL;
+    int group_id, worker_index;
+    for (group_id = 0; group_id < CPGS->group_num; group_id++)
+    {
+        if (strcmp(Z_STRVAL_PP(data_source), CPGS->G[group_id].name) == 0)
+        {
+            G = &CPGS->G[group_id];
+            cpConnection *conn = CONN(cli);
+            if (cli->lock(G) == 0)
+            {
+                for (worker_index = 0; worker_index < G->worker_num; worker_index++)
+                {
+                    if (G->workers_status[worker_index] == CP_WORKER_IDLE && worker_index < G->worker_max)
+                    {
+                        G->workers_status[worker_index] = CP_WORKER_BUSY;
+                        G->workers[worker_index].CPid = cpPid; //worker for this pid
+                        conn->release = CP_FD_NRELEASED;
+                        conn->worker_id = group_id * CP_GROUP_LEN + worker_index;
+                        conn->group_id = group_id;
+                        conn->worker_index = worker_index;
+                        break;
+                    }
+                }
+                if (conn->release == CP_FD_RELEASED)
+                {
+                    if (G->worker_num < G->worker_max)
+                    {//add
+                        conn->worker_index = G->worker_num;
+                        conn->release = CP_FD_NRELEASED;
+                        conn->worker_id = group_id * CP_GROUP_LEN + conn->worker_index;
+                        conn->group_id = group_id;
+                        G->workers_status[conn->worker_index] = CP_WORKER_BUSY;
+                        G->workers[conn->worker_index].CPid = cpPid; //worker for this pid
+                        cpCreate_worker_mem(conn->worker_index, group_id);
+
+                        cpTcpEvent event = {0};
+                        event.type = CP_TCPEVENT_ADD;
+                        event.ClientPid = cpPid;
+                        G->worker_num++; //add first, for thread safe
+                        int ret = cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
+                        if (ret < 0)
+                        {
+                            cpLog("send to server errro %s [%d]", strerror(errno), errno);
+                        }
+                    }
+                    else
+                    {// in queue
+                        conn->wait_fpm_pid = cpPid;
+                        conn->next_wait_id = 0;
+                        if (G->last_wait_id)
+                        {
+                            CPGS->conlist[G->last_wait_id].next_wait_id = cli->server_fd;
+                            G->last_wait_id = cli->server_fd;
+                            
+                        }
+                        else
+                        {
+                            G->first_wait_id = G->last_wait_id = cli->server_fd;
+                        }
+                        conn->release = CP_FD_WAITING;
+                    }
+                }
+                cli->unLock(G);
+            }
+            break;
+        }
+    }
+    return G;
+}
+
 CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zend_class_entry *ce)
 {
     int ret = 0;
     cpClient *cli = *real_cli;
-    cpMasterInfo *info = &cli->info;
-    if (cli->released == CP_FD_RELEASED)
+    if (CONN(cli)->release == CP_FD_RELEASED)
     {
         zval **data_source;
         zend_hash_find(Z_ARRVAL_P(send_data), ZEND_STRS("data_source"), (void **) &data_source);
-        cpTcpEvent event = {0};
-        event.type = CP_TCPEVENT_GET;
-        event.ClientPid = cpPid;
-        strcpy(event.data_source, Z_STRVAL_PP(data_source));
-        int ret = cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
-        if (ret < 0)
-        {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, "send failed in GET. Error:%d", errno);
-        }
-        int n = cpClient_recv(cli, info, sizeof (cpMasterInfo), 1);
-        if (info->worker_id == -1)
-        {
-            zend_throw_exception(NULL, CP_MULTI_PROCESS_ERR, 0 TSRMLS_CC);
-            return -1;
-        }
-        if (info->worker_id == -2)
-        {
-            zend_throw_exception(NULL, "can not find datasource from pool.ini", 0 TSRMLS_CC);
-            return -1;
-        }
-        if (n > 0)
-        {
-            cli->released = CP_FD_NRELEASED;
-            ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->mmap_name);
-        }
-        else if (n == 0)
-        {
+        if (manager_pid != CPGS->manager_pid)
+        {//restart server
             ret = cpClient_close(cli);
             zval *zres = NULL;
             MAKE_STD_ZVAL(zres);
@@ -270,23 +352,29 @@ CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zen
                 *real_cli = cli_retry;
                 return cli_real_send(&cli_retry, send_data, this, ce);
             }
-
         }
-        else
+        cpGroup *G = cpGet_worker(cli, data_source);
+        if (!G)
         {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, "connect_pool: recv failed. Error: %s [%d]", strerror(errno), errno);
+            zend_throw_exception_ex(NULL, 0, "can not find datasource %s from pool.ini", Z_STRVAL_PP(data_source) TSRMLS_CC);
+            return -1;
         }
+        while (CONN(cli)->release == CP_FD_WAITING)
+        {
+            pause();
+        }
+        ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, cli);
     }
     else
     {
-        ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, info->worker_id, info->max, info->mmap_name);
+        ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, cli);
     }
     return ret;
 }
 
-static int cli_real_recv(cpMasterInfo *info)
+static int cli_real_recv(cpClient *cli)
 {
-    int pipe_fd_read = get_readfd(info->worker_id);
+    int pipe_fd_read = get_readfd(CONN(cli)->worker_id);
     cpWorkerInfo event;
     int ret = 0;
     int i = 0;
@@ -312,7 +400,8 @@ static int cli_real_recv(cpMasterInfo *info)
 
     zval *ret_value;
     ALLOC_INIT_ZVAL(ret_value);
-    php_msgpack_unserialize(ret_value, get_attach_buf(info->worker_id, info->max, info->mmap_name), event.len);
+    void * buf = get_attach_buf(CONN(cli)->worker_id, CPGS->max_buffer_len, CPGS->G[CONN(cli)->group_id].workers[CONN(cli)->worker_index].sm_obj.mmap_name);
+    php_msgpack_unserialize(ret_value, buf, event.len);
     RecvData.type = event.type;
     RecvData.ret_value = ret_value;
     return SUCCESS;
@@ -521,7 +610,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
-    cli_real_recv(&cli->info);
+    cli_real_recv(cli);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
@@ -578,7 +667,7 @@ PHP_METHOD(pdo_connect_pool, __call)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
-    cli_real_recv(&cli->info);
+    cli_real_recv(cli);
     if (RecvData.type == CP_SIGEVENT_PDO)
     {//返回一个模拟pdo类
         object_init_ex(return_value, pdo_connect_pool_PDOStatement_class_entry_ptr);
@@ -769,7 +858,7 @@ PHP_METHOD(redis_connect_pool, select)
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
 
-    cli_real_recv(&cli->info);
+    cli_real_recv(cli);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
@@ -852,7 +941,7 @@ PHP_METHOD(redis_connect_pool, __call)
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
 
-    cli_real_recv(&cli->info);
+    cli_real_recv(cli);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);

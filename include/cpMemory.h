@@ -21,11 +21,8 @@ extern "C" {
         void *mem;
     } cpShareMemory;
 
-    typedef struct _cpMasterInfo {//获取连接,master进程返回的信息
-        char mmap_name[CP_MMAP_NAME_LEN];
-        int ping_pid;
-        int worker_id;
-        int max;//数据包max
+    typedef struct _cpMasterInfo {
+        int server_fd;//fpm in server's fd
     } cpMasterInfo;
 
     typedef struct _cpWorkerInfo {
@@ -37,7 +34,6 @@ extern "C" {
     typedef struct _cpTcpEvent {
         int type;
         int ClientPid;
-        char data_source[100];
     } cpTcpEvent;
 
 

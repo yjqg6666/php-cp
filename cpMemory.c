@@ -61,7 +61,7 @@ int cp_create_mmap_file(cpShareMemory *object)
     int fd = open(object->mmap_name, O_RDWR | O_CREAT, S_IROTH | S_IWOTH);
     if (fd == -1)
     {
-        cpLog("open fail. Error: %s[%d]", strerror(errno), errno);
+        php_printf("open fail. Error: %s[%d],%s", strerror(errno), errno,object->mmap_name);
         return -1;
 
     }

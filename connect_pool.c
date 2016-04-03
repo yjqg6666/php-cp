@@ -26,7 +26,7 @@ static zval* pdo_stmt = NULL;
 extern zval* pdo_object;
 
 cpServerG ConProxyG;
-cpServerGS *ConProxyGS;
+cpServerGS *ConProxyGS = NULL;
 cpWorkerG ConProxyWG;
 
 extern sapi_module_struct sapi_module;
@@ -38,7 +38,7 @@ static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
-#define CP_VERSION "1.4.2"
+#define CP_VERSION "1.4.3"
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
@@ -246,19 +246,32 @@ void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC)
     {
         pefree(cli, 1); //长连接
     }
-    else if (cli->released == CP_FD_NRELEASED)
+    else if (cli->server_fd != 0)
     {//防止release后rshutdown的重复释放
-        cpTcpEvent event = {0};
-        event.type = CP_TCPEVENT_RELEASE;
-        event.ClientPid = 0;
-        int ret = cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
-        if (ret >= 0)
+        cpConnection *conn = CONN(cli);
+        if (conn->release == CP_FD_NRELEASED)
         {
-            cli->released = CP_FD_RELEASED;
-        }
-        else
-        {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, "pdo_connect_pool: release error. Error: %s [%d]", strerror(errno), errno);
+            cpGroup* G = &CPGS->G[conn->group_id];
+            if (cli->lock(G) == 0)
+            {
+                conn->release = CP_FD_RELEASED;
+                if (G->first_wait_id && conn->worker_index <= G->worker_max)
+                {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
+                    int wait_pid = cpPopWaitQueue(G, conn);
+                    cli->unLock(G);
+                    if (kill(wait_pid, SIGRTMIN) < 0)
+                    {
+                        return send_oob2proxy(rsrc);
+                        php_printf("send sig 2 %d error. Error: %s [%d]", wait_pid, strerror(errno), errno);
+                    }
+                }
+                else
+                {
+                    CPGS->G[conn->group_id].workers_status[conn->worker_index] = CP_WORKER_IDLE;
+                    cli->unLock(G);
+                }
+
+            }
         }
     }
 }
@@ -841,7 +854,7 @@ static void redis_dispatch(zval * args)
                     //                    {
                     zend_hash_del(&redis_object_table, Z_STRVAL_PP(data_source), Z_STRLEN_PP(data_source));
                     //                    }
-//                    cpLog("fuck %s",Z_STRVAL_P(str));
+                    //                    cpLog("fuck %s",Z_STRVAL_P(str));
                     zval_ptr_dtor(&str);
                 }
                 else

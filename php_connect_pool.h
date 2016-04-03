@@ -110,6 +110,8 @@ extern zend_module_entry connect_pool_module_entry;
 
 #define CP_TCPEVENT_GET         1
 #define CP_TCPEVENT_RELEASE     2
+#define CP_TCPEVENT_ADD         3
+#define CP_TCPEVENT_GETFD       4
 #define CP_GET_PID if(cpPid==0)cpPid=getpid()
 
 typedef struct _cpRecvEvent
@@ -137,8 +139,8 @@ typedef struct _cpRecvEvent
 #define CP_PIPE_MOD O_RDWR
 #define CP_TYPE_SIZE sizeof(uint8_t)
 
-#define CP_GROUP_LEN 1000 //
-#define CP_GROUP_NUM 100 //the max group num of proxy process . todo  check it
+//#define CP_GROUP_LEN 1000 //
+//#define CP_GROUP_NUM 100 //the max group num of proxy process . todo  check it
 
 extern int le_cli_connect_pool;
 
@@ -188,7 +190,7 @@ extern int pdo_proxy_connect(zval *args, int flag);
 
 int worker_onReceive(zval *data);
 CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type);
-CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, int pid, int max, char *mm_name);
+CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, cpClient *);
 extern cpServerG ConProxyG;
 extern cpServerGS *ConProxyGS;
 extern cpWorkerG ConProxyWG;
