@@ -58,7 +58,7 @@ void *cp_mmap_calloc(int size)
 int cp_create_mmap_file(cpShareMemory *object)
 {
     umask(0);
-    int fd = open(object->mmap_name, O_RDWR | O_CREAT, S_IROTH | S_IWOTH);
+    int fd = open(object->mmap_name, O_RDWR | O_CREAT, 0777);
     if (fd == -1)
     {
         php_printf("open fail. Error: %s[%d],%s", strerror(errno), errno,object->mmap_name);
