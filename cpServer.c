@@ -98,7 +98,7 @@ void cpServer_init(zval *conf, char *ini_file)
     bzero(&CPGL, sizeof (cpServerG));
     CPGC.backlog = CP_BACKLOG;
     //    CPGC.reactor_num = CP_CPU_NUM;
-    CPGC.reactor_num = 4;
+    CPGC.reactor_num = 1;
     CPGC.timeout_sec = CP_REACTOR_TIMEO_SEC;
     CPGC.timeout_usec = CP_REACTOR_TIMEO_USEC;
     CPGC.max_conn = CP_MAX_FDS;
@@ -356,22 +356,31 @@ static int cpServer_master_onAccept(int fd)
     return SUCCESS;
 }
 
+//void cpPrint_queue(cpGroup *G)
+//{
+//    int current_fd = G->first_wait_id;
+//    while (current_fd)
+//    {
+//        cpConnection* conn = &(CPGS->conlist[current_fd]);
+//        printf("fd is %d\n", conn->fd);
+//        current_fd = conn->next_wait_id;
+//    }
+//}
+
 static int cpReactor_client_release(int fd)
 {
     cpConnection *conn = &(CPGS->conlist[fd]);
     cpGroup *G = &CPGS->G[conn->group_id];
-
-    if (conn->release == CP_FD_NRELEASED)
-    {//防止too many cons&&重复release
-        if (G->lock(G) == 0)
-        {
+    if (G->lock(G) == 0)
+    {
+        if (conn->release == CP_FD_NRELEASED)
+        {//防止too many cons&&重复release
             if (G->first_wait_id && conn->worker_index <= G->worker_max)
             {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
                 int wait_pid = cpPopWaitQueue(G, conn);
                 G->unLock(G);
                 if (kill(wait_pid, SIGRTMIN) < 0)
                 {
-                    return cpReactor_client_release(fd);
                     cpLog("send sig 2 %d error. Error: %s [%d]", wait_pid, strerror(errno), errno);
                 }
             }
@@ -381,7 +390,51 @@ static int cpReactor_client_release(int fd)
                 G->unLock(G);
             }
         }
+        else if (conn->release == CP_FD_WAITING)
+        {
+            cpLog("The fd %d is closed and remove from the queue but no conn dispatch , maybe have slow query", fd);
+            cpConnection *pre = NULL;
+            int current_fd = G->first_wait_id;
+            while (current_fd)
+            {
+                conn = &(CPGS->conlist[current_fd]);
+                if (conn->fd == fd)
+                {
+                    if (fd == G->first_wait_id)
+                    {
+                        if (conn->next_wait_id)
+                        {
+                            G->first_wait_id = conn->next_wait_id;
+                            conn->next_wait_id = 0;
+                        }
+                        else
+                        {//only one
+                            G->first_wait_id = G->last_wait_id = 0;
+                        }
+                    }
+                    else if (fd == G->last_wait_id)
+                    {
+                        pre->next_wait_id = 0;
+                        G->last_wait_id = pre->fd;
+                    }
+                    else
+                    {
+                        pre->next_wait_id = conn->next_wait_id;
+                        conn->next_wait_id = 0;
+                    }
+                    break;
+                }
+                pre = conn;
+                current_fd = conn->next_wait_id;
+            }
+            G->unLock(G);
+        }
+        else
+        {
+            G->unLock(G);
+        }
     }
+
     return SUCCESS;
 
 }

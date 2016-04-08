@@ -55,7 +55,7 @@ static void cpClient_attach_mem()
 
 static void* connect_pool_perisent(zval* zres, zval* data_source)
 {
-//    cpLog_init("/tmp/pool_client.log");
+    //        cpLog_init("/tmp/pool_client.log");
     zend_rsrc_list_entry sock_le;
     int ret;
     cpClient* cli = (cpClient*) pecalloc(sizeof (cpClient), 1, 1);
@@ -293,12 +293,13 @@ CPINLINE cpGroup * cpGet_worker(cpClient *cli, zval **data_source)
 
                         cpTcpEvent event = {0};
                         event.type = CP_TCPEVENT_ADD;
-                        event.ClientPid = cpPid;
+                        event.data = conn->worker_index;
+                        //                         event.ClientPid = cpPid;
                         G->worker_num++; //add first, for thread safe
                         int ret = cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
                         if (ret < 0)
                         {
-                            cpLog("send to server errro %s [%d]", strerror(errno), errno);
+                            php_error_docref(NULL TSRMLS_CC, E_ERROR, "send to server errro %s [%d]", strerror(errno), errno);
                         }
                     }
                     else
@@ -309,13 +310,14 @@ CPINLINE cpGroup * cpGet_worker(cpClient *cli, zval **data_source)
                         {
                             CPGS->conlist[G->last_wait_id].next_wait_id = cli->server_fd;
                             G->last_wait_id = cli->server_fd;
-                            
+
                         }
                         else
                         {
                             G->first_wait_id = G->last_wait_id = cli->server_fd;
                         }
                         conn->release = CP_FD_WAITING;
+                        conn->group_id = group_id;
                     }
                 }
                 cli->unLock(G);
@@ -336,22 +338,23 @@ CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zen
         zend_hash_find(Z_ARRVAL_P(send_data), ZEND_STRS("data_source"), (void **) &data_source);
         if (manager_pid != CPGS->manager_pid)
         {//restart server
-            ret = cpClient_close(cli);
-            zval *zres = NULL;
-            MAKE_STD_ZVAL(zres);
-            cpClient *cli_retry = NULL;
-            if ((cli_retry = connect_pool_perisent(zres, *data_source)) == NULL)
-            {
-                efree(zres);
-                zend_throw_exception(NULL, CON_FAIL_MESSAGE, 0 TSRMLS_CC);
-                return -1;
-            }
-            else
-            {
-                zend_update_property(ce, this, ZEND_STRL("cli"), zres TSRMLS_CC);
-                *real_cli = cli_retry;
-                return cli_real_send(&cli_retry, send_data, this, ce);
-            }
+            exit(0);
+//            ret = cpClient_close(cli);
+//            zval *zres = NULL;
+//            MAKE_STD_ZVAL(zres);
+//            cpClient *cli_retry = NULL;
+//            if ((cli_retry = connect_pool_perisent(zres, *data_source)) == NULL)
+//            {
+//                efree(zres);
+//                zend_throw_exception(NULL, CON_FAIL_MESSAGE, 0 TSRMLS_CC);
+//                return -1;
+//            }
+//            else
+//            {
+//                zend_update_property(ce, this, ZEND_STRL("cli"), zres TSRMLS_CC);
+//                *real_cli = cli_retry;
+//                return cli_real_send(&cli_retry, send_data, this, ce);
+//            }
         }
         cpGroup *G = cpGet_worker(cli, data_source);
         if (!G)

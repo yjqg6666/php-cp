@@ -261,8 +261,9 @@ void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC)
                     cli->unLock(G);
                     if (kill(wait_pid, SIGRTMIN) < 0)
                     {
-                        return send_oob2proxy(rsrc);
                         php_printf("send sig 2 %d error. Error: %s [%d]", wait_pid, strerror(errno), errno);
+//                        return send_oob2proxy(rsrc);
+                        
                     }
                 }
                 else

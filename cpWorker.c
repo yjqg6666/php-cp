@@ -57,7 +57,6 @@ static int cpWorker_loop(int worker_id, int group_id)
     cpWorker_init(worker_id, group_id);
     cpGroup *G = &CPGS->G[group_id];
     cpShareMemory *sm_obj = &(G->workers[worker_id].sm_obj);
-
     int ret;
     cpSettitle(G->name);
     cpSignalSet(SIGALRM, cpWorker_do_ping, 1, 0);
@@ -75,7 +74,7 @@ static int cpWorker_loop(int worker_id, int group_id)
         }
         if (CPWG.event.pid != G->workers[CPWG.id].CPid)
         {//pipe数据里面的fpm pid和worker应该服务的pid不一样
-            cpLog("warning: read a wrong event,maybe you restart the pool server");
+            cpLog("warning: read a wrong event,maybe you restart the pool server,%d,%d,%d",CPWG.event.pid,CPWG.id,G->workers[CPWG.id].CPid);
             continue;
         }
         CPWG.working = 1;
