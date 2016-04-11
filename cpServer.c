@@ -73,6 +73,20 @@ void cpServer_init_common(zval *conf)
     }
 }
 
+void cpKillClient()
+{
+    int i;
+    for (i = 0; i <= CP_MAX_FDS; i++)
+    {
+        cpConnection *conn = &(CPGS->conlist[i]);
+        if (conn->fpm_pid)
+        {
+            kill(conn->fpm_pid, 9);
+            printf("kill %d\n",conn->fpm_pid);
+        }
+    }
+}
+
 void cpServer_init(zval *conf, char *ini_file)
 {
     size_t group_num = 0;
@@ -82,6 +96,7 @@ void cpServer_init(zval *conf, char *ini_file)
     if (cp_create_mmap_file(&shm) == 0)
     {
         CPGS = (cpServerGS*) cp_mmap_calloc_with_file(&shm);
+        cpKillClient();
         bzero(CPGS, shm.size);
         if (CPGS == NULL)
         {
@@ -235,7 +250,6 @@ int cpServer_start()
                     }
                 }
             }
-
             //数据库坏连接检测恢复进程
             //            ret = cpCreate_ping_worker_mem();
             //            ping_pid = cpFork_ping_worker();
@@ -443,6 +457,7 @@ static int cpReactor_client_close(int fd)
 {//长连接 相当于mshutdown
     cpReactor_client_release(fd);
     cpConnection *conn = &(CPGS->conlist[fd]);
+    conn->fpm_pid = 0;
     //关闭连接
     cpEpoll_del(CPGS->reactor_threads[conn->pth_id].epfd, fd);
     (CPGS->reactor_threads[conn->pth_id].event_num <= 0) ? CPGS->reactor_threads[conn->pth_id].event_num = 0 : CPGS->reactor_threads[conn->pth_id].event_num--;
@@ -473,6 +488,7 @@ static int cpReactor_client_receive(int fd)
             {
                 cpMasterInfo info;
                 info.server_fd = fd;
+                CPGS->conlist[fd].fpm_pid = event->data;
                 ret = cpWrite(fd, &info, sizeof (info));
                 break;
             }
@@ -561,7 +577,8 @@ int static cpReactor_start(int sock)
     epoll_wait_handle handles[CP_MAX_EVENT];
     handles[EPOLLIN] = cpServer_master_onAccept;
 
-    usleep(50000);
+//    usleep(50000);
+    sleep(1);
     cpLog("start  success");
     return cpEpoll_wait(handles, &timeo, accept_epfd);
 }

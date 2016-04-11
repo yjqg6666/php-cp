@@ -104,7 +104,6 @@ $obj1->release();
 - pool_server 必须以root用户启动
 - redis不支持pub/sub方法
 - 当你用完一个连接后（例如：fetchAll调用结束），请调用release来马上释放连接到池子里面(如果事务需要在事务commit或者rollback后release)，如果不想改业务代码可以在框架层每次fetch（或者get/set）用完之后调用release方法。
-- 当重启pool_server的时候 需要重启fpm(或者说客户端) ，否则会有报错
 
 ## contact us
 - http://weibo.com/u/2661945152

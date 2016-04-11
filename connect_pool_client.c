@@ -78,6 +78,7 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
 
     cpTcpEvent event = {0};
     event.type = CP_TCPEVENT_GETFD;
+    event.data = cpPid;
     cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
     cpMasterInfo info;
     ret = cpClient_recv(cli->sock, &info, sizeof (cpMasterInfo), 1);

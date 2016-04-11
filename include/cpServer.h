@@ -96,8 +96,9 @@ extern "C" {
         uint8_t release;
         uint16_t pth_id;
 
-        int wait_fpm_pid;//对应的fpm pid
+        int wait_fpm_pid;//等待的fpm pid
         int next_wait_id;//sever fd
+        int fpm_pid;//连接对应的fpm
 //        struct _cpWaitList WaitList;
     } cpConnection;
 
