@@ -1,6 +1,7 @@
 <?php
 
 /* * ****************don't use pool(不用连接池 最原始的方式)************************ */
+/*
 $obj = new Redis();
 $rs = $obj->connect("192.168.20.130");
 $obj->select(5);
@@ -10,7 +11,7 @@ var_dump($obj->get("test"));
 $obj = new PDO('mysql:host=192.168.20.130;dbname=test1', "admin", "admin");
 $rs = $obj->query("show tables");
 var_dump($rs->fetchAll());
-
+ 
 //*****************use pool（使用了连接池）*********************************/
 $obj = new redisProxy();
 $rs = $obj->connect("192.168.20.130");
@@ -18,6 +19,7 @@ $obj->select(5);
 $obj->set("test", '1111');
 var_dump($obj->get("test"));
 $obj->release();
+ */
 
 $obj1 = new pdoProxy('mysql:host=192.168.20.131;dbname=db1', "admin", "admin");
 $rs = $obj1->query("show tables");
