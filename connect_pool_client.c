@@ -98,23 +98,32 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
 
 static CPINLINE zval * cpConnect_pool_server(zval *data_source)
 {
-    zval zres;
+    zval *zres = NULL;
     cpClient *cli = NULL;
     zend_resource *p_sock_le;
+    CP_MAKE_STD_ZVAL(zres);
+#if PHP_MAJOR_VERSION < 7
+    if (zend_hash_find(&EG(persistent_list), Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void **) &p_sock_le) == SUCCESS)
+#else 
     if (cp_zend_hash_find_ptr(&EG(persistent_list), data_source, (void **) &p_sock_le) == SUCCESS)
+#endif
     {
         cli = (cpClient*) p_sock_le->ptr;
-        CP_ZEND_REGISTER_RESOURCE(&zres, cli, le_cli_connect_pool);
+        CP_ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
     }
     else
     {//create long connect to pool_server
-        if (connect_pool_perisent(&zres, data_source) == NULL)
+
+        if (connect_pool_perisent(zres, data_source) == NULL)
         {// error
+#if PHP_MAJOR_VERSION < 7
+            efree(zres);
+#endif
             php_error_docref(NULL TSRMLS_CC, E_ERROR, CON_FAIL_MESSAGE);
             return NULL;
         }
     }
-    return &zres;
+    return zres;
 }
 
 static void release_worker(zval *object)

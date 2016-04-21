@@ -390,9 +390,11 @@ void cpWorker_do_ping()
         if (stmt_value)
             cp_zval_ptr_dtor(&stmt_value);
     }
-    cp_zval_ptr_dtor(&sql);
 #if PHP_MAJOR_VERSION==7
     zval_ptr_dtor(&method);
+    zval_ptr_dtor(&sql);
+#else
+    efree(sql);
 #endif
     alarm(CP_PING_SLEEP);
 }
