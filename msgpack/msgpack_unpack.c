@@ -1,5 +1,6 @@
 
 #include "php.h"
+#if PHP_MAJOR_VERSION < 7
 #include "php_ini.h"
 #include "ext/standard/php_incomplete_class.h"
 
@@ -785,3 +786,4 @@ int msgpack_unserialize_map_item(
 
     return 0;
 }
+#endif

@@ -1,18 +1,18 @@
 /*
-  +----------------------------------------------------------------------+
-  | common con pool                                                      |
-  +----------------------------------------------------------------------+
-  | This source file is subject to version 2.0 of the Apache license,    |
-  | that is bundled with this package in the file LICENSE, and is        |
-  | available through the world-wide-web at the following url:           |
-  | http://www.apache.org/licenses/LICENSE-2.0.html                      |
-  | If you did not receive a copy of the Apache2.0 license and are unable|
-  | to obtain it through the world-wide-web, please send a note to       |
-  | license@php.net so we can mail you a copy immediately.               |
-  +----------------------------------------------------------------------+
-  | Author: Xinhua Guo  <woshiguo35@sina.com>                            |
-  +----------------------------------------------------------------------+
- */
+   +----------------------------------------------------------------------+
+   | common con pool                                                      |
+   +----------------------------------------------------------------------+
+   | This source file is subject to version 2.0 of the Apache license,    |
+   | that is bundled with this package in the file LICENSE, and is        |
+   | available through the world-wide-web at the following url:           |
+   | http://www.apache.org/licenses/LICENSE-2.0.html                      |
+   | If you did not receive a copy of the Apache2.0 license and are unable|
+   | to obtain it through the world-wide-web, please send a note to       |
+   | license@php.net so we can mail you a copy immediately.               |
+   +----------------------------------------------------------------------+
+   | Author: Xinhua Guo  <woshiguo35@sina.com>                            |
+   +----------------------------------------------------------------------+
+   */
 #include "php_connect_pool.h"
 
 int static cpListen();
@@ -25,51 +25,54 @@ static int cpReactor_start(int sock);
 
 void cpServer_init_common(zval *conf)
 {
-    zval **v;
+    zval *v;
     //daemonize，守护进程化
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("daemonize"), (void **) &v) == SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("daemonize"), (void **) &v) == SUCCESS)
     {
-        convert_to_long(*v);
-        CPGC.daemonize = (int) Z_LVAL_PP(v);
+        convert_to_long(v);
+        CPGC.daemonize = (int) Z_LVAL_P(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("recycle_num"), (void **) &v) == SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("recycle_num"), (void **) &v) == SUCCESS)
+        //if (cp_zend_hash_find(Z_ARRVAL_P(conf), "recycle_num", strlen("recycle_num"), (void **) &v) == SUCCESS)
     {
-        convert_to_long(*v);
-        CPGC.recycle_num = (int) Z_LVAL_PP(v);
+        convert_to_long(v);
+        CPGC.recycle_num = (int) Z_LVAL_P(v);
     }
     //error_file
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("log_file"), (void **) &v) == SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("log_file"), (void **) &v) == SUCCESS)
+        //if (cp_zend_hash_find(Z_ARRVAL_P(conf), "log_file", strlen("log_file"), (void **) &v) == SUCCESS)
     {
-        memcpy(CPGC.log_file, Z_STRVAL_PP(v), Z_STRLEN_PP(v));
+        memcpy(CPGC.log_file, Z_STRVAL_P(v), Z_STRLEN_P(v));
     }
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_read_len"), (void **) &v) == SUCCESS)
+
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_read_len"), (void **) &v) == SUCCESS)
     {
-        convert_to_long(*v);
-        CPGC.max_read_len = (int) Z_LVAL_PP(v);
+        convert_to_long(v);
+        CPGC.max_read_len = (int) Z_LVAL_P(v);
     }
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("port"), (void **) &v) == SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("port"), (void **) &v) == SUCCESS)
     {//todo check null
-        convert_to_long(*v);
-        CPGC.port = (int) Z_LVAL_PP(v);
+        convert_to_long(v);
+        CPGC.port = (int) Z_LVAL_P(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("idel_time"), (void **) &v) == SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("idel_time"), (void **) &v) == SUCCESS)
     {
-        convert_to_long(*v);
-        CPGC.idel_time = (int) Z_LVAL_PP(v);
+        convert_to_long(v);
+        CPGC.idel_time = (int) Z_LVAL_P(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ser_fail_hits"), (void **) &v) == SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ser_fail_hits"), (void **) &v) == SUCCESS)
     {
-        convert_to_long(*v);
-        CPGC.ser_fail_hits = (int) Z_LVAL_PP(v);
+        convert_to_long(v);
+        CPGC.ser_fail_hits = (int) Z_LVAL_P(v);
     }
 
-    if (zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_fail_num"), (void **) &v) == SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_fail_num"), (void **) &v) == SUCCESS)
     {
-        convert_to_long(*v);
-        CPGC.max_fail_num = (int) Z_LVAL_PP(v);
+        convert_to_long(v);
+        CPGC.max_fail_num = (int) Z_LVAL_P(v);
     }
 }
 
@@ -127,31 +130,32 @@ void cpServer_init(zval *conf, char *ini_file)
     strcpy(CPGC.ini_file, ini_file);
     //    MAKE_STD_ZVAL(CPGS->group);
     //    array_init(CPGS->group);
+    zval *config;
+    char *name;
+    uint32_t klen;
+    int ktype;
+    HashTable *_ht = Z_ARRVAL_P(conf);
 
-    for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(conf)); zend_hash_has_more_elements(Z_ARRVAL_P(conf)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(conf)))
+    CP_HASHTABLE_FOREACH_START2(_ht, name, klen, ktype, config)
     {
-        zval **config;
-        zend_hash_get_current_data(Z_ARRVAL_P(conf), (void**) &config);
-        char *name;
-        uint keylen;
-        zend_hash_get_current_key_ex(Z_ARRVAL_P(conf), &name, &keylen, NULL, 0, NULL);
+
         if (strcmp(name, "common") == 0)
         {//common config
-            cpServer_init_common(*config);
+            cpServer_init_common(config);
         }
         else
         {
-            zval **v;
+            zval *v;
             strcpy(CPGS->G[group_num].name, name);
-            if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
+            if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
             {
-                convert_to_long(*v);
-                CPGS->G[group_num].worker_num = CPGS->G[group_num].worker_min = Z_LVAL_PP(v);
+                convert_to_long(v);
+                CPGS->G[group_num].worker_num = CPGS->G[group_num].worker_min = Z_LVAL_P(v);
             }
-            if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
+            if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
             {
-                convert_to_long(*v);
-                CPGS->G[group_num].worker_max = Z_LVAL_PP(v);
+                convert_to_long(v);
+                CPGS->G[group_num].worker_max = Z_LVAL_P(v);
             }
             CPGS->max_buffer_len = CPGC.max_read_len;
 
@@ -170,7 +174,56 @@ void cpServer_init(zval *conf, char *ini_file)
             CPGS->group_num++;
             group_num++;
         }
+
+
     }
+    CP_HASHTABLE_FOREACH_END();
+
+    /*
+       for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(conf)); zend_hash_has_more_elements(Z_ARRVAL_P(conf)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(conf)))
+       {
+       zval **config;
+       zend_hash_get_current_data(Z_ARRVAL_P(conf), (void**) &config);
+       char *name;
+       uint keylen;
+       zend_hash_get_current_key_ex(Z_ARRVAL_P(conf), &name, &keylen, NULL, 0, NULL);
+       if (strcmp(name, "common") == 0)
+       {//common config
+       cpServer_init_common(*config);
+       }
+       else
+       {
+       zval **v;
+       strcpy(CPGS->G[group_num].name, name);
+       if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
+       {
+       convert_to_long(*v);
+       CPGS->G[group_num].worker_num = CPGS->G[group_num].worker_min = Z_LVAL_PP(v);
+       }
+       if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
+       {
+       convert_to_long(*v);
+       CPGS->G[group_num].worker_max = Z_LVAL_PP(v);
+       }
+       CPGS->max_buffer_len = CPGC.max_read_len;
+
+       pthread_mutexattr_t attr;
+       pthread_mutexattr_init(&attr);
+       pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+       if (pthread_mutex_init(&CPGS->G[group_num].mutex_lock, &attr) < 0)
+       {
+       cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
+       return;
+       }
+       CPGS->G[group_num].lock = cpMutexLock;
+       CPGS->G[group_num].unLock = cpMutexUnLock;
+       CPGS->G[group_num].tryLock = cpMutexTryLock;
+    //            CPGS->G[group_num].WaitList = CPGS->G[group_num].WaitTail = NULL;
+    CPGS->group_num++;
+    group_num++;
+    }
+    }
+    */
 }
 
 int cpServer_create()
@@ -229,7 +282,7 @@ int cpServer_start()
     pid = fork();
     switch (pid)
     {
-            //创建manager进程
+        //创建manager进程
         case 0:
             for (g = 0; g < CPGS->group_num; g++)
             {
@@ -270,10 +323,10 @@ int cpServer_start()
             CPGS->manager_pid = pid;
             break;
         case -1:
-        {
-            cpLog("fork manager process fail");
-            return FAILURE;
-        }
+            {
+                cpLog("fork manager process fail");
+                return FAILURE;
+            }
     }
 
     cpSignalInit();
@@ -485,13 +538,13 @@ static int cpReactor_client_receive(int fd)
                 }
                 break;
             case CP_TCPEVENT_GETFD:
-            {
-                cpMasterInfo info;
-                info.server_fd = fd;
-                CPGS->conlist[fd].fpm_pid = event->data;
-                ret = cpWrite(fd, &info, sizeof (info));
-                break;
-            }
+                {
+                    cpMasterInfo info;
+                    info.server_fd = fd;
+                    CPGS->conlist[fd].fpm_pid = event->data;
+                    ret = cpWrite(fd, &info, sizeof (info));
+                    break;
+                }
             default:
                 cpLog("wrong type");
                 break;
@@ -577,7 +630,7 @@ int static cpReactor_start(int sock)
     epoll_wait_handle handles[CP_MAX_EVENT];
     handles[EPOLLIN] = cpServer_master_onAccept;
 
-//    usleep(50000);
+    //    usleep(50000);
     sleep(1);
     cpLog("start  success");
     return cpEpoll_wait(handles, &timeo, accept_epfd);

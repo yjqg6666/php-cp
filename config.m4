@@ -51,6 +51,10 @@ AC_TRY_COMPILE([#include "$phpincludedir/main/php_config.h"], [
                     msgpack/msgpack_pack.c\
                     msgpack/msgpack_unpack.c\
                     msgpack/msgpack_convert.c\
+                    msgpack7/msgpack.c \
+                    msgpack7/msgpack_pack.c\
+                    msgpack7/msgpack_unpack.c\
+                    msgpack7/msgpack_convert.c\
                     , $ext_shared)
   PHP_ADD_INCLUDE([$ext_srcdir/include])
 fi

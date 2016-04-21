@@ -36,6 +36,19 @@
 #endif
 //#endif
 
+#if defined(__GNUC__)
+#if __GNUC__ >= 3
+#define CPINLINE inline __attribute__((always_inline))
+#else
+#define CPINLINE inline
+#endif
+#elif defined(_MSC_VER)
+#define CPINLINE __forceinline
+#else
+#define CPINLINE inline
+#endif
+
+
 #if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
 #define MAP_ANONYMOUS MAP_ANON
 #endif
@@ -61,6 +74,8 @@
 #include <netinet/tcp.h>
 #include <pthread.h>
 
+#include <ext/standard/php_string.h>
+#include "include/php7_wrapper.h"
 #include "cpMemory.h"
 #include "cpFunction.h"
 #include "cpWorker.h"
@@ -69,13 +84,14 @@
 #include "cpClientNet.h"
 #include "cpPingWorker.h"
 
-#include "ext/pdo/php_pdo_driver.h"
-#include "ext/standard/php_smart_str.h"
-#include "ext/standard/php_var.h"
-#include "zend_exceptions.h"
-
+#include <ext/pdo/php_pdo_driver.h>
+#include <ext/standard/php_var.h>
+#include <zend_exceptions.h>
+#if PHP_MAJOR_VERSION < 7
 #include "msgpack/php_msgpack.h"
-
+#else
+#include "msgpack7/php_msgpack.h"
+#endif
 #ifdef ZTS
 #include "TSRM.h"
 #endif
@@ -182,15 +198,15 @@ PHP_METHOD(redis_connect_pool, msConfig);
 PHP_METHOD(redis_connect_pool, forceMaster);
 
 
-void send_oob2proxy(zend_rsrc_list_entry *rsrc TSRMLS_DC);
+void send_oob2proxy(zend_resource *rsrc TSRMLS_DC);
 extern void cp_serialize(smart_str *ser_data, zval *array);
 extern zval * cp_unserialize(char *data, int len);
 extern int redis_proxy_connect(zval *data_source, zval *args, int flag);
 extern int pdo_proxy_connect(zval *args, int flag);
 
 int worker_onReceive(zval *data);
-CPINLINE int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type);
-CPINLINE int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, cpClient *);
+int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type);
+int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, cpClient *);
 extern cpServerG ConProxyG;
 extern cpServerGS *ConProxyGS;
 extern cpWorkerG ConProxyWG;

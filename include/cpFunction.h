@@ -11,18 +11,7 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
-#if __STDC_VERSION__ >= 199901L || defined(__cplusplus)
-#define CPINLINE inline
-#elif defined(_MSC_VER) || defined(__GNUC__)
-#define CPINLINE __inline
-#else
-#define CPINLINE
-#endif
 
-#ifdef __MACH__
-#undef CPINLINE
-#define CPINLINE
-#endif
 #define CP_FIFO_NAME_LEN   200
 #define CP_FIFO_NAME_PRE   "/tmp/con_pool_c2w_pipe"
 #define CP_MMAP_NAME_PRE   "/tmp/con_pool_mmap"
@@ -56,20 +45,44 @@ extern "C" {
     int cpLog_init(char *logfile);
     int pid_init();
     int set_pid(int pid);
-    CPINLINE void cpSetNonBlock(int sock);
+    void cpSetNonBlock(int sock);
     void swSingalNone();
-    CPINLINE int cpWrite(int fd, void *buf, int count);
-    CPINLINE int cpSetTimeout(int sock, double timeout);
+    int cpWrite(int fd, void *buf, int count);
+    int cpSetTimeout(int sock, double timeout);
     cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask);
     int cpQueueSignalSet(int sig, cpQueueFunc func);
     void cpSettitle(char *title);
-    zval * cpGetConfig(char *filename);
+    //zval* cpGetConfig(char *filename);
     zval * cpMD5(zval *arr);
-    CPINLINE void cp_ser_and_setpro(zval *arr);
-    CPINLINE int cpNetRead(int fd, void *buf, int len);
-    CPINLINE int cpCreateFifo(char *file);
-    CPINLINE int cpFifoRead(int pipe_fd_read, void *buf, int len);
+    void cp_ser_and_setpro(zval *arr);
+    int cpNetRead(int fd, void *buf, int len);
+    int cpCreateFifo(char *file);
+    int cpFifoRead(int pipe_fd_read, void *buf, int len);
 
+    static CPINLINE zval* cpGetConfig(char *filename) {
+        zval *fun_name, **args[2], *file, *section, *retval;
+
+        CP_MAKE_STD_ZVAL(file);
+        CP_ZVAL_STRING(file, filename, 1);
+        CP_MAKE_STD_ZVAL(section);
+        ZVAL_BOOL(section, 1);
+
+        args[0] = &file;
+        args[1] = &section;
+
+        CP_MAKE_STD_ZVAL(fun_name);
+        CP_ZVAL_STRING(fun_name, "parse_ini_file", 0);
+
+        if (cp_call_user_function_ex(EG(function_table), NULL, fun_name, &retval, 2, args, 0, NULL TSRMLS_CC) != SUCCESS) {
+            cp_zval_ptr_dtor(&file);
+            cp_zval_ptr_dtor(&section);
+            return NULL;
+        }
+        cp_zval_ptr_dtor(&file);
+        cp_zval_ptr_dtor(&section);
+        //zend_print_zval_r(retval,0);
+        return retval;
+    }
 
 #ifdef	__cplusplus
 }

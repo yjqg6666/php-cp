@@ -1,5 +1,6 @@
 
 #include "php.h"
+#if PHP_MAJOR_VERSION < 7
 #include "php_ini.h"
 #include "ext/standard/php_smart_str.h"
 #include "ext/standard/php_incomplete_class.h"
@@ -639,3 +640,4 @@ void msgpack_serialize_zval(
     }
     return;
 }
+#endif

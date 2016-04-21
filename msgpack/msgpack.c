@@ -4,6 +4,7 @@
 #endif
 
 #include "php.h"
+#if PHP_MAJOR_VERSION < 7
 #include "php_ini.h"
 #include "ext/standard/info.h" /* for php_info */
 #include "ext/standard/php_incomplete_class.h" /* for incomplete_class */
@@ -255,3 +256,4 @@ PHP_MSGPACK_API void php_msgpack_unserialize(
 //        }
 //    }
 //}
+#endif

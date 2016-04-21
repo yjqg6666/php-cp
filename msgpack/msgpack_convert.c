@@ -1,6 +1,6 @@
 
 #include "php.h"
-
+#if PHP_MAJOR_VERSION < 7
 #include "php_msgpack.h"
 #include "msgpack_convert.h"
 #include "msgpack_errors.h"
@@ -792,3 +792,4 @@ int msgpack_convert_template(zval *return_value, zval *tpl, zval **value)
     return FAILURE;
 }
 
+#endif

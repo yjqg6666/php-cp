@@ -58,7 +58,7 @@ int set_pid(int pid) {
     return SUCCESS;
 }
 
-CPINLINE int cpWrite(int fd, void *buf, int count) {
+int cpWrite(int fd, void *buf, int count) {
     int nwritten = 0, totlen = 0;
     while (totlen != count)
     {
@@ -89,7 +89,7 @@ CPINLINE int cpWrite(int fd, void *buf, int count) {
     return totlen;
 }
 
-CPINLINE int cpFifoRead(int pipe_fd_read, void *buf, int len) {
+int cpFifoRead(int pipe_fd_read, void *buf, int len) {
     int n, total = 0;
     do
     {
@@ -109,7 +109,7 @@ CPINLINE int cpFifoRead(int pipe_fd_read, void *buf, int len) {
     return total;
 }
 
-CPINLINE int cpNetRead(int fd, void *buf, int len) {
+int cpNetRead(int fd, void *buf, int len) {
     int n, total = 0;
     do
     {
@@ -140,29 +140,28 @@ void cpSettitle(char *title_name) {
     strcat(title, "pool_");
     strcat(title, title_name);
 
-#if PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 4
+#if PHP_MAJOR_VERSION > 5 && PHP_MINOR_VERSION > 4 ||PHP_MAJOR_VERSION==7
 
     zval *name_ptr, name;
     name_ptr = &name;
-    ZVAL_STRING(name_ptr, title, 1);
-    zval_add_ref(&name_ptr);
+    CP_ZVAL_STRING(name_ptr, title, 1);
+    cp_zval_add_ref(&name_ptr);
     zval *retval;
     zval **args[1];
     args[0] = &name_ptr;
 
     zval *function;
-    MAKE_STD_ZVAL(function);
-    ZVAL_STRING(function, "cli_set_process_title", 1);
+    CP_MAKE_STD_ZVAL(function);
+    CP_ZVAL_STRING(function, "cli_set_process_title", 1);
 
-    if (call_user_function_ex(EG(function_table), NULL, function, &retval, 1, args, 0, NULL TSRMLS_CC) == FAILURE)
+    if (cp_call_user_function_ex(EG(function_table), NULL, function, &retval, 1, args, 0, NULL TSRMLS_CC) == FAILURE)
     {
         return;
     }
-
-    zval_ptr_dtor(&function);
+    cp_zval_ptr_dtor(&function);
     if (retval)
     {
-        zval_ptr_dtor(&retval);
+        cp_zval_ptr_dtor(&retval);
     }
 
 #else
@@ -173,7 +172,7 @@ void cpSettitle(char *title_name) {
 
 //将套接字设置为非阻塞方式
 
-CPINLINE void cpSetNonBlock(int sock) {
+void cpSetNonBlock(int sock) {
     int opts, ret;
     do
     {
@@ -194,7 +193,7 @@ CPINLINE void cpSetNonBlock(int sock) {
     }
 }
 
-CPINLINE int cpSetTimeout(int sock, double timeout) {
+int cpSetTimeout(int sock, double timeout) {
     int ret;
     struct timeval timeo;
     timeo.tv_sec = (int) timeout;
@@ -212,7 +211,7 @@ CPINLINE int cpSetTimeout(int sock, double timeout) {
     return SUCCESS;
 }
 
-CPINLINE int cpCreateFifo(char *file) {
+int cpCreateFifo(char *file) {
     int pipe_fd;
     int res;
     umask(0);
@@ -247,57 +246,41 @@ void swSingalNone() {
     }
 }
 
-zval * cpGetConfig(char *filename) {
-    zval fun_name, **args[2], *retval, *file, *section;
-    ZVAL_STRING(&fun_name, "parse_ini_file", 0);
-
-    MAKE_STD_ZVAL(file);
-    ZVAL_STRING(file, filename, 1);
-    MAKE_STD_ZVAL(section);
-    ZVAL_BOOL(section, 1);
-    args[0] = &file;
-    args[1] = &section;
-
-    if (call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 2, args, 0, NULL TSRMLS_CC) != SUCCESS)
-    {
-        zval_ptr_dtor(&file);
-        zval_ptr_dtor(&section);
-        return NULL;
-    }
-    zval_ptr_dtor(&file);
-    zval_ptr_dtor(&section);
-    return retval;
-}
-
-CPINLINE zval * cpMD5(zval *arr) {//pass in array , out md5 zval
+zval * cpMD5(zval *arr) {//pass in array , out md5 zval
     smart_str ser_data = {0};
     cp_serialize(&ser_data, arr);
 
     zval fun_name, **args[1], *retval, *str;
-    ZVAL_STRING(&fun_name, "md5", 0);
+    CP_ZVAL_STRING(&fun_name, "md5", 0);
 
-    MAKE_STD_ZVAL(str);
-    ZVAL_STRINGL(str, ser_data.c, ser_data.len, 1);
+    CP_MAKE_STD_ZVAL(str);
+#if PHP_MAJOR_VERSION < 7
+    CP_ZVAL_STRINGL(str, ser_data.c, ser_data.len, 1);
+#else
+    zend_string *str_data = ser_data.s;
+    CP_ZVAL_STRINGL(str, str_data->val, str_data->len, 1);
+#endif
     args[0] = &str;
 
-    if (call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 1, args, 0, NULL TSRMLS_CC) != SUCCESS)
+    if (cp_call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 1, args, 0, NULL TSRMLS_CC) != SUCCESS)
     {
-        zval_ptr_dtor(&str);
+        cp_zval_ptr_dtor(&str);
         smart_str_free(&ser_data);
         return NULL;
     }
-    zval_ptr_dtor(&str);
+    cp_zval_ptr_dtor(&str);
     smart_str_free(&ser_data);
     return retval;
 }
 
-CPINLINE void cp_serialize(smart_str *ser_data, zval *array) {
-    //    struct timeval start, end;
-    //    gettimeofday(&start, NULL);
-
+void cp_serialize(smart_str *ser_data, zval *array) {
     php_serialize_data_t var_hash;
     PHP_VAR_SERIALIZE_INIT(var_hash);
+#if PHP_MAJOR_VERSION < 7
     php_var_serialize(ser_data, &array, &var_hash TSRMLS_CC);
+#else
+    php_var_serialize(ser_data, array, &var_hash TSRMLS_CC);
+#endif
     PHP_VAR_SERIALIZE_DESTROY(var_hash);
 
     //    gettimeofday(&end, NULL);
@@ -305,12 +288,12 @@ CPINLINE void cp_serialize(smart_str *ser_data, zval *array) {
     //    printf("ser time: %d us\n", timeuse);
 }
 
-CPINLINE zval * cp_unserialize(char *data, int len) {
+zval * cp_unserialize(char *data, int len) {
     zval *unser_value;
-    ALLOC_INIT_ZVAL(unser_value);
+    CP_ALLOC_INIT_ZVAL(unser_value);
     php_unserialize_data_t var_hash;
     PHP_VAR_UNSERIALIZE_INIT(var_hash);
-    if (php_var_unserialize(&unser_value, (const unsigned char **) &data, (unsigned char *) data + len - 1, &var_hash TSRMLS_CC) != 1)
+    if (cp_php_var_unserialize(&unser_value, (const unsigned char **) &data, (unsigned char *) data + len - 1, &var_hash TSRMLS_CC) != 1)
     {
 //        php_error_docref(NULL TSRMLS_CC, E_NOTICE, "unser data is corrupted");
     }
@@ -318,17 +301,27 @@ CPINLINE zval * cp_unserialize(char *data, int len) {
     return unser_value;
 }
 
-CPINLINE void cp_ser_and_setpro(zval *arr) {
+void cp_ser_and_setpro(zval *arr) {
     smart_str ser_data = {0};
     cp_serialize(&ser_data, arr);
+#if PHP_MAJOR_VERSION < 7
     memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN + CP_PING_PID_LEN + CP_PING_DIS_LEN, ser_data.c, ser_data.len);
+#else
+    zend_string *str = ser_data.s;
+    memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN + CP_PING_PID_LEN + CP_PING_DIS_LEN, str->val, str->len);
+#endif
     smart_str_free(&ser_data);
 }
 
-CPINLINE void cp_ser_and_setdis(zval *arr) {
+void cp_ser_and_setdis(zval *arr) {
     smart_str ser_data = {0};
     cp_serialize(&ser_data, arr);
+#if PHP_MAJOR_VERSION < 7
     memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN + CP_PING_PID_LEN, ser_data.c, ser_data.len);
+#else
+    zend_string *str = ser_data.s;
+    memcpy(CPGL.ping_mem_addr + CP_PING_MD5_LEN + CP_PING_PID_LEN, str->val, str->len);
+#endif
     smart_str_free(&ser_data);
 }
 

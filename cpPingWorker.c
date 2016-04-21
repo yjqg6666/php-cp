@@ -20,7 +20,7 @@ static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source)
 {
 
     zval *copy;
-    MAKE_STD_ZVAL(copy);
+    CP_MAKE_STD_ZVAL(copy);
     *copy = **args;
     zval_copy_ctor(copy);
 
@@ -33,14 +33,14 @@ static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source)
         zval_dtor(&first_arr);
         cpLog("'%s' insert into disable list", data_source);
     }
-    else if (Z_TYPE_P(dis_arr) != IS_BOOL)
+    else if (CP_Z_TYPE_P(dis_arr))
     {
-        zval **zval_source;
-        if (zend_hash_find(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1, (void **) &zval_source) == FAILURE)//SUCCESS的跳过,证明dis后继续调用这个节点了,防止重复添加
+        zval *zval_source;
+        if (cp_zend_hash_find(Z_ARRVAL_P(dis_arr), data_source, strlen(data_source) + 1, (void **) &zval_source) == FAILURE)//SUCCESS的跳过,证明dis后继续调用这个节点了,防止重复添加
         {
             if (zend_hash_num_elements(Z_ARRVAL_P(dis_arr)) >= CPGC.max_fail_num)
             {
-                zval_ptr_dtor(&copy);
+                cp_zval_ptr_dtor(&copy);
                 cpLog("the disable count exceed");
             }
             else
@@ -52,7 +52,7 @@ static void cpPing_add_dislist(zval *dis_arr, zval **args, char *data_source)
         }
         else
         {
-            zval_ptr_dtor(&copy);
+            cp_zval_ptr_dtor(&copy);
         }
     }
 
@@ -63,7 +63,7 @@ static void cpPing_del_prolist(zval *pro_arr, char *data_source)
     zval copy;
     copy = *pro_arr;
     zval_copy_ctor(&copy);
-    zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
+    cp_zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
     cp_ser_and_setpro(&copy);
     zval_dtor(&copy);
 }
@@ -85,9 +85,24 @@ static int cpPing_worker_loop()
         sleep(1);
         zval *pro_arr = CP_PING_GET_PRO(CPGL.ping_mem_addr);
         zval *dis_arr = CP_PING_GET_DIS(CPGL.ping_mem_addr);
-        if (Z_TYPE_P(pro_arr) != IS_BOOL && Z_TYPE_P(pro_arr) != IS_NULL)
+        if (!CP_Z_TYPE_P(pro_arr) && CP_Z_TYPE_P(pro_arr) != IS_NULL)
         {
             //检查probably里面是否有可以放入disable的
+            zval *row , *zval_count;
+            char *name;
+            int keytype;
+            uint32_t keylen;
+            CP_HASHTABLE_FOREACH_START2(CP_Z_ARRVAL_P(pro_arr), name, keylen, keytype, row)
+                if (cp_zend_hash_find(Z_ARRVAL_P(pro_arr), ZEND_STRS("count"), (void **) &zval_count) == SUCCESS)
+                {
+                    if (Z_LVAL_P(zval_count) >= CPGC.ser_fail_hits)
+                    {//连续错n次 放入dis列表
+                        cpPing_add_dislist(dis_arr, &row,  name);
+                        cpPing_del_prolist(pro_arr, name);
+                    }
+                }
+            CP_HASHTABLE_FOREACH_END();
+/*
             for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(pro_arr)); zend_hash_has_more_elements(Z_ARRVAL_P(pro_arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(pro_arr)))
             {
                 zval **args, **zval_count;
@@ -95,7 +110,7 @@ static int cpPing_worker_loop()
                 char *data_source;
                 uint keylen;
                 zend_hash_get_current_key_ex(Z_ARRVAL_P(pro_arr), &data_source, &keylen, NULL, 0, NULL);
-                if (zend_hash_find(Z_ARRVAL_PP(args), ZEND_STRS("count"), (void **) &zval_count) == SUCCESS)
+                if (cp_zend_hash_find(Z_ARRVAL_PP(args), ZEND_STRS("count"), (void **) &zval_count) == SUCCESS)
                 {
                     if (Z_LVAL_PP(zval_count) >= CPGC.ser_fail_hits)
                     {//连续错n次 放入dis列表
@@ -104,16 +119,46 @@ static int cpPing_worker_loop()
                     }
                 }
             }
+*/
         }
-        zval_ptr_dtor(&dis_arr);
+
+        cp_zval_ptr_dtor(&dis_arr);
 
         dis_arr = CP_PING_GET_DIS(CPGL.ping_mem_addr);
         zval copy;
         copy = *dis_arr;
         zval_copy_ctor(&copy);
-        if (Z_TYPE_P(dis_arr) != IS_BOOL && Z_TYPE_P(dis_arr) != IS_NULL)
+        if (!CP_Z_TYPE_P(dis_arr)  && CP_Z_TYPE_P(dis_arr) != IS_NULL)
         {
             //开始检测disable中是否有恢复的
+            zval *args;
+            char *data_source;
+            int keytype;
+            uint32_t keylen;
+            CP_HASHTABLE_FOREACH_START2(CP_Z_ARRVAL_P(dis_arr), data_source, keylen, keytype, args)
+                if (strstr(data_source, "host"))
+                {//mysql
+                    if (pdo_proxy_connect(args, CP_CONNECT_PING))
+                    {
+                        cp_zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
+                        cp_ser_and_setdis(&copy);
+                        cpLog("'%s' remove from disable list", data_source);
+                    }
+                }
+                else
+                {//redis
+                    zval z_data_source;
+                    CP_ZVAL_STRINGL(&z_data_source, data_source, keylen, 0);
+                    if (redis_proxy_connect(&z_data_source, args, CP_CONNECT_PING))
+                    {
+                        cp_zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
+                        cp_ser_and_setdis(&copy);
+                        cpLog("'%s' remove from disable list", data_source);
+                    }
+                }
+            CP_HASHTABLE_FOREACH_END();
+
+            /*
             for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(dis_arr)); zend_hash_has_more_elements(Z_ARRVAL_P(dis_arr)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(dis_arr)))
             {
                 zval **args;
@@ -125,7 +170,7 @@ static int cpPing_worker_loop()
                 {//mysql
                     if (pdo_proxy_connect(*args, CP_CONNECT_PING))
                     {
-                        zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
+                        cp_zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
                         cp_ser_and_setdis(&copy);
                         cpLog("'%s' remove from disable list", data_source);
                     }
@@ -133,19 +178,20 @@ static int cpPing_worker_loop()
                 else
                 {//redis
                     zval z_data_source;
-                    ZVAL_STRINGL(&z_data_source, data_source, keylen, 0);
+                    CP_ZVAL_STRINGL(&z_data_source, data_source, keylen, 0);
                     if (redis_proxy_connect(&z_data_source, *args, CP_CONNECT_PING))
                     {
-                        zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
+                        cp_zend_hash_del(Z_ARRVAL(copy), data_source, strlen(data_source) + 1);
                         cp_ser_and_setdis(&copy);
                         cpLog("'%s' remove from disable list", data_source);
                     }
                 }
             }
+            */
         }
         zval_dtor(&copy);
-        zval_ptr_dtor(&dis_arr);
-        zval_ptr_dtor(&pro_arr);
+        cp_zval_ptr_dtor(&dis_arr);
+        cp_zval_ptr_dtor(&pro_arr);
     }
 
 

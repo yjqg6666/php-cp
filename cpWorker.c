@@ -65,7 +65,7 @@ static int cpWorker_loop(int worker_id, int group_id)
     while (CPGS->running)
     {
         zval *ret_value;
-        ALLOC_INIT_ZVAL(ret_value);
+        CP_ALLOC_INIT_ZVAL(ret_value);
         bzero(&CPWG.event, sizeof (cpWorkerInfo));
         ret = cpFifoRead(CPWG.pipe_fd_read, &CPWG.event, sizeof (cpWorkerInfo));
         if (ret < 0)
@@ -74,7 +74,7 @@ static int cpWorker_loop(int worker_id, int group_id)
         }
         if (CPWG.event.pid != G->workers[CPWG.id].CPid)
         {//pipe数据里面的fpm pid和worker应该服务的pid不一样
-            cpLog("warning: read a wrong event,maybe you restart the pool server,%d,%d,%d",CPWG.event.pid,CPWG.id,G->workers[CPWG.id].CPid);
+            cpLog("warning: read a wrong event,maybe you restart the pool server,%d,%d,%d", CPWG.event.pid, CPWG.id, G->workers[CPWG.id].CPid);
             continue;
         }
         CPWG.working = 1;
@@ -116,11 +116,11 @@ static void cpManagerRecycle(int sig)
         cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
         if (G->lock(G) == 0)
         {
-//                                    for (i = G->worker_num - 1; i >= 0; i--)
-//                                    {
-//                                        cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
-//                                    }
-//                                    cpLog("________________");
+            //                                    for (i = G->worker_num - 1; i >= 0; i--)
+            //                                    {
+            //                                        cpLog("index is %d,pid is %d,status is %d", i, G->workers[i].pid, G->workers_status[i]);
+            //                                    }
+            //                                    cpLog("________________");
 
             for (i = G->worker_num - 1; i >= G->worker_min; i--)
             {
@@ -191,7 +191,7 @@ static void cpManagerReload(int sig)
     zval *group_conf = NULL, **v;
     group_conf = cpGetConfig(CPGC.ini_file);
     int gid = 0;
-    zval **gid_ptr = NULL;
+    zval *gid_ptr = NULL;
     cpGroup *G = NULL;
     if (!Z_BVAL_P(group_conf))
     {
@@ -199,18 +199,18 @@ static void cpManagerReload(int sig)
     }
     else
     {
-        for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(group_conf)); zend_hash_has_more_elements(Z_ARRVAL_P(group_conf)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(group_conf)))
+        zval *config;
+        char *name;
+        int keytype;
+        uint32_t keylen;
+
+        CP_HASHTABLE_FOREACH_START2(CP_Z_ARRVAL_P(group_conf), name, keylen, keytype, config)
         {
-            zval **config;
-            zend_hash_get_current_data(Z_ARRVAL_P(group_conf), (void**) &config);
-            char *name;
-            uint keylen;
-            zend_hash_get_current_key_ex(Z_ARRVAL_P(group_conf), &name, &keylen, NULL, 0, NULL);
             if (strcmp(name, "common") != 0)
             {
-                if (zend_hash_find(Z_ARRVAL_P(CPGS->group), name, strlen(name) + 1, (void **) &gid_ptr) == SUCCESS)
+                if (cp_zend_hash_find(Z_ARRVAL_P(CPGS->group), name, strlen(name) + 1, (void **) &gid_ptr) == SUCCESS)
                 {
-                    gid = Z_LVAL_PP(gid_ptr);
+                    gid = Z_LVAL_P(gid_ptr);
                     G = &CPGS->G[gid];
                 }
                 else
@@ -220,12 +220,12 @@ static void cpManagerReload(int sig)
                 }
                 if (G->lock(G) == 0)
                 {
-                    if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
+                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
                     {
                         convert_to_long(*v);
                         G->worker_max = (int) Z_LVAL_PP(v);
                     }
-                    if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
+                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
                     {
                         convert_to_long(*v);
                         int new_min = (int) Z_LVAL_PP(v);
@@ -255,20 +255,20 @@ static void cpManagerReload(int sig)
             }
             else
             {
-                if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("recycle_num"), (void **) &v) == SUCCESS)
+                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("recycle_num"), (void **) &v) == SUCCESS)
                 {
                     convert_to_long(*v);
                     CPGC.recycle_num = (int) Z_LVAL_PP(v);
                 }
-                if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("idel_time"), (void **) &v) == SUCCESS)
+                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("idel_time"), (void **) &v) == SUCCESS)
                 {
                     convert_to_long(*v);
                     CPGC.idel_time = (int) Z_LVAL_PP(v);
                 }
             }
         }
-
-        zval_ptr_dtor(&group_conf);
+        CP_HASHTABLE_FOREACH_END();
+        cp_zval_ptr_dtor(&group_conf);
     }
 }
 
@@ -380,16 +380,20 @@ void cpWorker_do_ping()
 {
     zval * stmt_value = NULL;
     zval method, **args[1], *sql;
-    ZVAL_STRING(&method, "query", 0);
-    MAKE_STD_ZVAL(sql);
-    ZVAL_STRING(sql, "select 1", 0);
+    CP_ZVAL_STRING(&method, "query", 0);
+    CP_MAKE_STD_ZVAL(sql);
+    CP_ZVAL_STRING(sql, "select 1", 0);
     args[0] = &sql;
     if (pdo_object != NULL && CPWG.working == 0)
     {
-        call_user_function_ex(NULL, &pdo_object, &method, &stmt_value, 1, args, 0, NULL TSRMLS_CC);
+        cp_call_user_function_ex(NULL, &pdo_object, &method, &stmt_value, 1, args, 0, NULL TSRMLS_CC);
         if (stmt_value)
-            zval_ptr_dtor(&stmt_value);
+            cp_zval_ptr_dtor(&stmt_value);
     }
-    efree(sql);
+    cp_zval_ptr_dtor(&sql);
+#if PHP_MAJOR_VERSION==7
+    zval_ptr_dtor(&method);
+#endif
     alarm(CP_PING_SLEEP);
 }
+
