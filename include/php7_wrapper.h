@@ -388,28 +388,23 @@ static CPINLINE int cp_internal_call_user_function(zval *object, zval *fun, zval
                                 CP_ZVAL_STRING(&send_zval,send_data,0);\
                                 CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,type);\
                                 zval_ptr_dtor(&send_zval);
+#define CP_GET_EXCEPTION_STR
 
-#define CP_EXCEPTION_ARGS(str) do{   zend_object *ex = EG(exception);\
-                            zval exception, tmp, rv;\
-                            ZVAL_OBJ(&exception, ex);\
-                            zend_class_entry *ce_exception = Z_OBJCE(exception);\
-                            zend_call_method_with_0_params(&exception, ce_exception, NULL, "__tostring", &tmp);\
-                            *str = zend_read_property(ce_exception, &exception, "message", sizeof ("message") - 1, 1, &rv);\
-                             zval_ptr_dtor(&exception);\
-                            zval_ptr_dtor(&tmp);\
-                            EG(exception) = NULL;\
-                        }while(0);
-
-#define CP_SEND_EXCEPTION_ARGS(str) do{    zend_object *ex = EG(exception);\
-                zval exception, tmp, rv;\
+#define CP_EXCEPTION_ARGS(str) do{    zend_object *ex = EG(exception);\
+                zval exception, tmp, rv,ret;\
                 ZVAL_OBJ(&exception, ex);\
                 zend_class_entry *ce_exception = Z_OBJCE(exception);\
                 zend_call_method_with_0_params(&exception, ce_exception, NULL, "__tostring", &tmp);\
                 *str = zend_read_property(ce_exception, &exception, "message", sizeof ("message") - 1, 1, &rv);\
-                zval_ptr_dtor(&exception);\
+	            ZVAL_STRING(&ret,Z_STRVAL_P(*str));\
+                *str = &ret;\
+	            zval_ptr_dtor(&exception);\
                 zval_ptr_dtor(&tmp);\
                 EG(exception) = NULL;\
-                CP_INTERNAL_SERIALIZE_SEND_MEM(*str,CP_SIGEVENT_EXCEPTION);\
+                        }while(0);
+
+#define CP_SEND_EXCEPTION_ARGS(str) do{   CP_EXCEPTION_ARGS(str);\
+			    CP_INTERNAL_SERIALIZE_SEND_MEM(*str,CP_SIGEVENT_EXCEPTION);\
             }while(0);
 
 #define CP_TEST_RETURN_FALSE(flag) ({if(flag==CP_CONNECT_PING){ \
