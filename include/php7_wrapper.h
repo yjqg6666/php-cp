@@ -69,10 +69,13 @@ static CPINLINE int cp_zend_hash_index_find(HashTable *ht, zend_ulong h, void **
 #define CP_RETURN_STRINGL                     RETURN_STRINGL
 #define cp_explode                            php_explode
 #define cp_zend_register_internal_class_ex    zend_register_internal_class_ex
+#define cp_zend_fetch_class(zval,type)        zend_fetch_class(Z_STRVAL_P(zval),Z_STRLEN_P(zval),type)
 
 #define cp_zend_call_method_with_0_params     zend_call_method_with_0_params
 #define cp_zend_call_method_with_1_params     zend_call_method_with_1_params
 #define cp_zend_call_method_with_2_params     zend_call_method_with_2_params
+
+#define ZVAL_DUP(z,v)                                 *z = *v;zval_copy_ctor(z);
 
 typedef int zend_size_t;
 
@@ -96,6 +99,11 @@ typedef int zend_size_t;
             (ktype = zend_hash_get_current_key_ex(ht, &k, &klen, &idx, 0, NULL)) != HASH_KEY_NON_EXISTENT; \
             zend_hash_move_forward(ht)\
         ) { \
+        if(HASH_KEY_IS_LONG==ktype){\
+            char t[20] = {0};\
+            sprintf(t,"%d",idx);\
+            k = t; klen = strlen(t)+1; \
+        }\
     if (zend_hash_get_current_data(ht, (void**)&tmp) == FAILURE) {\
         continue;\
     }\
@@ -163,7 +171,7 @@ static CPINLINE int cp_internal_call_user_function(zval *object, zval *fun, zval
 }
 
 static CPINLINE int cp_zend_hash_find_ptr(HashTable *ht, zval *k, void **ret) {
-    return cp_zend_hash_find(ht, Z_STRVAL_P(k), Z_STRLEN_P(k)+1, ret);
+    return cp_zend_hash_find(ht, Z_STRVAL_P(k), Z_STRLEN_P(k) + 1, ret);
 }
 #else
 //------------下面是php7版本------------------------------------
@@ -180,6 +188,7 @@ static CPINLINE int Z_BVAL_P(zval *v) {
         return 0;
     }
 }
+#define cp_zend_fetch_class(zval,type)                   zend_fetch_class(Z_STR_P(zval),type)
 
 #define cp_add_assoc_stringl(__arg, __key, __str, __length, __duplicate) cp_add_assoc_stringl_ex(__arg, __key, strlen(__key)+1, __str, __length, __duplicate)
 
@@ -194,8 +203,12 @@ static CPINLINE int cp_add_assoc_stringl_ex(zval *arg, const char *key, size_t k
 
 
 #define CP_HASHTABLE_FOREACH_START2(ht, k, klen, ktype, _val) zend_string *_foreach_key;\
-    ZEND_HASH_FOREACH_STR_KEY_VAL(ht, _foreach_key, _val);\
-    if (!_foreach_key) {k = NULL; klen = 0; ktype = 0;}\
+    zend_ulong knum;\
+     ZEND_HASH_FOREACH_KEY_VAL(ht, knum,_foreach_key, _val);\
+    if (!_foreach_key) {\
+        char t[20] = {0};\
+        sprintf(t,"%d",knum);\
+        k = t; klen = strlen(t); ktype = 0;}\
     else {k = _foreach_key->val, klen=_foreach_key->len; ktype = 1;} {
 
 

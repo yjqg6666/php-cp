@@ -17,6 +17,7 @@
 #include "php_connect_pool.h"
 #include <ext/standard/info.h>
 #include "zend_interfaces.h"
+#include "zend_exceptions.h"
 #include <sys/time.h>
 #include <Zend/zend_types.h>
 
@@ -55,7 +56,7 @@ static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 #define CP_SEND_EXCEPTION_RETURN do{CP_SEND_EXCEPTION;return CP_FALSE;}while(0);
 #define CP_TEST_RETURN_TRUE(flag) ({if(flag==CP_CONNECT_PING)return CP_TRUE;})
 
-#include "zend_exceptions.h"
+
 
 const zend_function_entry cp_functions[] = {
     PHP_FE(pool_server_create, NULL)
@@ -579,6 +580,10 @@ static void pdo_proxy_stmt(zval * args)
             cp_zval_ptr_dtor(&pdo_stmt);
             pdo_stmt = NULL;
         }
+        if (Z_TYPE_P(ret_value) == IS_OBJECT)
+        {
+            CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_STMT_OBJ);
+        }
         else
         {
             CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
@@ -662,7 +667,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
     {
         tmp_pass[1] = &port;
     }
-    
+
     CP_MAKE_STD_ZVAL(timeout);
     CP_ZVAL_STRING(timeout, "10", 0);
     tmp_pass[2] = &timeout;

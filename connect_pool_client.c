@@ -565,13 +565,93 @@ static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, ch
     return pass_data;
 }
 
+int static stmt_fetch_obj(zval *args, zend_class_entry *ce, zval *return_value)
+{
+    zend_fcall_info fci = {0};
+    zend_fcall_info_cache fcc = {0};
+    fci.size = sizeof (zend_fcall_info);
+
+
+    if (ce->constructor)
+    {
+#if PHP_MAJOR_VERSION == 7
+        zval retval;
+        fci.function_table = &ce->function_table;
+        ZVAL_UNDEF(&fci.function_name);
+        fci.symbol_table = NULL;
+        fci.retval = &retval;
+        fci.param_count = 0;
+        fci.params = NULL;
+        fci.no_separation = 1;
+
+        zend_fcall_info_args_ex(&fci, ce->constructor, args);
+
+        fcc.initialized = 1;
+        fcc.function_handler = ce->constructor;
+        fcc.calling_scope = EG(scope);
+        fcc.called_scope = ce;
+
+        object_init_ex(return_value, ce);
+
+        fci.object = Z_OBJ_P(return_value);
+        fcc.object = Z_OBJ_P(return_value);
+#else
+        zval *retval;
+        fci.function_table = &ce->function_table;
+        fci.function_name = NULL;
+        fci.symbol_table = NULL;
+        fci.retval_ptr_ptr = &retval;
+        if (args)
+        {
+            HashTable *ht = Z_ARRVAL_P(args);
+            Bucket *p;
+
+            fci.param_count = 0;
+            fci.params = safe_emalloc(sizeof (zval**), ht->nNumOfElements, 0);
+            p = ht->pListHead;
+            while (p != NULL)
+            {
+                fci.params[fci.param_count++] = (zval**) p->pData;
+                p = p->pListNext;
+            }
+        }
+        else
+        {
+            fci.param_count = 0;
+            fci.params = NULL;
+        }
+        fci.no_separation = 1;
+
+        fcc.initialized = 1;
+        fcc.function_handler = ce->constructor;
+        fcc.calling_scope = EG(scope);
+        fcc.called_scope = ce;
+
+        object_init_ex(return_value, ce);
+
+        fci.object_ptr = return_value;
+        fcc.object_ptr = return_value;
+#endif
+        if (zend_call_function(&fci, &fcc) == FAILURE)
+        {
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "could not call class constructor");
+            return 0;
+        }
+        else
+        {//??? free something?
+            return 1;
+        }
+    }
+    else
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "user-supplied class does not have a constructor");
+        return 0;
+    }
+}
+
 PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
 {
-    zval *z_args;
-    zval *object;
-    zval *pass_data;
-    zval *zres, *source_zval;
-
+    zval *zres, *source_zval, *pass_data, *object, *z_args, *class_name = NULL, stmt_obj_args_dup;
     char *cmd;
     zend_size_t cmd_len;
 
@@ -602,6 +682,16 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     cp_add_assoc_string(pass_data, "method", cmd, 1);
     cp_zval_add_ref(&z_args);
     add_assoc_zval(pass_data, "args", z_args);
+    if (strcasecmp("fetchObject", cmd) == 0)
+    {
+        cp_zend_hash_del(Z_ARRVAL_P(pass_data), "args", strlen("args") + 1); //use no args in the pool server
+        cp_zend_hash_index_find(Z_ARRVAL_P(z_args), 0, (void**) &class_name);
+        if (class_name)
+        {
+            ZVAL_DUP(&stmt_obj_args_dup, z_args);
+            zend_hash_index_del(Z_ARRVAL_P(z_args), 0);
+        }
+    }
     cp_add_assoc_string(pass_data, "method_type", "PDOStatement", 1);
     cp_add_assoc_string(pass_data, "type", "pdo", 1);
     int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_PDOStatement_class_entry_ptr);
@@ -615,8 +705,33 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
+    else if (RecvData.type == CP_SIGEVENT_STMT_OBJ)
+    {//fetchObject return
+        if (class_name)
+        {//user class
+            zend_class_entry *class_ce = cp_zend_fetch_class(class_name, ZEND_FETCH_CLASS_AUTO);
+            stmt_fetch_obj(&stmt_obj_args_dup, class_ce, return_value);
+            zval *val;
+            char *name;
+            uint klen;
+            int ktype;
+
+            CP_HASHTABLE_FOREACH_START2(CP_Z_ARRVAL_P(RecvData.ret_value), name, klen, ktype, val)
+            {
+                zend_update_property(class_ce, return_value, name, klen, val TSRMLS_CC);
+            }
+            CP_HASHTABLE_FOREACH_END();
+        }
+        else
+        {//default class
+            convert_to_object(RecvData.ret_value);
+            ZVAL_DUP(return_value, RecvData.ret_value);
+            //            ZVAL_OBJ(return_value, Z_OBJ_P(RecvData.ret_value));
+        }
+    }
     else
     {
+
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
     }
     cp_zval_ptr_dtor(&pass_data);
@@ -678,6 +793,7 @@ PHP_METHOD(pdo_connect_pool, __call)
     }
     else
     {
+
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
     }
     cp_zval_ptr_dtor(&pass_data);
@@ -732,6 +848,7 @@ PHP_METHOD(pdo_connect_pool, __construct)
         case IS_ARRAY:
             cp_zval_add_ref(&data_source);
             zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("config"), data_source TSRMLS_CC);
+
             break;
     }
     zend_update_property_bool(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("in_tran"), 0 TSRMLS_CC);
@@ -740,12 +857,14 @@ PHP_METHOD(pdo_connect_pool, __construct)
 
 PHP_METHOD(pdo_connect_pool, release)
 {
+
     release_worker(getThis());
     CP_CHECK_RETURN(1);
 }
 
 PHP_METHOD(redis_connect_pool, release)
 {
+
     release_worker(getThis());
     CP_CHECK_RETURN(1);
 }
@@ -757,6 +876,7 @@ PHP_METHOD(redis_connect_pool, __destruct)
 
 PHP_METHOD(redis_connect_pool, __construct)
 {
+
     CP_GET_PID;
 }
 
@@ -771,6 +891,7 @@ PHP_METHOD(redis_connect_pool, connect)
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s!|s!s!", &ip, &ip_len, &port, &port_len, &time, &time_len) == FAILURE)
     {
+
         RETURN_FALSE;
     }
     //临时标示这个连接的真实目标,根据下一步是select还是get来确定db号,可以減少一次select操作
@@ -790,6 +911,7 @@ static cpClient * cpRedis_conn_pool_server(zval *obj, char *source_char)
     }
     else
     {//connect local proxy
+
         zval z_data_source;
         CP_ZVAL_STRING(&z_data_source, source_char, 0);
         zval *tmp = cpConnect_pool_server(&z_data_source);
@@ -865,6 +987,7 @@ PHP_METHOD(redis_connect_pool, select)
     }
     else
     {
+
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
     }
     cp_zval_ptr_dtor(&pass_data);
