@@ -639,6 +639,11 @@ int static stmt_fetch_obj(zval *args, zend_class_entry *ce, zval *return_value)
         }
         else
         {//??? free something?
+		#if PHP_MAJOR_VERSION < 7
+			   efree(fci.params); 
+			   cp_zval_ptr_dtor(&retval);
+		#endif
+           //cp_zval_ptr_dtor(&args);
             return 1;
         }
     }
@@ -725,8 +730,13 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
         else
         {//default class
             convert_to_object(RecvData.ret_value);
-            ZVAL_DUP(return_value, RecvData.ret_value);
-            //            ZVAL_OBJ(return_value, Z_OBJ_P(RecvData.ret_value));
+			#if PHP_MAJOR_VERSION == 7
+            ZVAL_OBJ(return_value, Z_OBJ_P(RecvData.ret_value));
+
+			#else
+			ZVAL_DUP(return_value, RecvData.ret_value);
+		    #endif
+            
         }
     }
     else
@@ -995,10 +1005,7 @@ PHP_METHOD(redis_connect_pool, select)
 
 PHP_METHOD(redis_connect_pool, __call)
 {
-    zval *z_args;
-    zval *pass_data;
-    zval *object;
-    zval *zres, *source_zval;
+    zval *z_args, *pass_data, *object, *zres, *source_zval;
     char source_char[100] = {0};
     char *cmd;
     zend_size_t cmd_len;
