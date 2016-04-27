@@ -143,7 +143,7 @@ static void release_worker(zval *object)
     }
     else
     {
-        php_error_docref(NULL TSRMLS_CC, E_ERROR, "data_source can not find");
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "data_source can not find,we should do something like query before we release");
     }
 }
 
@@ -639,11 +639,11 @@ int static stmt_fetch_obj(zval *args, zend_class_entry *ce, zval *return_value)
         }
         else
         {//??? free something?
-		#if PHP_MAJOR_VERSION < 7
-			   efree(fci.params); 
-			   cp_zval_ptr_dtor(&retval);
-		#endif
-           //cp_zval_ptr_dtor(&args);
+#if PHP_MAJOR_VERSION < 7
+            efree(fci.params);
+            cp_zval_ptr_dtor(&retval);
+#endif
+            //cp_zval_ptr_dtor(&args);
             return 1;
         }
     }
@@ -730,13 +730,13 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
         else
         {//default class
             convert_to_object(RecvData.ret_value);
-			#if PHP_MAJOR_VERSION == 7
+#if PHP_MAJOR_VERSION == 7
             ZVAL_OBJ(return_value, Z_OBJ_P(RecvData.ret_value));
 
-			#else
-			ZVAL_DUP(return_value, RecvData.ret_value);
-		    #endif
-            
+#else
+            ZVAL_DUP(return_value, RecvData.ret_value);
+#endif
+
         }
     }
     else
