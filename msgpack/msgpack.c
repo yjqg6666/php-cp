@@ -141,6 +141,7 @@ ZEND_GET_MODULE(msgpack)
 PHP_MSGPACK_API void php_msgpack_serialize(instead_smart *buf, zval *val TSRMLS_DC)
 //PHP_MSGPACK_API void php_msgpack_serialize(smart_str *buf, zval *val TSRMLS_DC)
 {
+    MSGPACK_G(php_only) = 1;
     msgpack_serialize_data_t var_hash;
 
     msgpack_serialize_var_init(&var_hash);
@@ -153,6 +154,7 @@ PHP_MSGPACK_API void php_msgpack_serialize(instead_smart *buf, zval *val TSRMLS_
 PHP_MSGPACK_API void php_msgpack_unserialize(
     zval *return_value, char *str, size_t str_len TSRMLS_DC)
 {
+    MSGPACK_G(php_only) = 1;
     int ret;
     size_t off = 0;
     msgpack_unpack_t mp;

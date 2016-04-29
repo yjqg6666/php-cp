@@ -285,7 +285,6 @@ void msgpack_serialize_var_init(msgpack_serialize_data_t *var_hash)
 {
     HashTable **var_hash_ptr = (HashTable **)var_hash;
     TSRMLS_FETCH();
-
     if (MSGPACK_G(serialize).level) {
         *var_hash_ptr = MSGPACK_G(serialize).var_hash;
     } else {

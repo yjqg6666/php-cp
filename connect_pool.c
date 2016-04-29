@@ -327,6 +327,7 @@ int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
     dest.addr = sm_obj->mem;
     dest.max = CPGC.max_read_len;
     dest.exceed = 0;
+    
     php_msgpack_serialize(&dest, ret_value);
     if (dest.exceed == 1)
     {

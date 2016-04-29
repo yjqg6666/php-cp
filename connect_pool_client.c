@@ -720,6 +720,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
             char *name;
             uint klen;
             int ktype;
+//          zend_print_zval_r(RecvData.ret_value,0);
 
             CP_HASHTABLE_FOREACH_START2(CP_Z_ARRVAL_P(RecvData.ret_value), name, klen, ktype, val)
             {
