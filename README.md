@@ -111,7 +111,6 @@ $obj1->release();
 - qq群号 538716391
 
 ## quick start
-- fetchAll返回对象的支持
 - foreach stmt对象的支持
 - 自动release连接（太难看情况）
 - 不配置数据源走默认的最大最小连接数
