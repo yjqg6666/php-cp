@@ -21,6 +21,15 @@
 #include <sys/time.h>
 #include <Zend/zend_types.h>
 
+#include <Zend/zend.h>
+#include <ext/pdo/php_pdo.h>
+#include <ext/pdo/php_pdo_driver.h>
+#include <ext/pdo/php_pdo_error.h>
+
+#ifdef HAVE_PCRE
+#include <ext/spl/spl_iterators.h>
+#endif
+
 static HashTable pdo_object_table;
 static HashTable redis_object_table;
 static zval* pdo_stmt = NULL;
@@ -80,11 +89,94 @@ const zend_function_entry pdo_connect_pool_methods[] = {
     PHP_FE_END
 };
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_statement_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
 const zend_function_entry pdo_connect_pool_PDOStatement_methods[] = {
     PHP_ME(pdo_connect_pool_PDOStatement, __call, __call_args, ZEND_ACC_PUBLIC)
+#ifdef HAVE_PCRE
+    PHP_ME(pdo_connect_pool_PDOStatement, rewind,      arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, next,        arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, current,     arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, key,         arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, valid,       arginfo_statement_void, ZEND_ACC_PUBLIC)
+#endif
     PHP_FE_END
 };
 
+#ifdef HAVE_PCRE
+static PHP_METHOD(pdo_connect_pool_PDOStatement, rewind)
+{
+    zval *object = getThis();
+    zval *method_ptr, method, *ret_value = NULL, *pos;
+    method_ptr = &method;
+    zend_class_entry *ce;
+    ce = Z_OBJCE_P(object);
+    CP_MAKE_STD_ZVAL(pos);
+    ZVAL_LONG(pos, 0);
+    CP_ZVAL_STRING(method_ptr, "fetchAll", 0);
+    //cp_internal_call_user_function(object, method_ptr, &ret_value, NULL);
+    if (cp_call_user_function_ex(EG(function_table), &object, method_ptr, &ret_value, 0, NULL, 0, NULL TSRMLS_CC) == FAILURE)
+    {
+        return ;
+    }
+        zend_update_property(ce, object, "pos", sizeof("pos") -1, pos TSRMLS_CC);
+        zend_update_property(ce, object, "rs", sizeof("rs") - 1, ret_value TSRMLS_CC);
+
+}
+
+static PHP_METHOD(pdo_connect_pool_PDOStatement, current)
+{
+    zval *pos, *rs, *row;
+    zend_class_entry *ce;
+    ce = Z_OBJCE_P(getThis());
+    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
+    rs = cp_zend_read_property(ce, getThis(), "rs", sizeof("rs") -1, 0 TSRMLS_DC);
+    CP_MAKE_STD_ZVAL(row);
+
+    cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &row);
+    RETVAL_ZVAL(row, 1, 1);
+}
+
+static PHP_METHOD(pdo_connect_pool_PDOStatement, key)
+{
+    zval *pos;
+    zend_class_entry *ce;
+    ce = Z_OBJCE_P(getThis());
+    pos = cp_zend_read_property(ce, getThis(),"pos", sizeof("pos") -1, 0 TSRMLS_DC);
+    ZVAL_LONG(return_value, Z_LVAL_P(pos));
+}
+
+static PHP_METHOD(pdo_connect_pool_PDOStatement, next)
+{
+    zval *pos, *next;
+    CP_MAKE_STD_ZVAL(next);
+    zend_class_entry *ce;
+    ce = Z_OBJCE_P(getThis());
+    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
+
+    ZVAL_LONG(next, ++Z_LVAL_P(pos));
+    zend_update_property(ce, getThis(),  "pos", sizeof("pos") -1, next TSRMLS_CC);
+
+}
+
+static PHP_METHOD(pdo_connect_pool_PDOStatement, valid)
+{
+    zval *pos, *rs, *row = NULL;
+    zend_class_entry *ce;
+    ce = Z_OBJCE_P(getThis());
+    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
+    rs = cp_zend_read_property(ce, getThis(), "rs", sizeof("rs") -1, 0 TSRMLS_DC);
+    CP_MAKE_STD_ZVAL(row);
+
+    if (cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &row) == SUCCESS) {
+        RETURN_BOOL(1);
+    } else {
+        RETURN_BOOL(0);
+    }
+
+}
+#endif
 const zend_function_entry redis_connect_pool_methods[] = {
     PHP_ME(redis_connect_pool, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(redis_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
@@ -145,7 +237,11 @@ PHP_MINIT_FUNCTION(connect_pool)
     redis_connect_pool_class_entry_ptr = zend_register_internal_class(&redis_connect_pool_ce TSRMLS_CC);
 
     INIT_CLASS_ENTRY(pdo_connect_pool_PDOStatement_ce, "pdo_connect_pool_PDOStatement", pdo_connect_pool_PDOStatement_methods);
+
+    //zend_class_entry *pdo_dbstmt_ce = cp_zend_fetch_class("PDOStatement", ZEND_FETCH_CLASS_AUTO);
+
     pdo_connect_pool_PDOStatement_class_entry_ptr = zend_register_internal_class(&pdo_connect_pool_PDOStatement_ce TSRMLS_CC);
+        zend_class_implements(pdo_connect_pool_PDOStatement_class_entry_ptr TSRMLS_CC, 1, spl_ce_Iterator, spl_ce_Countable);
 
     zend_hash_init(&pdo_object_table, 50, NULL, ZVAL_PTR_DTOR, 1);
     zend_hash_init(&redis_object_table, 50, NULL, ZVAL_PTR_DTOR, 1);
@@ -327,7 +423,6 @@ int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
     dest.addr = sm_obj->mem;
     dest.max = CPGC.max_read_len;
     dest.exceed = 0;
-    
     php_msgpack_serialize(&dest, ret_value);
     if (dest.exceed == 1)
     {
@@ -497,7 +592,7 @@ static void pdo_proxy_pdo(zval * args)
 #if PHP_MAJOR_VERSION < 7
                         char *name;
                         zend_uint name_len;
-                        zend_get_object_classname(ret_value, &name, &name_len TSRMLS_CC);
+                        zend_get_object_classname(ret_value, (const char **)&name, &name_len TSRMLS_CC);
                         if (strcmp(name, "PDOStatement") == 0)
                         {
                             if (pdo_stmt)
@@ -886,3 +981,111 @@ static void cp_add_fail_into_mem(zval *o_arg, zval * data_source)
     }
     cp_zval_ptr_dtor(&arr);
 }
+
+/* {{{ statement iterator */
+
+/*
+struct php_pdo_iterator {
+    zend_object_iterator iter;
+    zend_ulong key;
+    zval fetch_ahead;
+};
+
+static void pdo_stmt_iter_dtor(zend_object_iterator *iter)
+{
+    struct php_pdo_iterator *I = (struct php_pdo_iterator*)iter;
+
+    zval_ptr_dtor(&I->iter.data);
+
+    if (!Z_ISUNDEF(I->fetch_ahead)) {
+        zval_ptr_dtor(&I->fetch_ahead);
+    }
+}
+
+static int pdo_stmt_iter_valid(zend_object_iterator *iter)
+{
+    struct php_pdo_iterator *I = (struct php_pdo_iterator*)iter;
+
+    return Z_ISUNDEF(I->fetch_ahead) ? FAILURE : SUCCESS;
+}
+
+static zval *pdo_stmt_iter_get_data(zend_object_iterator *iter)
+{
+    struct php_pdo_iterator *I = (struct php_pdo_iterator*)iter;
+
+    if (Z_ISUNDEF(I->fetch_ahead)) {
+        return NULL;
+    }
+
+    return &I->fetch_ahead;
+}
+
+static void pdo_stmt_iter_get_key(zend_object_iterator *iter, zval *key)
+{
+    struct php_pdo_iterator *I = (struct php_pdo_iterator*)iter;
+
+    if (I->key == (ulong)-1) {
+        ZVAL_NULL(key);
+    } else {
+        ZVAL_LONG(key, I->key);
+    }
+}
+
+static void pdo_stmt_iter_move_forwards(zend_object_iterator *iter)
+{
+    struct php_pdo_iterator *I = (struct php_pdo_iterator*)iter;
+    pdo_stmt_t *stmt = Z_PDO_STMT_P(&I->iter.data); 
+
+    if (!Z_ISUNDEF(I->fetch_ahead)) {
+        zval_ptr_dtor(&I->fetch_ahead);
+    }
+
+    if (!do_fetch(stmt, TRUE, &I->fetch_ahead, PDO_FETCH_USE_DEFAULT,
+            PDO_FETCH_ORI_NEXT, 0, 0)) {
+
+        PDO_HANDLE_STMT_ERR();
+        I->key = (ulong)-1;
+        ZVAL_UNDEF(&I->fetch_ahead);
+
+        return;
+    }
+
+    I->key++;
+}
+
+static zend_object_iterator_funcs pdo_stmt_iter_funcs = {
+    pdo_stmt_iter_dtor,
+    pdo_stmt_iter_valid,
+    pdo_stmt_iter_get_data,
+    pdo_stmt_iter_get_key,
+    pdo_stmt_iter_move_forwards,
+    NULL
+};
+
+zend_object_iterator *pdo_stmt_iter_get(zend_class_entry *ce, zval *object, int by_ref)
+{
+    pdo_stmt_t *stmt = Z_PDO_STMT_P(object);
+    struct php_pdo_iterator *I;
+
+    if (by_ref) {
+        zend_error(E_ERROR, "An iterator cannot be used with foreach by reference");
+    }    
+
+    I = ecalloc(1, sizeof(struct php_pdo_iterator));
+    zend_iterator_init(&I->iter);
+    I->iter.funcs = &pdo_stmt_iter_funcs;
+    ZVAL_COPY(&I->iter.data, object);
+
+    if (!do_fetch(stmt, 1, &I->fetch_ahead, PDO_FETCH_USE_DEFAULT,
+            PDO_FETCH_ORI_NEXT, 0, 0)) {
+        PDO_HANDLE_STMT_ERR();
+        I->key = (ulong)-1;
+        ZVAL_UNDEF(&I->fetch_ahead);
+    }    
+
+    return &I->iter;
+}
+*/
+
+/* }}} */
+
