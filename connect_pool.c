@@ -22,13 +22,8 @@
 #include <Zend/zend_types.h>
 
 #include <Zend/zend.h>
-#include <ext/pdo/php_pdo.h>
-#include <ext/pdo/php_pdo_driver.h>
-#include <ext/pdo/php_pdo_error.h>
 
-#ifdef HAVE_PCRE
 #include <ext/spl/spl_iterators.h>
-#endif
 
 static HashTable pdo_object_table;
 static HashTable redis_object_table;
@@ -84,7 +79,6 @@ const zend_function_entry pdo_connect_pool_methods[] = {
     PHP_ME(pdo_connect_pool, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(pdo_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(pdo_connect_pool, __call, __call_args, ZEND_ACC_PUBLIC)
-    //    PHP_ME(pdo_connect_pool, quote, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool, release, NULL, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
@@ -94,18 +88,15 @@ ZEND_END_ARG_INFO()
 
 const zend_function_entry pdo_connect_pool_PDOStatement_methods[] = {
     PHP_ME(pdo_connect_pool_PDOStatement, __call, __call_args, ZEND_ACC_PUBLIC)
-#ifdef HAVE_PCRE
     PHP_ME(pdo_connect_pool_PDOStatement, rewind,      arginfo_statement_void, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool_PDOStatement, next,        arginfo_statement_void, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool_PDOStatement, current,     arginfo_statement_void, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool_PDOStatement, key,         arginfo_statement_void, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool_PDOStatement, valid,       arginfo_statement_void, ZEND_ACC_PUBLIC)
-#endif
     PHP_FE_END
 };
 
-#ifdef HAVE_PCRE
-static PHP_METHOD(pdo_connect_pool_PDOStatement, rewind)
+PHP_METHOD(pdo_connect_pool_PDOStatement, rewind)
 {
     zval *object = getThis();
     zval *method_ptr, method, *ret_value = NULL, *pos;
@@ -125,7 +116,7 @@ static PHP_METHOD(pdo_connect_pool_PDOStatement, rewind)
 
 }
 
-static PHP_METHOD(pdo_connect_pool_PDOStatement, current)
+PHP_METHOD(pdo_connect_pool_PDOStatement, current)
 {
     zval *pos, *rs, *row;
     zend_class_entry *ce;
@@ -138,7 +129,7 @@ static PHP_METHOD(pdo_connect_pool_PDOStatement, current)
     RETVAL_ZVAL(row, 1, 1);
 }
 
-static PHP_METHOD(pdo_connect_pool_PDOStatement, key)
+PHP_METHOD(pdo_connect_pool_PDOStatement, key)
 {
     zval *pos;
     zend_class_entry *ce;
@@ -147,7 +138,7 @@ static PHP_METHOD(pdo_connect_pool_PDOStatement, key)
     ZVAL_LONG(return_value, Z_LVAL_P(pos));
 }
 
-static PHP_METHOD(pdo_connect_pool_PDOStatement, next)
+PHP_METHOD(pdo_connect_pool_PDOStatement, next)
 {
     zval *pos, *next;
     CP_MAKE_STD_ZVAL(next);
@@ -160,7 +151,7 @@ static PHP_METHOD(pdo_connect_pool_PDOStatement, next)
 
 }
 
-static PHP_METHOD(pdo_connect_pool_PDOStatement, valid)
+PHP_METHOD(pdo_connect_pool_PDOStatement, valid)
 {
     zval *pos, *rs, *row = NULL;
     zend_class_entry *ce;
@@ -176,7 +167,6 @@ static PHP_METHOD(pdo_connect_pool_PDOStatement, valid)
     }
 
 }
-#endif
 const zend_function_entry redis_connect_pool_methods[] = {
     PHP_ME(redis_connect_pool, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(redis_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
