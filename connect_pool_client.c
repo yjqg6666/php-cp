@@ -501,9 +501,9 @@ static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, ch
     zval *data_source, *username, *pwd, *options, *pass_data, *zval_conf, *real_data_srouce_arr;
     zval_conf = cp_zend_read_property(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("config"), 0 TSRMLS_DC);
 
-    if (*cur_type == 's')
+    zval *slave;
+    if (*cur_type == 's' && (cp_zend_hash_find(Z_ARRVAL_P(zval_conf), ZEND_STRS("slave"), (void **) &slave) == SUCCESS))
     {
-        zval *slave;
         zval *start_prt, start, end, *end_prt;
         start_prt = &start;
         end_prt = &end;
@@ -720,7 +720,6 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
             char *name;
             uint klen;
             int ktype;
-//          zend_print_zval_r(RecvData.ret_value,0);
 
             CP_HASHTABLE_FOREACH_START2(CP_Z_ARRVAL_P(RecvData.ret_value), name, klen, ktype, val)
             {
@@ -747,6 +746,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     }
     cp_zval_ptr_dtor(&pass_data);
 }
+
 
 PHP_METHOD(pdo_connect_pool, __call)
 {
