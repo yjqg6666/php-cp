@@ -189,13 +189,11 @@ PHP_METHOD(pdo_connect_pool, forceMaster);
 
 PHP_METHOD(pdo_connect_pool_PDOStatement, __call);
 PHP_METHOD(pdo_connect_pool_PDOStatement, __call);
-#ifdef HAVE_PCRE
-static PHP_METHOD(pdo_connect_pool_PDOStatement, rewind);
-static PHP_METHOD(pdo_connect_pool_PDOStatement, next);
-static PHP_METHOD(pdo_connect_pool_PDOStatement, current);
-static PHP_METHOD(pdo_connect_pool_PDOStatement, key);
-static PHP_METHOD(pdo_connect_pool_PDOStatement, valid);
-#endif
+PHP_METHOD(pdo_connect_pool_PDOStatement, rewind);
+PHP_METHOD(pdo_connect_pool_PDOStatement, next);
+PHP_METHOD(pdo_connect_pool_PDOStatement, current);
+PHP_METHOD(pdo_connect_pool_PDOStatement, key);
+PHP_METHOD(pdo_connect_pool_PDOStatement, valid);
 
 PHP_METHOD(redis_connect_pool, __construct);
 PHP_METHOD(redis_connect_pool, __destruct);
