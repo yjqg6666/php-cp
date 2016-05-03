@@ -98,10 +98,9 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
 
 static CPINLINE zval * cpConnect_pool_server(zval *data_source)
 {
-    zval *zres = NULL;
     cpClient *cli = NULL;
     zend_resource *p_sock_le;
-    CP_MAKE_STD_ZVAL(zres);
+    zval *zres = (zval *) emalloc(sizeof (zval));
 #if PHP_MAJOR_VERSION < 7
     if (zend_hash_find(&EG(persistent_list), Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void **) &p_sock_le) == SUCCESS)
 #else 
@@ -746,7 +745,6 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     }
     cp_zval_ptr_dtor(&pass_data);
 }
-
 
 PHP_METHOD(pdo_connect_pool, __call)
 {

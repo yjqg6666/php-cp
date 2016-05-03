@@ -8,6 +8,7 @@ Provide local connection pool like java
 - PHP 5.3 + (no zts)
 - linux 2.6+
 - pdo and redis extension install
+- php7.0.5+ (if php7)
 
 ## Install
 
@@ -111,6 +112,5 @@ $obj1->release();
 - qq群号 538716391
 
 ## quick start
-- foreach stmt对象的支持
 - 自动release连接（太难看情况）
 - 不配置数据源走默认的最大最小连接数
