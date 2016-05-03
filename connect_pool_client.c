@@ -143,7 +143,7 @@ static void release_worker(zval *object)
     }
     else
     {
-        php_error_docref(NULL TSRMLS_CC, E_ERROR, "data_source can not find");
+        php_error_docref(NULL TSRMLS_CC, E_WARNING, "data_source can not find,we should do something like query before we release");
     }
 }
 
@@ -639,6 +639,11 @@ int static stmt_fetch_obj(zval *args, zend_class_entry *ce, zval *return_value)
         }
         else
         {//??? free something?
+#if PHP_MAJOR_VERSION < 7
+            efree(fci.params);
+            cp_zval_ptr_dtor(&retval);
+#endif
+            //cp_zval_ptr_dtor(&args);
             return 1;
         }
     }
@@ -725,8 +730,13 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
         else
         {//default class
             convert_to_object(RecvData.ret_value);
+#if PHP_MAJOR_VERSION == 7
+            ZVAL_OBJ(return_value, Z_OBJ_P(RecvData.ret_value));
+
+#else
             ZVAL_DUP(return_value, RecvData.ret_value);
-            //            ZVAL_OBJ(return_value, Z_OBJ_P(RecvData.ret_value));
+#endif
+
         }
     }
     else
@@ -759,7 +769,6 @@ PHP_METHOD(pdo_connect_pool, __call)
         cur_type = php_check_ms(cmd, z_args, object);
         check_need_exchange(getThis(), cur_type);
     }
-
     pass_data = create_pass_data(cmd, z_args, object, cur_type, &source_zval);
 
     cpClient *cli;
@@ -784,15 +793,12 @@ PHP_METHOD(pdo_connect_pool, __call)
     if (RecvData.type == CP_SIGEVENT_PDO)
     {//返回一个模拟pdo类
         object_init_ex(return_value, pdo_connect_pool_PDOStatement_class_entry_ptr);
-        //zend_print_zval_r(return_value,0);
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("cli"), zres TSRMLS_CC);
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("data_source"), source_zval TSRMLS_CC); //标示这个连接的真实目标
-
         cp_zval_ptr_dtor(&RecvData.ret_value);
     }
     else if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
-        printf(" exception\n");
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
@@ -1000,10 +1006,7 @@ PHP_METHOD(redis_connect_pool, select)
 
 PHP_METHOD(redis_connect_pool, __call)
 {
-    zval *z_args;
-    zval *pass_data;
-    zval *object;
-    zval *zres, *source_zval;
+    zval *z_args, *pass_data, *object, *zres, *source_zval;
     char source_char[100] = {0};
     char *cmd;
     zend_size_t cmd_len;
