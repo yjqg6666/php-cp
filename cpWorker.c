@@ -220,12 +220,12 @@ static void cpManagerReload(int sig)
                 }
                 if (G->lock(G) == 0)
                 {
-                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
+                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_max"), (void **) v) == SUCCESS)
                     {
                         convert_to_long(*v);
                         G->worker_max = (int) Z_LVAL_PP(v);
                     }
-                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
+                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_min"), (void **) v) == SUCCESS)
                     {
                         convert_to_long(*v);
                         int new_min = (int) Z_LVAL_PP(v);
@@ -255,12 +255,12 @@ static void cpManagerReload(int sig)
             }
             else
             {
-                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("recycle_num"), (void **) &v) == SUCCESS)
+                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("recycle_num"), (void **) v) == SUCCESS)
                 {
                     convert_to_long(*v);
                     CPGC.recycle_num = (int) Z_LVAL_PP(v);
                 }
-                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("idel_time"), (void **) &v) == SUCCESS)
+                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("idel_time"), (void **) v) == SUCCESS)
                 {
                     convert_to_long(*v);
                     CPGC.idel_time = (int) Z_LVAL_PP(v);
