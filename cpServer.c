@@ -85,7 +85,7 @@ void cpKillClient()
         if (conn->fpm_pid)
         {
             kill(conn->fpm_pid, 9);
-            printf("kill %d\n",conn->fpm_pid);
+          //  printf("kill %d\n",conn->fpm_pid);
         }
     }
 }
@@ -126,6 +126,7 @@ void cpServer_init(zval *conf, char *ini_file)
     CPGC.max_read_len = CP_DEF_MAX_READ_LEN;
     CPGC.ser_fail_hits = 1;
     CPGC.max_fail_num = 2;
+    CPGC.port = CP_PORT_PDO;
 
     strcpy(CPGC.ini_file, ini_file);
     //    MAKE_STD_ZVAL(CPGS->group);
@@ -178,52 +179,6 @@ void cpServer_init(zval *conf, char *ini_file)
 
     }
     CP_HASHTABLE_FOREACH_END();
-
-    /*
-       for (zend_hash_internal_pointer_reset(Z_ARRVAL_P(conf)); zend_hash_has_more_elements(Z_ARRVAL_P(conf)) == SUCCESS; zend_hash_move_forward(Z_ARRVAL_P(conf)))
-       {
-       zval **config;
-       zend_hash_get_current_data(Z_ARRVAL_P(conf), (void**) &config);
-       char *name;
-       uint keylen;
-       zend_hash_get_current_key_ex(Z_ARRVAL_P(conf), &name, &keylen, NULL, 0, NULL);
-       if (strcmp(name, "common") == 0)
-       {//common config
-       cpServer_init_common(*config);
-       }
-       else
-       {
-       zval **v;
-       strcpy(CPGS->G[group_num].name, name);
-       if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
-       {
-       convert_to_long(*v);
-       CPGS->G[group_num].worker_num = CPGS->G[group_num].worker_min = Z_LVAL_PP(v);
-       }
-       if (zend_hash_find(Z_ARRVAL_PP(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
-       {
-       convert_to_long(*v);
-       CPGS->G[group_num].worker_max = Z_LVAL_PP(v);
-       }
-       CPGS->max_buffer_len = CPGC.max_read_len;
-
-       pthread_mutexattr_t attr;
-       pthread_mutexattr_init(&attr);
-       pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-       if (pthread_mutex_init(&CPGS->G[group_num].mutex_lock, &attr) < 0)
-       {
-       cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
-       return;
-       }
-       CPGS->G[group_num].lock = cpMutexLock;
-       CPGS->G[group_num].unLock = cpMutexUnLock;
-       CPGS->G[group_num].tryLock = cpMutexTryLock;
-    //            CPGS->G[group_num].WaitList = CPGS->G[group_num].WaitTail = NULL;
-    CPGS->group_num++;
-    group_num++;
-    }
-    }
-    */
 }
 
 int cpServer_create()
