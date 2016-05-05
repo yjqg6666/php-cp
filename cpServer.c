@@ -85,7 +85,7 @@ void cpKillClient()
         if (conn->fpm_pid)
         {
             kill(conn->fpm_pid, 9);
-            printf("kill %d\n",conn->fpm_pid);
+          //  printf("kill %d\n",conn->fpm_pid);
         }
     }
 }
