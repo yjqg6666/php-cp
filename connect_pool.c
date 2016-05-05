@@ -263,7 +263,7 @@ PHP_MSHUTDOWN_FUNCTION(connect_pool)
 PHP_MINFO_FUNCTION(connect_pool)
 {
     php_info_print_table_start();
-    php_info_print_table_header(2, "connect_poll support", "enabled");
+    php_info_print_table_header(2, "connect_pool support", "enabled");
     php_info_print_table_row(2, "Version", CP_VERSION);
     php_info_print_table_row(2, "Author", "郭新华，张磊");
     php_info_print_table_row(2, "email", "woshiguo35@sina.com");
