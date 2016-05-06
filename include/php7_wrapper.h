@@ -328,7 +328,7 @@ static CPINLINE int cp_zend_hash_find(HashTable *ht, char *k, int len, void **v)
 
 static CPINLINE int cp_zend_hash_find_ptr(HashTable *ht, zval *k, void **ret) {
     *ret = zend_hash_find_ptr(ht, Z_STR_P(k));
-    zval_dtor(k);
+//    zval_dtor(k);
     if (*ret == NULL) {
         return FAILURE;
     } else {
