@@ -99,21 +99,19 @@ const zend_function_entry pdo_connect_pool_PDOStatement_methods[] = {
 PHP_METHOD(pdo_connect_pool_PDOStatement, rewind)
 {
     zval *object = getThis();
-    zval *method_ptr, method, *ret_value = NULL, *pos;
+    zval *method_ptr, method, *ret_value = NULL;
     method_ptr = &method;
     zend_class_entry *ce;
     ce = Z_OBJCE_P(object);
-    CP_MAKE_STD_ZVAL(pos);
-    ZVAL_LONG(pos, 0);
     CP_ZVAL_STRING(method_ptr, "fetchAll", 0);
-    //cp_internal_call_user_function(object, method_ptr, &ret_value, NULL);
     if (cp_call_user_function_ex(EG(function_table), &object, method_ptr, &ret_value, 0, NULL, 0, NULL TSRMLS_CC) == FAILURE)
     {
         return ;
     }
-        zend_update_property(ce, object, "pos", sizeof("pos") -1, pos TSRMLS_CC);
-        zend_update_property(ce, object, "rs", sizeof("rs") - 1, ret_value TSRMLS_CC);
+    //zend_print_zval_r(ret_value,0);
 
+    zend_update_property_long(ce, object, "pos", sizeof("pos") -1, 0 TSRMLS_CC);
+    zend_update_property(ce, object, "rs", sizeof("rs") - 1, ret_value TSRMLS_CC);
 }
 
 PHP_METHOD(pdo_connect_pool_PDOStatement, current)
@@ -123,10 +121,25 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, current)
     ce = Z_OBJCE_P(getThis());
     pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
     rs = cp_zend_read_property(ce, getThis(), "rs", sizeof("rs") -1, 0 TSRMLS_DC);
-    CP_MAKE_STD_ZVAL(row);
 
+    //CP_MAKE_STD_ZVAL(row);
+    if (cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &row) == SUCCESS)
+    {
+        RETVAL_ZVAL(row, 1, 0);
+    }
+    cp_zval_ptr_dtor(&row);
+
+    /*
+    if (cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &return_value) == SUCCESS)
+    {
+        zend_print_zval_r(return_value, 0);;
+        RETURN_ZVAL(return_value, 1, 0);
+    }
+
+    CP_MAKE_STD_ZVAL(row);
     cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &row);
-    RETVAL_ZVAL(row, 1, 1);
+    RETVAL_ZVAL(row, 1, 0);
+    */
 }
 
 PHP_METHOD(pdo_connect_pool_PDOStatement, key)
@@ -141,13 +154,11 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, key)
 PHP_METHOD(pdo_connect_pool_PDOStatement, next)
 {
     zval *pos, *next;
-    CP_MAKE_STD_ZVAL(next);
     zend_class_entry *ce;
     ce = Z_OBJCE_P(getThis());
     pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
 
-    ZVAL_LONG(next, ++Z_LVAL_P(pos));
-    zend_update_property(ce, getThis(),  "pos", sizeof("pos") -1, next TSRMLS_CC);
+    zend_update_property_long(ce, getThis(),  "pos", sizeof("pos") -1, ++Z_LVAL_P(pos) TSRMLS_CC);
 
 }
 
@@ -158,7 +169,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, valid)
     ce = Z_OBJCE_P(getThis());
     pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
     rs = cp_zend_read_property(ce, getThis(), "rs", sizeof("rs") -1, 0 TSRMLS_DC);
-    CP_MAKE_STD_ZVAL(row);
+    //CP_MAKE_STD_ZVAL(row);
 
     if (cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &row) == SUCCESS) {
         RETURN_BOOL(1);
