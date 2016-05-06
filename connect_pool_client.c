@@ -100,7 +100,7 @@ static CPINLINE zval * cpConnect_pool_server(zval *data_source)
 {
     cpClient *cli = NULL;
     zend_resource *p_sock_le;
-    zval *zres = (zval *) emalloc(sizeof (zval));
+    zval *zres = (zval *) safe_emalloc(sizeof (zval));
 #if PHP_MAJOR_VERSION < 7
     if (zend_hash_find(&EG(persistent_list), Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void **) &p_sock_le) == SUCCESS)
 #else 
