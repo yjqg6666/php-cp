@@ -12,7 +12,7 @@
    +----------------------------------------------------------------------+
    | Author: Xinhua Guo  <woshiguo35@sina.com>                            |
    +----------------------------------------------------------------------+
-   */
+ */
 #include "php_connect_pool.h"
 
 int static cpListen();
@@ -85,8 +85,26 @@ void cpKillClient()
         if (conn->fpm_pid)
         {
             kill(conn->fpm_pid, 9);
-          //  printf("kill %d\n",conn->fpm_pid);
+            //  printf("kill %d\n",conn->fpm_pid);
         }
+    }
+}
+
+static void cpServer_init_lock()
+{
+    int i = 0;
+    for (; i <= CP_GROUP_NUM; i++)
+    {
+        pthread_mutexattr_t attr;
+        pthread_mutexattr_init(&attr);
+        pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+        if (pthread_mutex_init(&CPGS->G[i].mutex_lock, &attr) < 0)
+        {
+            cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
+        }
+        CPGS->G[i].lock = cpMutexLock;
+        CPGS->G[i].unLock = cpMutexUnLock;
+        CPGS->G[i].tryLock = cpMutexTryLock;
     }
 }
 
@@ -159,26 +177,27 @@ void cpServer_init(zval *conf, char *ini_file)
                 CPGS->G[group_num].worker_max = Z_LVAL_P(v);
             }
             CPGS->max_buffer_len = CPGC.max_read_len;
-
-            pthread_mutexattr_t attr;
-            pthread_mutexattr_init(&attr);
-            pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-            if (pthread_mutex_init(&CPGS->G[group_num].mutex_lock, &attr) < 0)
-            {
-                cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
-                return;
-            }
-            CPGS->G[group_num].lock = cpMutexLock;
-            CPGS->G[group_num].unLock = cpMutexUnLock;
-            CPGS->G[group_num].tryLock = cpMutexTryLock;
-            //            CPGS->G[group_num].WaitList = CPGS->G[group_num].WaitTail = NULL;
             CPGS->group_num++;
             group_num++;
         }
 
-
     }
     CP_HASHTABLE_FOREACH_END();
+
+    pthread_mutexattr_t attr;
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+    if (pthread_mutex_init(&CPGS->mutex_lock, &attr) < 0)
+    {
+        cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
+        return;
+    }
+
+    CPGS->default_min = CP_DEF_MIN_NUM;
+    CPGS->default_max = CP_DEF_MAX_NUM;
+
+    cpServer_init_lock();
+
 }
 
 int cpServer_create()
@@ -237,7 +256,7 @@ int cpServer_start()
     pid = fork();
     switch (pid)
     {
-        //创建manager进程
+            //创建manager进程
         case 0:
             for (g = 0; g < CPGS->group_num; g++)
             {
@@ -278,10 +297,10 @@ int cpServer_start()
             CPGS->manager_pid = pid;
             break;
         case -1:
-            {
-                cpLog("fork manager process fail");
-                return FAILURE;
-            }
+        {
+            cpLog("fork manager process fail");
+            return FAILURE;
+        }
     }
 
     cpSignalInit();
@@ -393,6 +412,7 @@ static int cpReactor_client_release(int fd)
 {
     cpConnection *conn = &(CPGS->conlist[fd]);
     cpGroup *G = &CPGS->G[conn->group_id];
+
     if (G->lock(G) == 0)
     {
         if (conn->release == CP_FD_NRELEASED)
@@ -493,13 +513,13 @@ static int cpReactor_client_receive(int fd)
                 }
                 break;
             case CP_TCPEVENT_GETFD:
-                {
-                    cpMasterInfo info;
-                    info.server_fd = fd;
-                    CPGS->conlist[fd].fpm_pid = event->data;
-                    ret = cpWrite(fd, &info, sizeof (info));
-                    break;
-                }
+            {
+                cpMasterInfo info;
+                info.server_fd = fd;
+                CPGS->conlist[fd].fpm_pid = event->data;
+                ret = cpWrite(fd, &info, sizeof (info));
+                break;
+            }
             default:
                 cpLog("wrong type");
                 break;

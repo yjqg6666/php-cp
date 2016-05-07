@@ -264,8 +264,9 @@ int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, cpClient *cli)
     }
     return FAILURE;
 }
+//core logic
 
-CPINLINE cpGroup * cpGet_worker(cpClient *cli, zval *data_source)
+static cpGroup * cpGet_worker(cpClient *cli, zval *data_source)
 {
     cpGroup *G = NULL;
     int group_id, worker_index;
@@ -335,6 +336,29 @@ CPINLINE cpGroup * cpGet_worker(cpClient *cli, zval *data_source)
             }
             break;
         }
+    }
+    if (!G)
+    {
+        if (pthread_mutex_lock(&CPGS->mutex_lock) == 0)
+        {
+            int group_num = CPGS->group_num;
+            if (CPGS->G[group_num].worker_max == 0)
+            {
+                strcpy(CPGS->G[group_num].name, Z_STRVAL_P(data_source));
+                CPGS->G[group_num].worker_max = CPGS->default_max;
+                CPGS->G[group_num].worker_min = CPGS->default_min;
+                CPGS->G[group_num].worker_num = CPGS->default_min;
+				CPGS->G[group_num].workers_status[CPGS->G[group_num].worker_num-1] = CP_WORKER_IDLE;//foreach to CPGS->default_min to set status???
+				cpCreate_worker_mem(CPGS->G[group_num].worker_num-1, group_num);//foreach to CPGS->default_min to create mem???
+                cpTcpEvent event = {0};
+                event.type = CP_TCPEVENT_ADD;
+                event.data = 0;
+                cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
+                CPGS->group_num++; // add after for thread safe
+            }
+            pthread_mutex_unlock(&CPGS->mutex_lock);
+        }
+        return cpGet_worker(cli, data_source);
     }
     return G;
 }

@@ -118,7 +118,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, rewind)
 
 PHP_METHOD(pdo_connect_pool_PDOStatement, current)
 {
-    zval *pos, *rs, *row;
+    zval *pos, *rs, *row = NULL;
     zend_class_entry *ce;
     ce = Z_OBJCE_P(getThis());
     pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);

@@ -8,7 +8,6 @@ Provide local connection pool like java
 - PHP 5.3 + (no zts)
 - linux 2.6+
 - pdo and redis extension install
-- php7.0.5+ (if php7)
 
 ## Install
 
@@ -110,7 +109,3 @@ $obj1->release();
 - http://weibo.com/u/2661945152
 - 83212019@qq.com
 - qq群号 538716391
-
-## quick start
-- 自动release连接（太难看情况）
-- 不配置数据源走默认的最大最小连接数

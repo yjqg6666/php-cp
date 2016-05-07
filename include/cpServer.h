@@ -29,6 +29,8 @@ extern "C" {
 #define CP_DEF_MAX_READ_LEN      (1024*1024*5)
 #define CP_MAX_READ_LEN          (1024*1024*20)
 #define CP_SOURCE_LEN            200
+#define CP_DEF_MAX_NUM           20
+#define CP_DEF_MIN_NUM           1
 #define CP_SERVER_MMAP_FILE      "/tmp/cp_server_mmap_file"
 
 #define CP_GROUP_LEN 1000 //
@@ -78,13 +80,13 @@ extern "C" {
 
     typedef volatile int8_t volatile_int8;
 
-//    typedef struct _cpWaitList {
-//        int CPid; // fpm's pid
-//        struct _cpConnection *conn;
-//        struct _cpWaitList *next;
-//        int next_id;
-//        struct _cpWaitList *pre;
-//    } cpWaitList;
+    //    typedef struct _cpWaitList {
+    //        int CPid; // fpm's pid
+    //        struct _cpConnection *conn;
+    //        struct _cpWaitList *next;
+    //        int next_id;
+    //        struct _cpWaitList *pre;
+    //    } cpWaitList;
 
     typedef struct _cpConnection {
         int fd;
@@ -96,10 +98,10 @@ extern "C" {
         uint8_t release;
         uint16_t pth_id;
 
-        int wait_fpm_pid;//等待的fpm pid
-        int next_wait_id;//sever fd
-        int fpm_pid;//连接对应的fpm
-//        struct _cpWaitList WaitList;
+        int wait_fpm_pid; //等待的fpm pid
+        int next_wait_id; //sever fd
+        int fpm_pid; //连接对应的fpm
+        //        struct _cpWaitList WaitList;
     } cpConnection;
 
     typedef struct _cpIdelList {
@@ -133,6 +135,7 @@ extern "C" {
 
         char ini_file[MAX_INI_LENGTH];
         char log_file[128]; //日志文件
+
     } cpConfig;
 
     typedef struct _cpThread {
@@ -162,10 +165,10 @@ extern "C" {
         cpWorker workers[CP_GROUP_LEN];
         volatile_int8 workers_status[CP_GROUP_LEN];
         pthread_mutex_t mutex_lock;
-        int first_wait_id;//server fd
-        int last_wait_id;//server fd
-//        cpWaitList *WaitList; //获得失败的wait队列
-//        cpWaitList *WaitTail; //获得失败的wait队列队尾
+        int first_wait_id; //server fd
+        int last_wait_id; //server fd
+        //        cpWaitList *WaitList; //获得失败的wait队列
+        //        cpWaitList *WaitTail; //获得失败的wait队列队尾
         char name[100]; //group name
 
         int (*lock)(struct _cpGroup *);
@@ -193,6 +196,13 @@ extern "C" {
         zval* group;
         int group_num;
         int max_buffer_len;
+
+        pthread_mutex_t mutex_lock;
+        //        int (*global_lock)(struct _cpGroup *);
+        //        int (*global_unLock)(struct _cpGroup *);
+
+        int default_min;
+        int default_max;
     } cpServerGS;
 
     typedef struct _cpWorkerG {
@@ -213,7 +223,7 @@ extern "C" {
     int cpMutexUnLock(cpGroup *);
     int cpMutexTryLock(cpGroup *);
     void cpServer_try_get_worker(cpConnection *conn, int group_id);
-	int cpPopWaitQueue(cpGroup *G, cpConnection *conn);
+    int cpPopWaitQueue(cpGroup *G, cpConnection *conn);
 
 
 #ifdef	__cplusplus
