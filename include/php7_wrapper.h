@@ -314,14 +314,10 @@ static CPINLINE int cp_zend_hash_get_current_key(HashTable *ht, char **key, uint
 static CPINLINE int cp_zend_hash_find(HashTable *ht, char *k, int len, void **v) {
     zval *value = zend_hash_str_find(ht, k, len - 1);
 
-    //printf("cp_zend_hash_find key:%s \n", k);
-
     if (value == NULL) {
         return FAILURE;
     } else {
         *v = (void *) value;
-        //printf("in function key:%s have found \n\n", k);
-        //zend_print_zval_r(*v, 0);
         return SUCCESS;
     }
 }
