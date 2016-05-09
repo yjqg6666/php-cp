@@ -167,7 +167,8 @@ static void cpManagerAdd(int sig)
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
-        for (i = G->worker_num - 1; i >= G->worker_min; i--)
+        for (i = G->worker_num - 1; i >= 0; i--)//for not set source in pool.ini
+        //for (i = G->worker_num - 1; i >= G->worker_min; i--)
         {
             if (G->workers[i].pid == 0)
             {//只创建刚分配并且pid为0的
@@ -188,7 +189,7 @@ static void cpManagerAdd(int sig)
 
 static void cpManagerReload(int sig)
 {
-    zval *group_conf = NULL, **v;
+    zval *group_conf = NULL, *v;
     group_conf = cpGetConfig(CPGC.ini_file);
     int gid = 0;
     zval *gid_ptr = NULL;
@@ -220,15 +221,15 @@ static void cpManagerReload(int sig)
                 }
                 if (G->lock(G) == 0)
                 {
-                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_max"), (void **) v) == SUCCESS)
+                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_max"), (void **) &v) == SUCCESS)
                     {
-                        convert_to_long(*v);
-                        G->worker_max = (int) Z_LVAL_PP(v);
+                        convert_to_long(v);
+                        G->worker_max = (int) Z_LVAL_P(v);
                     }
-                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_min"), (void **) v) == SUCCESS)
+                    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("pool_min"), (void **) &v) == SUCCESS)
                     {
-                        convert_to_long(*v);
-                        int new_min = (int) Z_LVAL_PP(v);
+                        convert_to_long(v);
+                        int new_min = (int) Z_LVAL_P(v);
                         if (new_min > G->worker_min)
                         {//增加最小
                             while (G->worker_num < new_min)
@@ -255,15 +256,15 @@ static void cpManagerReload(int sig)
             }
             else
             {
-                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("recycle_num"), (void **) v) == SUCCESS)
+                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("recycle_num"), (void **) &v) == SUCCESS)
                 {
-                    convert_to_long(*v);
-                    CPGC.recycle_num = (int) Z_LVAL_PP(v);
+                    convert_to_long(v);
+                    CPGC.recycle_num = (int) Z_LVAL_P(v);
                 }
-                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("idel_time"), (void **) v) == SUCCESS)
+                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("idel_time"), (void **) &v) == SUCCESS)
                 {
-                    convert_to_long(*v);
-                    CPGC.idel_time = (int) Z_LVAL_PP(v);
+                    convert_to_long(v);
+                    CPGC.idel_time = (int) Z_LVAL_P(v);
                 }
             }
         }
