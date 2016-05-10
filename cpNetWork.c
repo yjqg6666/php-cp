@@ -15,6 +15,29 @@
  */
 #include "php_connect_pool.h"
 
+#ifdef HAVE_EPOLL
+
+/**
+ * 转换成epoll 对应的事件类型
+ */
+static inline int cpReactorEpollGetType(int fdtype) {
+    uint32_t flag = 0;
+
+    if (isReactor_event_read(fdtype))
+    {
+        flag |= EPOLLIN;
+    }
+    if (isReactor_event_write(fdtype))
+    {
+        flag |= EPOLLOUT;
+    }
+    if (isReactor_event_error(fdtype))
+    {
+        flag |= (EPOLLRDHUP | EPOLLHUP | EPOLLERR);
+    }
+    return flag;
+}
+
 int cpEpoll_add(int epfd, int fd, int fdtype) {
     struct epoll_event e;
     int ret;
@@ -74,12 +97,6 @@ int cpEpoll_wait(epoll_wait_handle *handles, struct timeval *timeo, int epfd) {
         usec = timeo->tv_sec * 1000 + timeo->tv_usec / 1000;
     }
 
-    //    uint8_t *run;
-    //    if (CPGL.process_type == CP_PROCESS_WORKER) {
-    //        run = &CPGS->workers[CPWG.id].run;
-    //    } else {
-    //        run = &CPGL.running;
-    //    }
     struct epoll_event events[CP_REACTOR_MAXEVENTS];
 
     while (CPGS->running)
@@ -88,18 +105,6 @@ int cpEpoll_wait(epoll_wait_handle *handles, struct timeval *timeo, int epfd) {
         for (i = 0; i < n; i++)
         {
             //取出事件
-            //            ev.fd = object->events[i].data.u64;
-            //            ev.type = object->events[i].data.u64 >> pack_size;
-
-            //            if (events[i].events & EPOLLPRI) {
-            //                char buf[1];
-            //                ret = handles[EPOLLPRI](events[i].data.fd);
-            //                recv(events[i].data.fd, buf, 1, MSG_OOB);
-            //                if (ret < 0) {
-            //                    cpLog("epoll [EPOLLPRI] handle failed. fd=%d. Error: %s[%d]", events[i].data.fd,
-            //                            strerror(errno), errno);
-            //                }
-            //            }
             if (events[i].events & EPOLLIN)
             {
                 ret = handles[EPOLLIN](events[i].data.fd);
@@ -145,3 +150,5 @@ int cpEpoll_wait(epoll_wait_handle *handles, struct timeval *timeo, int epfd) {
     }
     return 0;
 }
+#endif
+

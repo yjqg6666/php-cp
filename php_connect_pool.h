@@ -28,13 +28,20 @@
 #include "config.h"
 #endif
 
-//#ifdef HAVE_EPOLL
+#ifdef HAVE_EPOLL
 #include <sys/epoll.h> //todo
 #ifndef EPOLLRDHUP
 #define EPOLLRDHUP   0x2000
 #define NO_EPOLLRDHUP
 #endif
-//#endif
+#else
+#ifdef HAVE_KQUEUE
+#include <sys/event.h>
+#ifndef SIGRTMIN
+#define SIGRTMIN 33
+#endif
+#endif
+#endif
 
 #if defined(__GNUC__)
 #if __GNUC__ >= 3
@@ -158,6 +165,40 @@ typedef struct _cpRecvEvent
 
 //#define CP_GROUP_LEN 1000 //
 //#define CP_GROUP_NUM 100 //the max group num of proxy process . todo  check it
+
+//-------------------------------Reactor-----add by Ben----------------------------------
+//事件的值
+//CP_EVENT_READ 对应epoll :EPOLLIN   kqueue:EVFILT_READ
+//CP_EVENT_WRITE 对应epoll :EPOLLOUT   kqueue:EVFILT_WRITE
+
+enum CP_EVENTS
+{
+    CP_EVENT_DEAULT = 256,
+    CP_EVENT_READ = 1u << 9,
+    CP_EVENT_WRITE = 1u << 10,
+    CP_EVENT_ERROR = 1u << 11,
+};
+
+static inline int isReactor_event_read(int fdtype) 
+{
+    return (fdtype < CP_EVENT_DEAULT) || (fdtype & CP_EVENT_READ);
+}
+
+static inline int isReactor_event_write(int fdtype)
+{
+    return fdtype & CP_EVENT_WRITE;
+}
+
+static inline int isReactor_event_error(int fdtype)
+{
+    return fdtype & CP_EVENT_ERROR;
+}
+
+static inline int initReactor_fdtype(int fdtype)
+{
+    return fdtype & (~CP_EVENT_READ) & (~CP_EVENT_WRITE) & (~CP_EVENT_ERROR);
+}
+//----------------------------end---------------------------
 
 extern int le_cli_connect_pool;
 

@@ -32,13 +32,22 @@ extern "C" {
 
     typedef int (*epoll_wait_handle)(int fd);
 
+#ifdef HAVE_EPOLL
     int cpEpoll_add(int epfd, int fd, int fdtype);
     int cpEpoll_set(int fd, int fdtype);
     int cpEpoll_del(int epfd, int fd);
     int cpEpoll_wait(epoll_wait_handle*, struct timeval *timeo, int epfd);
     void cpEpoll_free();
     CPINLINE int cpEpoll_event_set(int fdtype);
-
+#else
+#ifdef HAVE_KQUEUE
+    int cpKqueue_add(int epfd, int fd, int fdtype);
+    int cpKqueue_del(int epfd, int fd);
+    int cpKqueue_set(int fd, int fdtype);
+    int cpKqueue_wait(epoll_wait_handle*, struct timeval *timeo, int epfd);
+    void cpKqueue_free();
+#endif
+#endif
 
 #ifdef	__cplusplus
 }

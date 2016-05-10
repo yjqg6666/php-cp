@@ -378,7 +378,7 @@ static int cpServer_master_onAccept(int fd)
         {//不能在add后做,线程安全,防止添加到reactor后马上就读到数据,这时候下面new_connect还没执行。
             conn->release = CP_FD_RELEASED;
         }
-        if (cpEpoll_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR | EPOLLPRI) < 0)
+        if (cpReactor_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, CP_EVENT_READ | CP_EVENT_WRITE) < 0)
         {
             cpLog("[Master]add event fail Errno=%d|FD=%d", errno, conn_fd);
             close(conn_fd);
@@ -487,7 +487,7 @@ static int cpReactor_client_close(int fd)
     cpConnection *conn = &(CPGS->conlist[fd]);
     conn->fpm_pid = 0;
     //关闭连接
-    cpEpoll_del(CPGS->reactor_threads[conn->pth_id].epfd, fd);
+    cpReactor_del(CPGS->reactor_threads[conn->pth_id].epfd, fd);
     (CPGS->reactor_threads[conn->pth_id].event_num <= 0) ? CPGS->reactor_threads[conn->pth_id].event_num = 0 : CPGS->reactor_threads[conn->pth_id].event_num--;
     CPGS->connect_count--;
 
@@ -560,15 +560,15 @@ int static cpReactor_thread_loop(int *id)
 
     swSingalNone();
 
-    int epfd = epoll_create(512); //这个参数没用
-    CPGS->reactor_threads[*id].epfd = epfd;
 
     epoll_wait_handle handles[CP_MAX_EVENT];
-    handles[EPOLLIN] = cpReactor_client_receive;
-    handles[EPOLLPRI] = cpReactor_client_release;
+    handles[CP_EVENT_READ] = cpReactor_client_receive;
+//    handles[EPOLLPRI] = cpReactor_client_release;
     handles[EPOLL_CLOSE] = cpReactor_client_close;
 
-    cpEpoll_wait(handles, &timeo, epfd);
+    int epfd = cpReactor_create(); //这个参数没用
+    CPGS->reactor_threads[*id].epfd = epfd;
+    cpReactor_wait(handles, &timeo, epfd);
 
     free(id);
     pthread_exit(0);
@@ -578,8 +578,8 @@ int static cpReactor_thread_loop(int *id)
 int static cpReactor_start(int sock)
 {
     int i;
-    int accept_epfd = epoll_create(512); //这个参数没用
-    if (cpEpoll_add(accept_epfd, sock, EPOLLIN) < 0)
+    int accept_epfd = epoll_create(); //这个参数没用
+    if (cpReactor_add(accept_epfd, sock, CP_EVENT_READ) < 0)
     {
         return FAILURE;
     };
@@ -603,12 +603,12 @@ int static cpReactor_start(int sock)
         CPGS->reactor_threads[i].thread_id = pidt;
     }
     epoll_wait_handle handles[CP_MAX_EVENT];
-    handles[EPOLLIN] = cpServer_master_onAccept;
+    handles[CP_EVENT_READ] = cpServer_master_onAccept;
 
     //    usleep(50000);
     sleep(1);
     cpLog("start  success");
-    return cpEpoll_wait(handles, &timeo, accept_epfd);
+    return cpReactor_wait(handles, &timeo, accept_epfd);
 }
 
 int static cpListen()
