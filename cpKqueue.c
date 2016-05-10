@@ -8,7 +8,7 @@ typedef struct _cpFd {
 
 #ifdef HAVE_KQUEUE
 /**
- * 转换成kqueue 对应的事件类型
+ * 转换成kqueue 对应的事件类型1
  */
 static inline int cpReactorKqueueGetType(int fdtype) {
     uint32_t flag = 0;
