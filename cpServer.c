@@ -93,7 +93,7 @@ void cpKillClient()
 static void cpServer_init_lock()
 {
     int i = 0;
-    for (; i <= CP_GROUP_NUM; i++)
+    for (; i < CP_GROUP_NUM; i++)
     {
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
