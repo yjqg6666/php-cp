@@ -176,7 +176,6 @@ void cpServer_init(zval *conf, char *ini_file)
                 convert_to_long(v);
                 CPGS->G[group_num].worker_max = Z_LVAL_P(v);
             }
-            CPGS->max_buffer_len = CPGC.max_read_len;
             CPGS->group_num++;
             group_num++;
         }
@@ -195,6 +194,7 @@ void cpServer_init(zval *conf, char *ini_file)
 
     CPGS->default_min = CP_DEF_MIN_NUM;
     CPGS->default_max = CP_DEF_MAX_NUM;
+    CPGS->max_buffer_len = CPGC.max_read_len;
 
     cpServer_init_lock();
 
