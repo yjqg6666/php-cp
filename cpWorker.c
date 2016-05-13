@@ -168,7 +168,7 @@ static void cpManagerAdd(int sig)
     {
         cpGroup *G = &CPGS->G[j];
         for (i = G->worker_num - 1; i >= 0; i--)//for not set source in pool.ini
-        //for (i = G->worker_num - 1; i >= G->worker_min; i--)
+            //for (i = G->worker_num - 1; i >= G->worker_min; i--)
         {
             if (G->workers[i].pid == 0)
             {//只创建刚分配并且pid为0的
@@ -328,6 +328,11 @@ int cpWorker_manager_loop()
 
     while (CPGS->running == 1)
     {
+        if (CPGS->group_num == 0)
+        {
+            sleep(1);
+            continue;
+        }
         pid = wait(&worker_exit_code);
         sigprocmask(SIG_BLOCK, &block_alarm, NULL);
         if (CPGS->running == 1 && pid > 0)
