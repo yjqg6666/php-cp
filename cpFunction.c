@@ -125,6 +125,10 @@ int cpNetRead(int fd, void *buf, int len) {
         {
             return 0;
         }
+
+        if (n < 0) {
+            cpLog("cpNetRead fd:[%d] recv [%d] Error:%s error %d \n",fd, n, strerror(errno), errno);
+        }
 //                else {
 //                    cpLog("worker recive error %d,len %d,%d\n", errno, n,fd);
 //                }

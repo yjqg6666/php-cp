@@ -58,7 +58,7 @@ static int cpWorker_loop(int worker_id, int group_id)
     cpGroup *G = &CPGS->G[group_id];
     cpShareMemory *sm_obj = &(G->workers[worker_id].sm_obj);
     int ret;
-    cpSettitle(G->name);
+    // cpSettitle(G->name);
     cpSignalSet(SIGALRM, cpWorker_do_ping, 1, 0);
     cpSignalSet(SIGTERM, cpWorker_do_stop, 1, 0);
     alarm(CP_PING_SLEEP);
@@ -108,12 +108,12 @@ int cpFork_one_worker(int worker_id, int group_id)
 static void cpManagerRecycle(int sig)
 {
     int i, recycle_num, j;
-    cpLog("monitor:start___________________");
+    //cpLog("monitor:start___________________");
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
         recycle_num = 0;
-        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
+     //   cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
         if (G->lock(G) == 0)
         {
             //                                    for (i = G->worker_num - 1; i >= 0; i--)
@@ -156,7 +156,7 @@ static void cpManagerRecycle(int sig)
             G->unLock(G);
         }
     }
-    cpLog("monitor:end___________________\n");
+    //cpLog("monitor:end___________________\n");
     alarm(CPGC.idel_time);
 }
 
@@ -393,7 +393,7 @@ void cpWorker_do_ping()
     }
 #if PHP_MAJOR_VERSION==7
     zval_ptr_dtor(&method);
-    zval_ptr_dtor(&sql);
+    zval_ptr_dtor(sql);
 #else
     efree(sql);
 #endif

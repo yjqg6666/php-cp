@@ -1,5 +1,10 @@
 <?php
 
+$obj1 = new pdoProxy('mysql:host=192.168.1.19;dbname=mz_gay_group2;charset=utf8', "public_user", "1qa2ws3ed");
+$rs = $obj1->query("select * from test limit 2");
+var_dump($rs->fetchAll());
+$obj1->release();
+die;
 /* * ****************don't use pool(不用连接池 最原始的方式)************************ */
 $obj = new Redis();
 $rs = $obj->connect("192.168.20.130");

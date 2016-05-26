@@ -328,7 +328,6 @@ PHP_FUNCTION(pool_server_create)
 {
     zval *conf = NULL;
     char *config_file = NULL;
-    //zend_string *config_file = NULL;
     zend_size_t file_len = 0;
     if (strcasecmp("cli", sapi_module.name) != 0)
     {
@@ -615,7 +614,9 @@ static void pdo_proxy_pdo(zval * args)
                         {
                             cp_zval_ptr_dtor(&ret_value);
 #if PHP_MAJOR_VERSION == 7
+                            printf("before not object  efree \n");
                             efree(ret_value);
+                            printf("after not object  efree \n");
 #endif
                         }
                     }

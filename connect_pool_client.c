@@ -55,7 +55,7 @@ static void cpClient_attach_mem()
 
 static void* connect_pool_perisent(zval* zres, zval* data_source)
 {
-    //        cpLog_init("/tmp/pool_client.log");
+    //  cpLog_init("/tmp/pool_client.log");
     zend_resource sock_le;
     int ret;
     cpClient* cli = (cpClient*) pecalloc(sizeof (cpClient), 1, 1);
@@ -63,7 +63,9 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "pdo_connect_pool: create sock fail. Error: %s [%d]", strerror(errno), errno);
     }
+
     ret = cpClient_connect(cli, "127.0.0.1", 6253, (float) 100, 0); //所有的操作100s超时
+
     if (ret < 0)
     {
         pefree(cli, 1);
@@ -85,7 +87,9 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
     event.data = cpPid;
     cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
     cpMasterInfo info;
+    //printf("client before cpNetRead fd:[%d] sfd:[%d] length:[%d] \n", cli->sock, info.server_fd, sizeof (cpMasterInfo));
     ret = cpClient_recv(cli->sock, &info, sizeof (cpMasterInfo), 1);
+
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "recv from pool server error  [%d],%s", errno, strerror(errno));
@@ -101,6 +105,7 @@ static CPINLINE zval * cpConnect_pool_server(zval *data_source)
     cpClient *cli = NULL;
     zend_resource *p_sock_le;
     zval *zres = (zval *) emalloc(sizeof (zval));
+    zend_print_zval_r(data_source,0);
 #if PHP_MAJOR_VERSION < 7
     if (zend_hash_find(&EG(persistent_list), Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void **) &p_sock_le) == SUCCESS)
 #else 
@@ -807,6 +812,8 @@ PHP_METHOD(pdo_connect_pool, __call)
     }
 
     int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
+    //zend_print_zval_r(pass_data,0);
+    printf("send ret[%d] \n", ret);
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
@@ -826,7 +833,6 @@ PHP_METHOD(pdo_connect_pool, __call)
     }
     else
     {
-
         RETVAL_ZVAL(RecvData.ret_value, 0, 1);
     }
     cp_zval_ptr_dtor(&pass_data);

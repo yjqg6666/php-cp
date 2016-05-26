@@ -10,7 +10,7 @@ typedef struct _cpFd {
 /**
  * 转换成kqueue 对应的事件类型1
  */
-static inline int cpReactorKqueueGetType(int fdtype) {
+static int cpReactorKqueueGetType(int fdtype) {
     uint32_t flag = 0;
 
     if (isReactor_event_read(fdtype))
@@ -30,7 +30,7 @@ static inline int cpReactorKqueueGetType(int fdtype) {
     return flag;
 }
 /**
- * epfd kqueue()  epoll_create 产生的 
+ * epfd kqueue()  epoll_create 产生的 服务器的fd
  * fd   listen() bind()的
  * fdtype 事件类型
  */
@@ -43,13 +43,7 @@ int cpKqueue_add(int epfd, int fd, int fdtype) {
     cpFd fd_;
 
     fd_.fd = fd;
-    fd_.fdtype = fdtype;
-
-    /*
-    // 这个地方 为毛要传这个啊
-    e.udata.fd = fd;
-    e.udata.fdtype = fdtype;
-    */
+    fd_.fdtype = fdtype; // wait 中有用到
 
     //包含读事件
     if (isReactor_event_read(fdtype)) {
@@ -60,6 +54,7 @@ int cpKqueue_add(int epfd, int fd, int fdtype) {
             cpLog(" add event [epfd=%d, fd=%d, type=%d, events=read, ret=%d] failed.\n", epfd, fd, fdtype, ret);
             return FAILURE;
         }
+        cpLog("add events=read success\n" , epfd, fd, fd_.fdtype);
     }
 
     //包含写事件
@@ -67,12 +62,18 @@ int cpKqueue_add(int epfd, int fd, int fdtype) {
         EV_SET(&e, fd, EVFILT_WRITE, EV_ADD, fflags, 0, NULL);
         memcpy(&e.udata, &fd_, sizeof(cpFd));
         ret = kevent(epfd, &e, 1, NULL, 0, NULL);
+
+        //EV_SET(&event_change, client_socket_fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+        //kevent(kq, &event_change, 1, NULL, 0, NULL);
+
         if (ret < 0) {
     //        cpLog(" add event [epfd=%d, fd=%d, type=%d, events=write] failed.\n", epfd, fd, fdtype);
             return FAILURE;
         }
+        cpLog("epfd [%d] fd [%d] fdtype [%d] add events=write success\n" , epfd, fd, fd_.fdtype);
     }
 
+    cpLog("epfd [%d] fd [%d] fdtype [%d] \n" , epfd, fd, fd_.fdtype);
     // 这步的意义何在???
     memcpy(&e.udata, &fd_, sizeof(cpFd));
     return SUCCESS;
@@ -83,6 +84,7 @@ int cpKqueue_del(int epfd, int fd) {
     int ret;
     int fflags = 0;
 
+        // 设置e 结构体 指定为EVFILT_READ读的过滤器, 并把本事件加入该过滤器EV_DELETE
         EV_SET(&e, fd, EVFILT_READ, EV_DELETE, fflags, 0, NULL);
         ret = kevent(epfd, &e, 1, NULL, 0, NULL);
 
@@ -111,7 +113,6 @@ void cpKqueue_free() {
 }
 
 int cpKqueue_wait(epoll_wait_handle* handles, struct timeval *timeo, int epfd) {
-
     int i, n, ret;
     //, usec;
     cpFd fd_;
@@ -142,23 +143,29 @@ int cpKqueue_wait(epoll_wait_handle* handles, struct timeval *timeo, int epfd) {
             //cpLog("kenvent timeout 没有事件而已 不算超时吧!\n");
             continue;
         }else{
-            for (i =0; i < n; i++) {
+            for (i = 0; i < n; i++) {
                 if (events[i].udata) {
                     memcpy(&fd_, &(events[i].udata), sizeof(fd_));
                 }
 
                 // 包含读事件
-                if (events[i].filter == EVFILT_READ) {
+                //if (events[i].filter == EVFILT_READ) {
+                if (fd_.fdtype & CP_EVENT_READ) {
+                    cpLog("before read function \n");
                     ret = handles[CP_EVENT_READ](fd_.fd);
+                    cpLog("Read fd [%d] ftype [%d] current event filter is [%d] CP_EVENT_READ [%d]  CP_EVENT_WRITE [%d]  i [%d] ret [%d]  \n", fd_.fd, fd_.fdtype, events[i].filter, CP_EVENT_READ, CP_EVENT_WRITE, i, ret);
+                    //ret = handles[CP_EVENT_READ](epfd);
                     if (ret < 0)
                     {
                         cpLog("kqueue [EVFILT_READ] handle failed. fd=%d. Error: %s[%d]", fd_.fd, strerror(errno), errno);
                     }
                 }
-                else if (events[i].filter == EVFILT_WRITE)
+                else if (fd_.fdtype & CP_EVENT_WRITE)
                 {
+                    cpLog("Write fd [%d] ftype [%d] current event filter is [%d] CP_EVENT_READ [%d]  CP_EVENT_WRITE [%d]  i [%d] ret [%d]  \n", fd_.fd, fd_.fdtype, events[i].filter, CP_EVENT_READ, CP_EVENT_WRITE, i, ret);
                     //ret = handles[CP_EVENT_WRITE](fd_.fd);
                     ret = handles[CP_EVENT_READ](fd_.fd);
+                    //ret = handles[CP_EVENT_READ](epfd);
                     if (ret < 0)
                     {
                         cpLog("kqueue [EPOLLOUT] handle failed. fd=%d. Error: %s[%d]", fd_.fd, strerror(errno), errno);
