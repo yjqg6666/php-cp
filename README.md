@@ -45,6 +45,42 @@ $redis = new Redis();
 tips:use $db/$redis->release() to release the connection  as early as you can;
 
 
+
+
+/* * ****************异步 pdo和redis操作**********************************************
+ * 依赖 swoole的event函数 异步操作只能用于cli环境
+ */
+include './asyncClass.php';
+$obj = new asyncRedisProxy();
+$obj->connect("127.0.0.1", "6379");
+$obj->set("a", 11111, function($obj, $ret) {
+    $obj->get("a", function($obj, $data) {
+        var_dump($data);
+        $obj->release(); //release to con pool
+    });
+});
+
+
+$obj2 = new asyncPdoProxy('mysql:host=192.168.1.19;dbname=mz_db', "public_user", "1qa2ws3ed");
+$obj2->query("select 1 from mz_user where user_id=299", function($obj, $stmt) {
+    $arr = $stmt->fetchAll();
+    var_dump($arr);
+    $obj->query("select 2 from mz_user where user_id=299", function($obj, $stmt) {
+        $arr = $stmt->fetchAll();
+        var_dump($arr);
+        $obj->release(); //release to con pool
+    });
+});
+
+
+$obj3 = new asyncPdoProxy('mysql:host=192.168.1.19;dbname=mz_db', "public_user", "1qa2ws3ed");
+$obj3->exec("insert into t1(name) values('111111')", function($obj, $data) {
+    var_dump($data);
+    $obj->release(); ////release to con pool
+});
+
+
+
 //*******************use master slave(最新版本支持了读写分离和从库的负载均衡 用法如下)***********************/
 $config = array(
     'master' => array(
