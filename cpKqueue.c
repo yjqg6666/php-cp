@@ -93,12 +93,14 @@ int cpKqueue_del(int epfd, int fd) {
             return FAILURE;
         }
 
+        /*
         EV_SET(&e, fd, EVFILT_WRITE, EV_DELETE, fflags, 0, NULL);
         ret = kevent(epfd, &e, 1, NULL, 0, NULL);
         if (ret < 0) {
             cpLog(" delete event [epfd=%d, fd=%d, events=write] failed.\n", epfd, fd);
             return FAILURE;
         }
+        */
     //close时会自动从kqueue事件中移除
     ret = close(fd);
     return SUCCESS;
