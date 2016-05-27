@@ -24,7 +24,8 @@ FILE *pid_fn = NULL;
 int cp_error;
 FILE *cp_log_fn = NULL;
 
-int cpLog_init(char *logfile) {
+int cpLog_init(char *logfile)
+{
     cp_log_fn = fopen(logfile, "a+");
     if (cp_log_fn == NULL)
     {
@@ -37,7 +38,8 @@ int cpLog_init(char *logfile) {
     return SUCCESS;
 }
 
-int pid_init() {
+int pid_init()
+{
     char pid_name[512] = {0};
     sprintf(pid_name, "%s.pid", PID_FILE_PATH);
     pid_fn = fopen(pid_name, "w+");
@@ -53,12 +55,14 @@ int pid_init() {
     return SUCCESS;
 }
 
-int set_pid(int pid) {
+int set_pid(int pid)
+{
     fprintf(pid_fn, "%d\n", pid);
     return SUCCESS;
 }
 
-int cpWrite(int fd, void *buf, int count) {
+int cpWrite(int fd, void *buf, int count)
+{
     int nwritten = 0, totlen = 0;
     while (totlen != count)
     {
@@ -67,19 +71,23 @@ int cpWrite(int fd, void *buf, int count) {
         {
             totlen += nwritten;
             buf += nwritten;
-        } else if (nwritten == 0)
+        }
+        else if (nwritten == 0)
         {
             return totlen;
-        } else
+        }
+        else
         {
             if (errno == EINTR)
             {
                 continue;
-            } else if (errno == EAGAIN)
+            }
+            else if (errno == EAGAIN)
             {
                 usleep(1);
                 continue;
-            } else
+            }
+            else
             {
                 return -1;
             }
@@ -89,7 +97,8 @@ int cpWrite(int fd, void *buf, int count) {
     return totlen;
 }
 
-int cpFifoRead(int pipe_fd_read, void *buf, int len) {
+int cpFifoRead(int pipe_fd_read, void *buf, int len)
+{
     int n, total = 0;
     do
     {
@@ -102,14 +111,21 @@ int cpFifoRead(int pipe_fd_read, void *buf, int len) {
                 break;
             }
         }
-        //        else {
-        //            cpLog("worker fifo recive error %d,len %d\n", errno, n);
-        //        }
+        else if (errno == EAGAIN)
+        {//for async "If no process has the pipe open for writing, read() will return 0 to indicate end-of-file"
+//            printf("worker fifo recive error %d,len %d\n", errno, n);
+            usleep(1);
+        }
+        else
+        {
+//            printf("worker fifo recive error %d,len %d\n", errno, n);
+        }
     } while ((n < 0 && errno == EINTR) || n > 0);
     return total;
 }
 
-int cpNetRead(int fd, void *buf, int len) {
+int cpNetRead(int fd, void *buf, int len)
+{
     int n, total = 0;
     do
     {
@@ -121,20 +137,22 @@ int cpNetRead(int fd, void *buf, int len) {
             {
                 break;
             }
-        } else if (n == 0)
+        }
+        else if (n == 0)
         {
             return 0;
         }
-//                else {
-//                    cpLog("worker recive error %d,len %d,%d\n", errno, n,fd);
-//                }
+        //                else {
+        //                    cpLog("worker recive error %d,len %d,%d\n", errno, n,fd);
+        //                }
     } while ((n < 0 && errno == EINTR) || n > 0);
     return total;
 }
 
-void cpSettitle(char *title_name) {
+void cpSettitle(char *title_name)
+{
 
-//    assert(MAX_TITLE_LENGTH > strlen(title) + 5);
+    //    assert(MAX_TITLE_LENGTH > strlen(title) + 5);
 
     char title[MAX_TITLE_LENGTH + 5] = {0};
     strcat(title, "pool_");
@@ -170,30 +188,42 @@ void cpSettitle(char *title_name) {
 #endif
 }
 
-//将套接字设置为非阻塞方式
 
-void cpSetNonBlock(int sock) {
+void cpSetIsBlock(int sock,int block)
+{
     int opts, ret;
     do
     {
         opts = fcntl(sock, F_GETFL);
-    } while (opts < 0 && errno == EINTR);
+    }    while (opts < 0 && errno == EINTR);
+
     if (opts < 0)
     {
-        cpLog("fcntl(sock,GETFL) fail");
+        cpLog("fcntl(%d, GETFL) failed.", sock);
     }
-    opts = opts | O_NONBLOCK;
+
+    if (!block)
+    {
+        opts = opts | O_NONBLOCK;
+    }
+    else
+    {
+        opts = opts & ~O_NONBLOCK;
+    }
+
     do
     {
         ret = fcntl(sock, F_SETFL, opts);
-    } while (ret < 0 && errno == EINTR);
+    }    while (ret < 0 && errno == EINTR);
+
     if (ret < 0)
     {
-        cpLog("fcntl(sock,SETFL,opts) fail");
+        cpLog("fcntl(%d, SETFL, opts) failed.", sock);
     }
 }
 
-int cpSetTimeout(int sock, double timeout) {
+int cpSetTimeout(int sock, double timeout)
+{
     int ret;
     struct timeval timeo;
     timeo.tv_sec = (int) timeout;
@@ -211,7 +241,8 @@ int cpSetTimeout(int sock, double timeout) {
     return SUCCESS;
 }
 
-int cpCreateFifo(char *file) {
+int cpCreateFifo(char *file)
+{
     int pipe_fd;
     int res;
     umask(0);
@@ -236,7 +267,8 @@ int cpCreateFifo(char *file) {
 /**
  * clear all singal
  */
-void swSingalNone() {
+void swSingalNone()
+{
     sigset_t mask;
     sigfillset(&mask);
     int ret = pthread_sigmask(SIG_BLOCK, &mask, NULL);
@@ -246,7 +278,8 @@ void swSingalNone() {
     }
 }
 
-zval * cpMD5(zval *arr) {//pass in array , out md5 zval
+zval * cpMD5(zval *arr)
+{//pass in array , out md5 zval
     smart_str ser_data = {0};
     cp_serialize(&ser_data, arr);
 
@@ -273,7 +306,8 @@ zval * cpMD5(zval *arr) {//pass in array , out md5 zval
     return retval;
 }
 
-void cp_serialize(smart_str *ser_data, zval *array) {
+void cp_serialize(smart_str *ser_data, zval *array)
+{
     php_serialize_data_t var_hash;
     PHP_VAR_SERIALIZE_INIT(var_hash);
 #if PHP_MAJOR_VERSION < 7
@@ -288,20 +322,22 @@ void cp_serialize(smart_str *ser_data, zval *array) {
     //    printf("ser time: %d us\n", timeuse);
 }
 
-zval * cp_unserialize(char *data, int len) {
+zval * cp_unserialize(char *data, int len)
+{
     zval *unser_value;
     CP_ALLOC_INIT_ZVAL(unser_value);
     php_unserialize_data_t var_hash;
     PHP_VAR_UNSERIALIZE_INIT(var_hash);
     if (cp_php_var_unserialize(&unser_value, (const unsigned char **) &data, (unsigned char *) data + len - 1, &var_hash TSRMLS_CC) != 1)
     {
-//        php_error_docref(NULL TSRMLS_CC, E_NOTICE, "unser data is corrupted");
+        //        php_error_docref(NULL TSRMLS_CC, E_NOTICE, "unser data is corrupted");
     }
     PHP_VAR_UNSERIALIZE_DESTROY(var_hash);
     return unser_value;
 }
 
-void cp_ser_and_setpro(zval *arr) {
+void cp_ser_and_setpro(zval *arr)
+{
     smart_str ser_data = {0};
     cp_serialize(&ser_data, arr);
 #if PHP_MAJOR_VERSION < 7
@@ -313,7 +349,8 @@ void cp_ser_and_setpro(zval *arr) {
     smart_str_free(&ser_data);
 }
 
-void cp_ser_and_setdis(zval *arr) {
+void cp_ser_and_setdis(zval *arr)
+{
     smart_str ser_data = {0};
     cp_serialize(&ser_data, arr);
 #if PHP_MAJOR_VERSION < 7
@@ -325,13 +362,15 @@ void cp_ser_and_setdis(zval *arr) {
     smart_str_free(&ser_data);
 }
 
-cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask) {
+cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask)
+{
     struct sigaction act, oact;
     act.sa_handler = func;
     if (mask)
     {
         sigfillset(&act.sa_mask);
-    } else
+    }
+    else
     {
         sigemptyset(&act.sa_mask);
     }
@@ -344,7 +383,8 @@ cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask) {
     return oact.sa_handler;
 }
 
-int cpQueueSignalSet(int sig, cpQueueFunc func) {
+int cpQueueSignalSet(int sig, cpQueueFunc func)
+{
     struct sigaction act, oact;
     sigemptyset(&act.sa_mask);
 
@@ -366,7 +406,8 @@ int cpQueueSignalSet(int sig, cpQueueFunc func) {
 #ifndef HAVE_CLOCK_GETTIME
 #ifdef __MACH__
 
-int clock_gettime(clock_id_t which_clock, struct timespec *t) {
+int clock_gettime(clock_id_t which_clock, struct timespec *t)
+{
     // be more careful in a multithreaded environement
     if (!orwl_timestart)
     {

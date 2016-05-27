@@ -43,7 +43,7 @@ static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
-#define CP_VERSION "1.4.5"
+#define CP_VERSION "1.4.6"
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
@@ -80,6 +80,9 @@ const zend_function_entry pdo_connect_pool_methods[] = {
     PHP_ME(pdo_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
     PHP_ME(pdo_connect_pool, __call, __call_args, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool, release, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool, close, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool, setAsync, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool, done, NULL, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -88,11 +91,13 @@ ZEND_END_ARG_INFO()
 
 const zend_function_entry pdo_connect_pool_PDOStatement_methods[] = {
     PHP_ME(pdo_connect_pool_PDOStatement, __call, __call_args, ZEND_ACC_PUBLIC)
-    PHP_ME(pdo_connect_pool_PDOStatement, rewind,      arginfo_statement_void, ZEND_ACC_PUBLIC)
-    PHP_ME(pdo_connect_pool_PDOStatement, next,        arginfo_statement_void, ZEND_ACC_PUBLIC)
-    PHP_ME(pdo_connect_pool_PDOStatement, current,     arginfo_statement_void, ZEND_ACC_PUBLIC)
-    PHP_ME(pdo_connect_pool_PDOStatement, key,         arginfo_statement_void, ZEND_ACC_PUBLIC)
-    PHP_ME(pdo_connect_pool_PDOStatement, valid,       arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, setAsync, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, done, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, rewind, arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, next, arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, current, arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, key, arginfo_statement_void, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, valid, arginfo_statement_void, ZEND_ACC_PUBLIC)
     PHP_FE_END
 };
 
@@ -106,11 +111,11 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, rewind)
     CP_ZVAL_STRING(method_ptr, "fetchAll", 0);
     if (cp_call_user_function_ex(EG(function_table), &object, method_ptr, &ret_value, 0, NULL, 0, NULL TSRMLS_CC) == FAILURE)
     {
-        return ;
+        return;
     }
-        zend_update_property_long(ce, object, "pos", sizeof("pos") -1, 0 TSRMLS_CC);
-        zend_update_property(ce, object, "rs", sizeof("rs") - 1, ret_value TSRMLS_CC);
-        cp_zval_ptr_dtor(&ret_value);
+    zend_update_property_long(ce, object, "pos", sizeof ("pos") - 1, 0 TSRMLS_CC);
+    zend_update_property(ce, object, "rs", sizeof ("rs") - 1, ret_value TSRMLS_CC);
+    cp_zval_ptr_dtor(&ret_value);
 
 }
 
@@ -119,9 +124,8 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, current)
     zval *pos, *rs, *row = NULL;
     zend_class_entry *ce;
     ce = Z_OBJCE_P(getThis());
-    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
-    rs = cp_zend_read_property(ce, getThis(), "rs", sizeof("rs") -1, 0 TSRMLS_DC);
-    //CP_MAKE_STD_ZVAL(row);
+    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof ("pos") - 1, 0 TSRMLS_DC);
+    rs = cp_zend_read_property(ce, getThis(), "rs", sizeof ("rs") - 1, 0 TSRMLS_DC);
 
     cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &row);
     RETVAL_ZVAL(row, 1, 1);
@@ -132,7 +136,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, key)
     zval *pos;
     zend_class_entry *ce;
     ce = Z_OBJCE_P(getThis());
-    pos = cp_zend_read_property(ce, getThis(),"pos", sizeof("pos") -1, 0 TSRMLS_DC);
+    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof ("pos") - 1, 0 TSRMLS_DC);
     ZVAL_LONG(return_value, Z_LVAL_P(pos));
 }
 
@@ -141,9 +145,9 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, next)
     zval *pos;
     zend_class_entry *ce;
     ce = Z_OBJCE_P(getThis());
-    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
+    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof ("pos") - 1, 0 TSRMLS_DC);
 
-    zend_update_property_long(ce, getThis(),  "pos", sizeof("pos") -1,  ++Z_LVAL_P(pos) TSRMLS_CC);
+    zend_update_property_long(ce, getThis(), "pos", sizeof ("pos") - 1, ++Z_LVAL_P(pos) TSRMLS_CC);
 }
 
 PHP_METHOD(pdo_connect_pool_PDOStatement, valid)
@@ -151,13 +155,15 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, valid)
     zval *pos, *rs, *row = NULL;
     zend_class_entry *ce;
     ce = Z_OBJCE_P(getThis());
-    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof("pos") -1, 0 TSRMLS_DC);
-    rs = cp_zend_read_property(ce, getThis(), "rs", sizeof("rs") -1, 0 TSRMLS_DC);
-    //CP_MAKE_STD_ZVAL(row);
+    pos = cp_zend_read_property(ce, getThis(), "pos", sizeof ("pos") - 1, 0 TSRMLS_DC);
+    rs = cp_zend_read_property(ce, getThis(), "rs", sizeof ("rs") - 1, 0 TSRMLS_DC);
 
-    if (cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &row) == SUCCESS) {
+    if (cp_zend_hash_index_find(Z_ARRVAL_P(rs), Z_LVAL_P(pos), (void**) &row) == SUCCESS)
+    {
         RETURN_BOOL(1);
-    } else {
+    }
+    else
+    {
         RETURN_BOOL(0);
     }
 
@@ -169,6 +175,9 @@ const zend_function_entry redis_connect_pool_methods[] = {
     PHP_ME(redis_connect_pool, release, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, select, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, connect, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(redis_connect_pool, done, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(redis_connect_pool, setAsync, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(redis_connect_pool, close, NULL, ZEND_ACC_PUBLIC)
     PHP_MALIAS(redis_connect_pool, pconnect, connect, NULL, ZEND_ACC_PUBLIC) /* pconnect 别名指向connect */
     PHP_FE_END
 };
@@ -226,7 +235,7 @@ PHP_MINIT_FUNCTION(connect_pool)
     //zend_class_entry *pdo_dbstmt_ce = cp_zend_fetch_class("PDOStatement", ZEND_FETCH_CLASS_AUTO);
 
     pdo_connect_pool_PDOStatement_class_entry_ptr = zend_register_internal_class(&pdo_connect_pool_PDOStatement_ce TSRMLS_CC);
-        zend_class_implements(pdo_connect_pool_PDOStatement_class_entry_ptr TSRMLS_CC, 1, spl_ce_Iterator, spl_ce_Countable);
+    zend_class_implements(pdo_connect_pool_PDOStatement_class_entry_ptr TSRMLS_CC, 1, spl_ce_Iterator, spl_ce_Countable);
 
     zend_hash_init(&pdo_object_table, 50, NULL, ZVAL_PTR_DTOR, 1);
     zend_hash_init(&redis_object_table, 50, NULL, ZVAL_PTR_DTOR, 1);
@@ -291,7 +300,7 @@ void send_oob2proxy(zend_resource *rsrc TSRMLS_DC)
     cpClient *cli = (cpClient *) rsrc->ptr;
     if (cli->sock == 0)
     {
-        pefree(cli, 1); //长连接
+        pefree(cli, 1);
     }
     else if (cli->server_fd != 0)
     {//防止release后rshutdown的重复释放
@@ -577,7 +586,7 @@ static void pdo_proxy_pdo(zval * args)
 #if PHP_MAJOR_VERSION < 7
                         char *name;
                         zend_uint name_len;
-                        zend_get_object_classname(ret_value, (const char **)&name, &name_len TSRMLS_CC);
+                        zend_get_object_classname(ret_value, (const char **) &name, &name_len TSRMLS_CC);
                         if (strcmp(name, "PDOStatement") == 0)
                         {
                             if (pdo_stmt)
@@ -915,7 +924,7 @@ int worker_onReceive(zval * unser_value)
     {
         cpLog("args error no type!");
     }
-    cp_zval_ptr_dtor(&unser_value);
+    //    cp_zval_ptr_dtor(&unser_value);
     return CP_TRUE;
 }
 

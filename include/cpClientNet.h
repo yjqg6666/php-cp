@@ -21,16 +21,20 @@ extern "C" {
 
         cpMasterInfo info;
         int server_fd;
+        uint8_t async;//是否是异步类的连接
 
         int (*lock)(struct _cpGroup *);
         int (*unLock)(struct _cpGroup *);
+       
+        uint16_t dummy_source_index;
+        uint8_t querying;//async querying
     } cpClient;
 
     int cpClient_close(cpClient *cli);
     int cpClient_send(int sock, char *data, int length, int flag);
     int cpClient_create(cpClient *cli);
     int cpClient_recv(int sock, void *data, int len, int waitall);
-    int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int nonblock);
+    int cpClient_connect(cpClient *cli, char *host, int port, double timeout);
 
 #define CONN(cli)                                 (&CPGS->conlist[cli->server_fd])
 #define CON_FORMART_KEY(str,port) sprintf((str), "connect_pool_sock%s" , (port));

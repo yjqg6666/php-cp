@@ -33,8 +33,10 @@ extern "C" {
 #define CP_DEF_MIN_NUM           1
 #define CP_SERVER_MMAP_FILE      "/tmp/cp_server_mmap_file"
 
-#define CP_GROUP_LEN 1000 //
-#define CP_GROUP_NUM 100 //the max group num of proxy process . todo  check it
+#define CP_GROUP_LEN     1000 //
+#define CP_GROUP_NUM     100 //the max group num of proxy process . todo  check it
+#define CP_MAX_ASYNC_NUM 100 //the max under async to protect db
+#define CP_SOURCE_MAX    100
 
 #define CP_PING_MEM_LEN          1024*1024
 #define CP_PING_DIS_LEN          409600  //disable list mem

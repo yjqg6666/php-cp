@@ -25,7 +25,7 @@ int cpClient_close(cpClient *cli)
     {
         cpLog("client close fail. Error: %s[%d]", strerror(errno), errno);
     }
-    CPGS = NULL;
+    //    CPGS = NULL;
     return ret;
 }
 
@@ -124,7 +124,7 @@ static int swClient_inet_addr(struct sockaddr_in *sin, char *string)
     return SUCCESS;
 }
 
-int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int nonblock)
+int cpClient_connect(cpClient *cli, char *host, int port, double timeout)
 {
     int ret;
     cli->serv_addr.sin_family = AF_INET;
@@ -136,15 +136,7 @@ int cpClient_connect(cpClient *cli, char *host, int port, double timeout, int no
     }
 
     cli->timeout = timeout;
-
-    if (nonblock == 1)
-    {
-        cpSetNonBlock(cli->sock);
-    }
-    else
-    {
-        cpSetTimeout(cli->sock, timeout);
-    }
+    cpSetTimeout(cli->sock, timeout);
 
     //    int count = 0;
     while (1)
