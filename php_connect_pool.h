@@ -192,6 +192,7 @@ PHP_METHOD(pdo_connect_pool, done);
 
 PHP_METHOD(pdo_connect_pool_PDOStatement, __call);
 PHP_METHOD(pdo_connect_pool_PDOStatement, setAsync);
+PHP_METHOD(pdo_connect_pool_PDOStatement, release);
 PHP_METHOD(pdo_connect_pool_PDOStatement, done);
 PHP_METHOD(pdo_connect_pool_PDOStatement, rewind);
 PHP_METHOD(pdo_connect_pool_PDOStatement, next);

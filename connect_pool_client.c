@@ -975,6 +975,12 @@ PHP_METHOD(pdo_connect_pool, release)
     CP_CHECK_RETURN(1);
 }
 
+PHP_METHOD(pdo_connect_pool_PDOStatement, release)
+{
+    release_worker(getThis());
+    CP_CHECK_RETURN(1);
+}
+
 PHP_METHOD(pdo_connect_pool, close)
 {
     close_conn(getThis());

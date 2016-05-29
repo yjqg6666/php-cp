@@ -57,6 +57,14 @@ $obj3->exec("insert into t1(name) values('111111')", function($obj, $data) {
     $obj->release(); ////release to con pool
 });
 
+$obj4 = new asyncPdoProxy('mysql:host=192.168.1.19;dbname=mz_db', "public_user", "1qa2ws3ed");
+$stmt = $obj4->prepare("select * from mz_account where user_id=:user_id");
+$stmt->bindParam(':user_id', "311");
+$stmt->execute(function($obj, $data) {
+    var_dump($data);
+    $obj->release();
+});
+
 
 
 //*******************use master slave(最新版本支持了读写分离和从库的负载均衡 用法如下)***********************/

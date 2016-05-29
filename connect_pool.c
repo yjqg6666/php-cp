@@ -92,6 +92,7 @@ ZEND_END_ARG_INFO()
 const zend_function_entry pdo_connect_pool_PDOStatement_methods[] = {
     PHP_ME(pdo_connect_pool_PDOStatement, __call, __call_args, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool_PDOStatement, setAsync, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(pdo_connect_pool_PDOStatement, release, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool_PDOStatement, done, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool_PDOStatement, rewind, arginfo_statement_void, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool_PDOStatement, next, arginfo_statement_void, ZEND_ACC_PUBLIC)
