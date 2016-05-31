@@ -61,7 +61,10 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
     cpClient* cli = (cpClient*) pecalloc(sizeof (cpClient), 1, 1);
     if (cpClient_create(cli) < 0)
     {
+        printf("create faild \n");
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "pdo_connect_pool: create sock fail. Error: %s [%d]", strerror(errno), errno);
+    } else {
+        printf("create success  sock [%d] \n", cli->sock);
     }
 
     ret = cpClient_connect(cli, "127.0.0.1", 6253, (float) 100, 0); //所有的操作100s超时
@@ -71,6 +74,8 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
         pefree(cli, 1);
         return NULL;
     }
+    printf("connect success \n");
+
     sock_le.type = le_cli_connect_pool;
     sock_le.ptr = cli;
     CP_ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
@@ -87,8 +92,10 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
     event.data = cpPid;
     cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
     cpMasterInfo info;
-    //printf("client before cpNetRead fd:[%d] sfd:[%d] length:[%d] \n", cli->sock, info.server_fd, sizeof (cpMasterInfo));
+
+    printf("client before cpNetRead fd:[%d] sock_le.type:[%d] length:[%d] \n", cli->sock, sock_le.type, sizeof (cpMasterInfo));
     ret = cpClient_recv(cli->sock, &info, sizeof (cpMasterInfo), 1);
+    printf(" after recv ret [%d] \n", ret);
 
     if (ret < 0)
     {
@@ -104,13 +111,16 @@ static CPINLINE zval * cpConnect_pool_server(zval *data_source)
 {
     cpClient *cli = NULL;
     zend_resource *p_sock_le;
-    zval *zres = (zval *) emalloc(sizeof (zval));
-    //zend_print_zval_r(data_source,0);
+    zval *zres = NULL;
+
+    printf("cpConnect_pool_server \n");
+    zend_print_zval_r(data_source,0);
 #if PHP_MAJOR_VERSION < 7
+    CP_ALLOC_INIT_ZVAL(zres);
     if (zend_hash_find(&EG(persistent_list), Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void **) &p_sock_le) == SUCCESS)
 #else 
+    zval *zres = (zval *) emalloc(sizeof (zval));
     if (cp_zend_hash_find_ptr(&EG(persistent_list), data_source, (void **) &p_sock_le) == SUCCESS)
-    //if (cp_zend_hash_find(&EG(persistent_list), ZEND_STRS("data_source"), (void **) &p_sock_le) == SUCCESS)
 #endif
     {
         printf("find data_source success \n");
@@ -121,6 +131,7 @@ static CPINLINE zval * cpConnect_pool_server(zval *data_source)
     {//create long connect to pool_server
 
         printf("find data_source faild \n");
+        zend_print_zval_r(data_source, 0);
         if (connect_pool_perisent(zres, data_source) == NULL)
         {// error
             printf("connect faild \n");

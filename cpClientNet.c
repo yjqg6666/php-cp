@@ -87,6 +87,7 @@ int cpClient_create(cpClient *cli)
 {
     bzero(cli, sizeof (cpClient));
     cli->sock = socket(AF_INET, SOCK_STREAM, 0);
+    printf("create sock [%d] \n", cli->sock);
 
     int flag = 1;
     setsockopt(cli->sock, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof (flag));

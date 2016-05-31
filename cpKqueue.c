@@ -1,11 +1,6 @@
 
 #include "php_connect_pool.h"
 
-typedef struct _cpFd {
-    uint32_t fd;
-    uint32_t fdtype;
-} cpFd;
-
 #ifdef HAVE_KQUEUE
 /**
  * 转换成kqueue 对应的事件类型1
