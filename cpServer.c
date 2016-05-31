@@ -176,7 +176,6 @@ void cpServer_init(zval *conf, char *ini_file)
                 convert_to_long(v);
                 CPGS->G[group_num].worker_max = Z_LVAL_P(v);
             }
-            CPGS->max_buffer_len = CPGC.max_read_len;
             CPGS->group_num++;
             group_num++;
         }
@@ -195,8 +194,10 @@ void cpServer_init(zval *conf, char *ini_file)
 
     CPGS->default_min = CP_DEF_MIN_NUM;
     CPGS->default_max = CP_DEF_MAX_NUM;
+    CPGS->max_buffer_len = CPGC.max_read_len;
 
     cpServer_init_lock();
+
 }
 
 int cpServer_create()
@@ -348,16 +349,16 @@ static int cpServer_master_onAccept(int fd)
         int flag = 1;
         setsockopt(conn_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof (flag));
 #if (defined SO_KEEPALIVE) && (defined TCP_KEEPIDLE)  
-        cpLog("===== if \n");
-//        int keepalive = 1;
-//        int keep_idle = CP_TCP_KEEPCOUNT;
-//        int keep_interval = CP_TCP_KEEPIDLE;
-//        int keep_count = CP_TCP_KEEPINTERVAL;
-//
-//        setsockopt(conn_fd, SOL_SOCKET, SO_KEEPALIVE, (void *) &keepalive, sizeof (keepalive));
-//        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPIDLE, (void*) &keep_idle, sizeof (keep_idle));
-//        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPINTVL, (void *) &keep_interval, sizeof (keep_interval));
-//        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPCNT, (void *) &keep_count, sizeof (keep_count));
+        cpLog("===== if 一堆option set\n");
+        int keepalive = 1;
+        int keep_idle = CP_TCP_KEEPCOUNT;
+        int keep_interval = CP_TCP_KEEPIDLE;
+        int keep_count = CP_TCP_KEEPINTERVAL;
+
+        setsockopt(conn_fd, SOL_SOCKET, SO_KEEPALIVE, (void *) &keepalive, sizeof (keepalive));
+        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPIDLE, (void*) &keep_idle, sizeof (keep_idle));
+        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPINTVL, (void *) &keep_interval, sizeof (keep_interval));
+        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPCNT, (void *) &keep_count, sizeof (keep_count));
 #endif
 
         if (CPGC.reactor_num > 1)

@@ -30,7 +30,12 @@ extern "C" {
 #define CP_RELEASE_HEADER_LEN      1
 
 
-    typedef int (*epoll_wait_handle)(int fd);
+typedef int (*epoll_wait_handle)(int fd);
+
+typedef struct _cpFd {
+    uint32_t fd;
+    uint32_t fdtype;
+} cpFd;
 
 #ifdef HAVE_EPOLL
     int cpEpoll_add(int epfd, int fd, int fdtype);
