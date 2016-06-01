@@ -93,7 +93,7 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
     cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
     cpMasterInfo info;
 
-    printf("client before cpNetRead fd:[%d] sock_le.type:[%d] length:[%d] \n", cli->sock, sock_le.type, sizeof (cpMasterInfo));
+    printf("client before cpNetRead fd:[%d] sock_le.type:[%d] length:[%lu] \n", cli->sock, sock_le.type, sizeof (cpMasterInfo));
     ret = cpClient_recv(cli->sock, &info, sizeof (cpMasterInfo), 1);
     printf(" after recv ret [%d] \n", ret);
 
@@ -119,7 +119,7 @@ static CPINLINE zval * cpConnect_pool_server(zval *data_source)
     CP_ALLOC_INIT_ZVAL(zres);
     if (zend_hash_find(&EG(persistent_list), Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void **) &p_sock_le) == SUCCESS)
 #else 
-    zval *zres = (zval *) emalloc(sizeof (zval));
+    zres = (zval *) emalloc(sizeof (zval));
     if (cp_zend_hash_find_ptr(&EG(persistent_list), data_source, (void **) &p_sock_le) == SUCCESS)
 #endif
     {
