@@ -396,9 +396,7 @@ static cpGroup * cpGet_worker(cpClient *cli, zval *data_source)
     return G;
 }
 
-//static CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zend_class_entry *ce)
-
-static int cli_real_send(cpClient **real_cli, zval *send_data)
+static CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data, zval *this, zend_class_entry *ce)
 {
     int ret = 0;
     cpClient *cli = *real_cli;
@@ -429,8 +427,7 @@ static int cli_real_send(cpClient **real_cli, zval *send_data)
     return ret;
 }
 
-static int cli_real_recv(cpClient *cli, int async)
-//static CPINLINE int cli_real_recv(cpClient *cli, int async)
+static CPINLINE int cli_real_recv(cpClient *cli, int async)
 {
     cpWorkerInfo event;
     int ret = 0;
