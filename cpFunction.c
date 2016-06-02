@@ -197,6 +197,39 @@ void cpSetNonBlock(int sock) {
     }
 }
 
+void cpSetIsBlock(int sock,int block)
+{
+    int opts, ret;
+    do
+    {
+        opts = fcntl(sock, F_GETFL);
+    }    while (opts < 0 && errno == EINTR);
+
+    if (opts < 0)
+    {
+        cpLog("fcntl(%d, GETFL) failed.", sock);
+    }
+
+    if (!block)
+    {
+        opts = opts | O_NONBLOCK;
+    }
+    else
+    {
+        opts = opts & ~O_NONBLOCK;
+    }
+
+    do
+    {
+        ret = fcntl(sock, F_SETFL, opts);
+    }    while (ret < 0 && errno == EINTR);
+
+    if (ret < 0)
+    {
+        cpLog("fcntl(%d, SETFL, opts) failed.", sock);
+    }
+}
+
 int cpSetTimeout(int sock, double timeout) {
     int ret;
     struct timeval timeo;
