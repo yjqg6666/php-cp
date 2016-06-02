@@ -393,7 +393,7 @@ static int cpServer_master_onAccept(int fd)
         }
         else
         {
-            cpLog("cpReactor_add ")
+            cpLog("cpReactor_add success \n")
             CPGS->reactor_threads[c_pti].event_num++;
             conn->fd = conn_fd;
             conn->pth_id = c_pti;
@@ -508,9 +508,11 @@ static int cpReactor_client_receive(int fd)
 {
     int event_size = sizeof (cpTcpEvent), n, ret = -1;
     char data[event_size];
+    /*
     int tid = pthread_self();
     //非ET模式会持续通知
     cpLog("thread id:[%d]   server before cpNetRead fd:[%d] data:[%s] length:[%d] \n", tid, fd, data, event_size);
+    */
     n = cpNetRead(fd, data, event_size);
     cpLog("server after cpNetRead n:[%d] \n", n);
 
@@ -585,7 +587,7 @@ int static cpReactor_thread_loop(int *id)
     epoll_wait_handle handles[CP_MAX_EVENT];
     handles[CP_EVENT_READ] = cpReactor_client_receive;
 //    handles[EPOLLPRI] = cpReactor_client_release;
-    handles[EPOLL_CLOSE] = cpReactor_client_close;
+    handles[CP_EVENT_CLOSE] = cpReactor_client_close;
 
     cpReactor_wait(handles, &timeo, epfd);
 
@@ -669,6 +671,7 @@ int static cpListen()
         return FAILURE;
     }
     cpSetNonBlock(sock);
+    // cpSetIsBlock(sock, 0);
 
     if (sock < 0)
     {
