@@ -16,7 +16,6 @@ extern "C" {
 #define CP_BUFFER_SIZE         (1024*1024)
 #define CP_MAX_UINT            4294967295
 
-#define EPOLL_CLOSE            10
 
 #define CP_CLIENT_EOF_STR          "\r\n^CON^eof\r\n"
 #define CP_TOO_MANY_CON            "not enough con"

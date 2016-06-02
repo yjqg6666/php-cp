@@ -63,6 +63,7 @@ int clock_gettime(clock_id_t which_clock, struct timespec *t);
     int pid_init();
     int set_pid(int pid);
     void cpSetNonBlock(int sock);
+    void cpSetIsBlock(int sock,int block);
     void swSingalNone();
     int cpWrite(int fd, void *buf, int count);
     int cpSetTimeout(int sock, double timeout);
