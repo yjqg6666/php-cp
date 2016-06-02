@@ -171,6 +171,7 @@ typedef struct _cpRecvEvent
 //CP_EVENT_READ 对应epoll :EPOLLIN   kqueue:EVFILT_READ
 //CP_EVENT_WRITE 对应epoll :EPOLLOUT   kqueue:EVFILT_WRITE
 
+#define CP_EVENT_CLOSE            10
 enum CP_EVENTS
 {
     CP_EVENT_DEAULT = 256,
