@@ -31,7 +31,6 @@ static int cpPid = 0;
 static int manager_pid = 0;
 static int dev_random_fd = -1;
 static uint16_t dummy_source_index = 0; //for multi async fun and the same source
-zval *redis_args_cache = NULL;
 
 static void cpClient_weekup(int sig)
 {// do noting now
@@ -1222,7 +1221,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, done)
 
 PHP_METHOD(redis_connect_pool, __call)
 {
-    zval *z_args, *object, *zres, *source_zval, *async_zval;
+    zval *z_args, *object, *zres, *source_zval, *pass_data, *async_zval;
     char source_char[CP_SOURCE_MAX] = {0};
     char *cmd;
     zend_size_t cmd_len;
@@ -1233,23 +1232,19 @@ PHP_METHOD(redis_connect_pool, __call)
     {
         RETURN_FALSE;
     }
-    if (!redis_args_cache)
-    {
-        CP_MAKE_STD_ZVAL(redis_args_cache);
-        array_init(redis_args_cache);
-        cp_add_assoc_string(redis_args_cache, "type", "redis", 1);
-    }
-
     if (cp_zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("async"), (void **) &async_zval) == SUCCESS)
     {
         async = Z_BVAL_P(async_zval);
     }
     cp_zval_add_ref(&z_args);
-    cp_add_assoc_string(redis_args_cache, "method", cmd, 1);
-    add_assoc_zval(redis_args_cache, "args", z_args);
+    CP_MAKE_STD_ZVAL(pass_data);
+    array_init(pass_data);
+    cp_add_assoc_string(pass_data, "method", cmd, 1);
+    cp_add_assoc_string(pass_data, "type", "redis", 1);
+    add_assoc_zval(pass_data, "args", z_args);
     if (cp_zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("data_source"), (void **) &source_zval) == SUCCESS)
     {
-        cp_add_assoc_string(redis_args_cache, "data_source", Z_STRVAL_P(source_zval), 1);
+        cp_add_assoc_string(pass_data, "data_source", Z_STRVAL_P(source_zval), 1);
         if (cp_zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
         {
             CP_ZEND_FETCH_RESOURCE_NO_RETURN(cli, cpClient*, &zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
@@ -1285,14 +1280,14 @@ PHP_METHOD(redis_connect_pool, __call)
         }
         strcat(source_char, "0");
         zend_update_property_string(redis_connect_pool_class_entry_ptr, object, ZEND_STRL("data_source"), source_char TSRMLS_CC); //确定数据源
-        cp_add_assoc_string(redis_args_cache, "data_source", source_char, 1);
+        cp_add_assoc_string(pass_data, "data_source", source_char, 1);
         cli = cpRedis_conn_pool_server(getThis(), source_char, async);
     }
     if (async && cli->querying)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "the obj is async querying now, you can not execute async function again");
     }
-    int ret = cli_real_send(&cli, redis_args_cache);
+    int ret = cli_real_send(&cli, pass_data);
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
@@ -1308,5 +1303,6 @@ PHP_METHOD(redis_connect_pool, __call)
     {
         RETVAL_ZVAL(RecvData.ret_value, 0, 1); //no copy  destroy
     }
+    cp_zval_ptr_dtor(&pass_data);
 }
 

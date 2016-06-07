@@ -1,4 +1,4 @@
-## php-cp(php-connect-pool),redis and pdo sync connect pool
+## php-cp(php-connect-pool),redis and pdo local connect proxy
 [中文简介] http://blog.sina.com.cn/s/blog_9eaa0f400102v9fd.html
 
 Provide local connection pool like java
