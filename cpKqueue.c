@@ -49,7 +49,6 @@ int cpKqueue_add(int epfd, int fd, int fdtype) {
             cpLog(" add event [epfd=%d, fd=%d, type=%d, events=read, ret=%d] failed.\n", epfd, fd, fdtype, ret);
             return FAILURE;
         }
-        cpLog("add events=read success\n" , epfd, fd, fd_.fdtype);
     }
 
     //包含写事件
@@ -65,10 +64,8 @@ int cpKqueue_add(int epfd, int fd, int fdtype) {
     //        cpLog(" add event [epfd=%d, fd=%d, type=%d, events=write] failed.\n", epfd, fd, fdtype);
             return FAILURE;
         }
-        cpLog("epfd [%d] fd [%d] fdtype [%d] add events=write success\n" , epfd, fd, fd_.fdtype);
     }
 
-    cpLog("epfd [%d] fd [%d] fdtype [%d] \n" , epfd, fd, fd_.fdtype);
     // 这步的意义何在???
     memcpy(&e.udata, &fd_, sizeof(cpFd));
     return SUCCESS;
@@ -137,7 +134,6 @@ int cpKqueue_wait(epoll_wait_handle* handles, struct timeval *timeo, int epfd) {
             cpLog("kqueue [#%d] Error: %s[%d]", fd_.fd, strerror(errno), errno);
             return FAILURE;
         } else if(n == 0){
-            //cpLog("kenvent timeout 没有事件而已 不算超时吧!\n");
             continue;
         }else{
             for (i = 0; i < n; i++) {
@@ -148,10 +144,7 @@ int cpKqueue_wait(epoll_wait_handle* handles, struct timeval *timeo, int epfd) {
                 // 包含读事件
                 //if (events[i].filter == EVFILT_READ) {
                 if (fd_.fdtype & CP_EVENT_READ) {
-                    cpLog("before read function \n");
                     ret = handles[CP_EVENT_READ](fd_.fd);
-                    cpLog("Read fd [%d] ftype [%d] current event filter is [%d] CP_EVENT_READ [%d]  CP_EVENT_WRITE [%d]  i [%d] ret [%d]  \n", fd_.fd, fd_.fdtype, events[i].filter, CP_EVENT_READ, CP_EVENT_WRITE, i, ret);
-                    //ret = handles[CP_EVENT_READ](epfd);
                     if (ret < 0)
                     {
                         cpLog("kqueue [EVFILT_READ] handle failed. fd=%d. Error: %s[%d]", fd_.fd, strerror(errno), errno);
@@ -159,10 +152,7 @@ int cpKqueue_wait(epoll_wait_handle* handles, struct timeval *timeo, int epfd) {
                 }
                 else if (fd_.fdtype & CP_EVENT_WRITE)
                 {
-                    cpLog("Write fd [%d] ftype [%d] current event filter is [%d] CP_EVENT_READ [%d]  CP_EVENT_WRITE [%d]  i [%d] ret [%d]  \n", fd_.fd, fd_.fdtype, events[i].filter, CP_EVENT_READ, CP_EVENT_WRITE, i, ret);
-                    //ret = handles[CP_EVENT_WRITE](fd_.fd);
                     ret = handles[CP_EVENT_READ](fd_.fd);
-                    //ret = handles[CP_EVENT_READ](epfd);
                     if (ret < 0)
                     {
                         cpLog("kqueue [EPOLLOUT] handle failed. fd=%d. Error: %s[%d]", fd_.fd, strerror(errno), errno);
