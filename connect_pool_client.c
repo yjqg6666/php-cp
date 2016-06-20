@@ -802,7 +802,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     }
     else if (RecvData.type == CP_SIGEVENT_STMT_OBJ)
     {//fetchObject return
-        if (class_name)
+        if (class_name && strcasecmp("stdClass", Z_STRVAL_P(class_name)) != 0)
         {//user class
             zend_class_entry *class_ce = cp_zend_fetch_class(class_name, ZEND_FETCH_CLASS_AUTO);
             stmt_fetch_obj(&stmt_obj_args_dup, class_ce, return_value);
