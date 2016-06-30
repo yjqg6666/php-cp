@@ -928,7 +928,7 @@ int worker_onReceive(zval * unser_value)
     {
         cpLog("args error no type!");
     }
-    cp_zval_ptr_dtor(&unser_value);
+//    cp_zval_ptr_dtor(&unser_value);
     return CP_TRUE;
 }
 
