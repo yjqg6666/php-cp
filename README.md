@@ -11,7 +11,7 @@ Provide local connection pool like java
 
 ## Install
 
-phpize=>./configure=>make install=>echo "extension=xx/connect_pool.so">php.ini
+phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
 
 
 ##Technical characteristics:
@@ -176,7 +176,6 @@ $obj1->release();
 ## 集成好的框架
 - yii请参考项目中的frame_example
 - ci 请参考此项目 https://github.com/ethenoscar2011/codeigniter-phpcp
-- thinkphp 请参考 http://git.oschina.net/xavier007/THINKPHP_phpcp_driver
 
 ## contact us
 - http://weibo.com/u/2661945152

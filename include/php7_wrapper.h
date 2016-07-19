@@ -34,7 +34,7 @@ static CPINLINE int cp_zend_hash_index_find(HashTable *ht, zend_ulong h, void **
     }
 }
 
-#define CP_INTERNAL_SEND_RAW(send_data,type)\
+#define CP_INTERNAL_SEND_ROW(send_data,type)\
                                 zval send_zval;\
                                 CP_ZVAL_STRING(&send_zval,send_data,0);\
                                 CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,type);
@@ -392,7 +392,7 @@ static CPINLINE int cp_internal_call_user_function(zval *object, zval *fun, zval
     }
 }
 
-#define CP_INTERNAL_SEND_RAW(send_data,type)\
+#define CP_INTERNAL_SEND_ROW(send_data,type)\
                                 zval send_zval;\
                                 CP_ZVAL_STRING(&send_zval,send_data,0);\
                                 CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,type);\
