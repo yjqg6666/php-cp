@@ -257,7 +257,7 @@ PHP_MSHUTDOWN_FUNCTION(connect_pool)
 {
     if (pdo_stmt)
     {
-        cp_zval_ptr_dtor(&pdo_stmt);
+      //  cp_zval_ptr_dtor(&pdo_stmt);
     }
     return SUCCESS;
 }
