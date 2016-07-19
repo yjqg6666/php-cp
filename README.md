@@ -11,7 +11,7 @@ Provide local connection pool like java
 
 ## Install
 
-phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
+phpize=>./configure=>make install=>echo "extension=xx/connect_pool.so">php.ini
 
 
 ##Technical characteristics:
