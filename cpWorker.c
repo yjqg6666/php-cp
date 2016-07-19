@@ -62,12 +62,12 @@ static int cpWorker_loop(int worker_id, int group_id)
     cpSignalSet(SIGALRM, cpWorker_do_ping, 1, 0);
     cpSignalSet(SIGTERM, cpWorker_do_stop, 1, 0);
     alarm(CP_PING_SLEEP);
-    zval *ret_value;
-    CP_ALLOC_INIT_ZVAL(ret_value);
+    //    zval *ret_value;
+    //    CP_ALLOC_INIT_ZVAL(ret_value);
     while (CPGS->running)
     {
-        //        zval *ret_value;
-        //        CP_ALLOC_INIT_ZVAL(ret_value);
+        zval *ret_value;
+        CP_ALLOC_INIT_ZVAL(ret_value);
         bzero(&CPWG.event, sizeof (cpWorkerInfo));
         ret = cpFifoRead(CPWG.pipe_fd_read, &CPWG.event, sizeof (cpWorkerInfo));
         if (ret < 0)
@@ -331,7 +331,7 @@ int cpWorker_manager_loop()
     while (CPGS->running == 1)
     {
         if (CPGS->group_num == 0)
-        {//for default max,min 
+        {
             sleep(1);
             continue;
         }

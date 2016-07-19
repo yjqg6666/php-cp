@@ -565,15 +565,7 @@ static void pdo_proxy_pdo(zval * args)
 #endif
             if (cp_internal_call_user_function(object, method, &ret_value, args) == FAILURE)
             {
-                if (EG(exception))
-                {
-                    CP_EXCEPTION_ARGS(&str);
-                    CP_INTERNAL_ERROR_SEND(Z_STRVAL_P(str));
-                }
-                else
-                {
-                    CP_INTERNAL_ERROR_SEND("call pdo method error!");
-                }
+                CP_INTERNAL_ERROR_SEND("call pdo method error!");
             }
             else
             {
@@ -936,7 +928,7 @@ int worker_onReceive(zval * unser_value)
     {
         cpLog("args error no type!");
     }
-    //    cp_zval_ptr_dtor(&unser_value);
+    cp_zval_ptr_dtor(&unser_value);
     return CP_TRUE;
 }
 
