@@ -47,12 +47,12 @@ static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
-                                CP_INTERNAL_SEND_ROW(send_data,CP_SIGEVENT_EXCEPTION)\
+                                CP_INTERNAL_SEND_RAW(send_data,CP_SIGEVENT_EXCEPTION)\
                                  })
 
 #define CP_INTERNAL_NORMAL_SEND(send_data)\
                                 ({         \
-                                 CP_INTERNAL_SEND_ROW(send_data,CP_SIGEVENT_TURE)\
+                                 CP_INTERNAL_SEND_RAW(send_data,CP_SIGEVENT_TURE)\
                                  })
 #define CP_SEND_EXCEPTION do{zval *str;CP_SEND_EXCEPTION_ARGS(&str);cp_zval_ptr_dtor(&str);}while(0);
 #define CP_INTERNAL_NORMAL_SEND_RETURN(send_data)({CP_INTERNAL_NORMAL_SEND(send_data);return CP_TRUE;})
@@ -565,6 +565,8 @@ static void pdo_proxy_pdo(zval * args)
 #endif
             if (cp_internal_call_user_function(object, method, &ret_value, args) == FAILURE)
             {
+                cp_zend_hash_del(&pdo_object_table, Z_STRVAL_P(data_source), Z_STRLEN_P(data_source));
+                cpLog("call pdo method error!");
                 CP_INTERNAL_ERROR_SEND("call pdo method error!");
             }
             else
@@ -576,6 +578,7 @@ static void pdo_proxy_pdo(zval * args)
                     char *p2 = strcasestr(Z_STRVAL_P(str), "There is already an active transaction");
                     if (p || p2)
                     {//del reconnect and retry
+                        cpLog("del and retry %s,%s", p, p2);
                         cp_zend_hash_del(&pdo_object_table, Z_STRVAL_P(data_source), Z_STRLEN_P(data_source));
                         pdo_proxy_connect(args, CP_CONNECT_NORMAL);
                     }
@@ -702,10 +705,10 @@ static void pdo_dispatch(zval * args)
         {
             pdo_proxy_stmt(args);
         }
-        else
-        {//not use now
-            pdo_proxy_pdo(args);
-        }
+        //        else
+        //        {//not use now
+        //            pdo_proxy_pdo(args);
+        //        }
     }
     else
     {//操作pdo
@@ -934,8 +937,6 @@ int worker_onReceive(zval * unser_value)
 
 static void cp_add_fail_into_mem(zval *o_arg, zval * data_source)
 {
-
-    return;
     zval *args;
     CP_MAKE_STD_ZVAL(args);
     *args = *o_arg;

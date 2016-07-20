@@ -11,7 +11,7 @@ Provide local connection pool like java
 
 ## Install
 
-phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
+phpize=>./configure=>make install=>echo "extension=xx/connect_pool.so">php.ini
 
 
 ##Technical characteristics:
@@ -167,10 +167,16 @@ $obj1->release();
  * 2、请求结束（rshutdown/mshutdown阶段）会调用自动调用release
  */
 ```
+
 ## 提示
 - pool_server 必须以root用户启动
 - redis不支持pub/sub方法
 - 当你用完一个连接后（例如：fetchAll调用结束），请调用release来马上释放连接到池子里面(如果事务需要在事务commit或者rollback后release)，如果不想改业务代码可以在框架层每次fetch（或者get/set）用完之后调用release方法。
+
+## 集成好的框架
+- yii请参考项目中的frame_example
+- ci 请参考此项目 https://github.com/ethenoscar2011/codeigniter-phpcp
+- thinkphp 请参考 http://git.oschina.net/xavier007/THINKPHP_phpcp_driver
 
 ## contact us
 - http://weibo.com/u/2661945152
