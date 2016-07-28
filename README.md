@@ -18,6 +18,7 @@ phpize=>./configure=>make install=>echo "extension=xx/connect_pool.so">php.ini
 
 - 提供了release方法，在每次fetch数据后(redis的get set) 调用，将连接放回到池子里面，避免其他耗时操作导致的db层连接数过高问题。
 - 提供最大最小连接数配置支持。
+- 连接自动ping 数据库， 防止压力小长时间不请求导致的gone away问题
 - 根据压力自动获取（最大到最大连接数）或者释放（释放最小到最小连接数）池子里面的连接。
 - 做了大量优化虽然请求经过代理进程转发但基本没有性能损耗.
 - 当池子里面的连接被占用没了，接下来的挣钱连接的进程将会排队，直到持有连接的进程release连接.
