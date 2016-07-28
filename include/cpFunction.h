@@ -15,7 +15,6 @@ extern "C" {
 #define CP_FIFO_NAME_LEN   200
 #define CP_FIFO_NAME_PRE   "/tmp/con_pool_c2w_pipe"
 #define CP_MMAP_NAME_PRE   "/tmp/con_pool_mmap"
-#define CP_MMAP_NAME_LEN   100
 #define SW_LOG_BUFFER_SIZE 1024
 #define SW_PID_BUFFER_SIZE 100
 #define SW_LOG_DATE_STRLEN  64
@@ -42,22 +41,27 @@ extern "C" {
 
     typedef void (*cpSignalFunc)(int);
     typedef void (*cpQueueFunc) (int, siginfo_t *, void *);
+
+
     int cpLog_init(char *logfile);
     int pid_init();
     int set_pid(int pid);
-    void cpSetIsBlock(int sock,int flag);
-    void swSingalNone();
     int cpWrite(int fd, void *buf, int count);
     int cpSetTimeout(int sock, double timeout);
-    cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask);
     int cpQueueSignalSet(int sig, cpQueueFunc func);
-    void cpSettitle(char *title);
-    //zval* cpGetConfig(char *filename);
-    zval * cpMD5(zval *arr);
-    void cp_ser_and_setpro(zval *arr);
     int cpNetRead(int fd, void *buf, int len);
     int cpCreateFifo(char *file);
     int cpFifoRead(int pipe_fd_read, void *buf, int len);
+
+    void cp_ser_and_setpro(zval *arr);
+    void cpSettitle(char *title);
+    void cpSetIsBlock(int sock, int flag);
+    void swSingalNone();
+
+    //zval* cpGetConfig(char *filename);
+    //    zval * cpMD5(zval *arr);
+
+    cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask);
 
     static CPINLINE zval* cpGetConfig(char *filename) {
         zval *fun_name, **args[2], *file, *section, *retval;

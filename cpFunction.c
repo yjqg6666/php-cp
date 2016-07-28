@@ -16,7 +16,6 @@
 
 #include "php_connect_pool.h"
 
-
 static char bufr[SW_LOG_BUFFER_SIZE];
 static char bufpid[SW_PID_BUFFER_SIZE];
 
@@ -113,12 +112,12 @@ int cpFifoRead(int pipe_fd_read, void *buf, int len)
         }
         else if (errno == EAGAIN)
         {//for async "If no process has the pipe open for writing, read() will return 0 to indicate end-of-file"
-//            printf("worker fifo recive error %d,len %d\n", errno, n);
+            //            printf("worker fifo recive error %d,len %d\n", errno, n);
             usleep(1);
         }
         else
         {
-//            printf("worker fifo recive error %d,len %d\n", errno, n);
+            //            printf("worker fifo recive error %d,len %d\n", errno, n);
         }
     } while ((n < 0 && errno == EINTR) || n > 0);
     return total;
@@ -188,14 +187,13 @@ void cpSettitle(char *title_name)
 #endif
 }
 
-
-void cpSetIsBlock(int sock,int block)
+void cpSetIsBlock(int sock, int block)
 {
     int opts, ret;
     do
     {
         opts = fcntl(sock, F_GETFL);
-    }    while (opts < 0 && errno == EINTR);
+    } while (opts < 0 && errno == EINTR);
 
     if (opts < 0)
     {
@@ -214,7 +212,7 @@ void cpSetIsBlock(int sock,int block)
     do
     {
         ret = fcntl(sock, F_SETFL, opts);
-    }    while (ret < 0 && errno == EINTR);
+    } while (ret < 0 && errno == EINTR);
 
     if (ret < 0)
     {
@@ -278,33 +276,33 @@ void swSingalNone()
     }
 }
 
-zval * cpMD5(zval *arr)
-{//pass in array , out md5 zval
-    smart_str ser_data = {0};
-    cp_serialize(&ser_data, arr);
-
-    zval fun_name, **args[1], *retval, *str;
-    CP_ZVAL_STRING(&fun_name, "md5", 0);
-
-    CP_MAKE_STD_ZVAL(str);
-#if PHP_MAJOR_VERSION < 7
-    CP_ZVAL_STRINGL(str, ser_data.c, ser_data.len, 1);
-#else
-    zend_string *str_data = ser_data.s;
-    CP_ZVAL_STRINGL(str, str_data->val, str_data->len, 1);
-#endif
-    args[0] = &str;
-
-    if (cp_call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 1, args, 0, NULL TSRMLS_CC) != SUCCESS)
-    {
-        cp_zval_ptr_dtor(&str);
-        smart_str_free(&ser_data);
-        return NULL;
-    }
-    cp_zval_ptr_dtor(&str);
-    smart_str_free(&ser_data);
-    return retval;
-}
+//zval * cpMD5(zval *arr)
+//{//pass in array , out md5 zval
+//    smart_str ser_data = {0};
+//    cp_serialize(&ser_data, arr);
+//
+//    zval fun_name, **args[1], *retval, *str;
+//    CP_ZVAL_STRING(&fun_name, "md5", 0);
+//
+//    CP_MAKE_STD_ZVAL(str);
+//#if PHP_MAJOR_VERSION < 7
+//    CP_ZVAL_STRINGL(str, ser_data.c, ser_data.len, 1);
+//#else
+//    zend_string *str_data = ser_data.s;
+//    CP_ZVAL_STRINGL(str, str_data->val, str_data->len, 1);
+//#endif
+//    args[0] = &str;
+//
+//    if (cp_call_user_function_ex(CG(function_table), NULL, &fun_name, &retval, 1, args, 0, NULL TSRMLS_CC) != SUCCESS)
+//    {
+//        cp_zval_ptr_dtor(&str);
+//        smart_str_free(&ser_data);
+//        return NULL;
+//    }
+//    cp_zval_ptr_dtor(&str);
+//    smart_str_free(&ser_data);
+//    return retval;
+//}
 
 void cp_serialize(smart_str *ser_data, zval *array)
 {

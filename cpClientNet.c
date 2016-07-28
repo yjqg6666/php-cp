@@ -16,6 +16,8 @@
 #include "php_connect_pool.h"
 #include <netdb.h>
 
+static int client_open_log = 0;
+
 int cpClient_close(cpClient *cli)
 {
     int ret, fd = cli->sock;
@@ -156,4 +158,96 @@ int cpClient_connect(cpClient *cli, char *host, int port, double timeout)
         break;
     }
     return ret;
+}
+
+static void log_process(zval *send_data, smart_str *buffer)
+{
+    zval *args = NULL, *method = NULL, *first = NULL;
+    cp_zend_hash_find(Z_ARRVAL_P(send_data), ZEND_STRS("method"), (void **) &method);
+    //    snprintf(buffer + strlen(buffer), CLIENT_LOG_BUFFER, "\nmethod:%s\n", Z_STRVAL_P(method));
+    smart_str_appendl(buffer, "\nmethod:", 8);
+    smart_str_appendl(buffer, Z_STRVAL_P(method), Z_STRLEN_P(method));
+    cp_zend_hash_find(Z_ARRVAL_P(send_data), ZEND_STRS("args"), (void **) &args);
+    if (cp_zend_hash_index_find(Z_ARRVAL_P(args), 0, (void**) &first) == SUCCESS)
+    {
+        if (Z_TYPE_P(first) == IS_STRING)
+        {
+            smart_str_appendl(buffer, "\nfirst arg:", 11);
+            smart_str_appendl(buffer, Z_STRVAL_P(first), Z_STRLEN_P(first));
+        }
+    }
+}
+
+void log_write(zval *send_data, cpClient* cli)
+{
+    if (CPGS->max_hold_time_to_log)
+    {
+        log_process(send_data, &cli->slow_log_tmp);
+    }
+    if (CPGS->max_data_size_to_log)
+    {
+        log_process(send_data, &cli->big_data_tmp);
+    }
+}
+
+void log_start(cpClient* cli)
+{
+    if (CPGS->max_hold_time_to_log)
+    {
+        gettimeofday(&cli->log_start, NULL);
+        smart_str_appendl(&cli->slow_log_tmp, MAX_HOLD_START_STR, sizeof (MAX_HOLD_START_STR) - 1);
+    }
+    if (CPGS->max_data_size_to_log)
+    {
+        cli->current_len = 0;
+        smart_str_appendl(&cli->big_data_tmp, MAX_DATA_START_STR, sizeof (MAX_DATA_START_STR) - 1);
+    }
+}
+
+void log_end(cpClient* cli)
+{
+    if (CPGS->max_hold_time_to_log)
+    {
+        static struct timeval log_end;
+        gettimeofday(&log_end, NULL);
+        int ms = 1000 * (log_end.tv_sec - cli->log_start.tv_sec) + (log_end.tv_usec - cli->log_start.tv_usec) / 1000;
+        if (CPGS->max_hold_time_to_log <= ms)
+        {
+            if (!client_open_log)
+            {
+                client_open_log = 1;
+                cpLog_init(CPGS->log_file);
+            }
+            smart_str_appendl(&cli->slow_log_tmp, MAX_HOLD_END_STR, sizeof (MAX_HOLD_END_STR) - 1);
+#if PHP_MAJOR_VERSION < 7
+            cpLog("%s\n\n", cli->slow_log_tmp.c);
+#else
+            cpLog("%s\n\n", ZSTR_VAL(cli->slow_log_tmp.s));
+#endif
+            smart_str_free(&cli->slow_log_tmp);
+        }
+    }
+    if (CPGS->max_data_size_to_log && CPGS->max_data_size_to_log <= cli->current_len)
+    {
+        if (!client_open_log)
+        {
+            client_open_log = 1;
+            cpLog_init(CPGS->log_file);
+        }
+        smart_str_appendl(&cli->big_data_tmp, MAX_DATA_END_STR, sizeof (MAX_DATA_END_STR) - 1);
+#if PHP_MAJOR_VERSION < 7
+        cpLog("%s\n\n", cli->big_data_tmp.c);
+#else
+        cpLog("%s\n\n", ZSTR_VAL(cli->big_data_tmp.s));
+#endif
+        smart_str_free(&cli->big_data_tmp);
+    }
+}
+
+void log_increase_size(int size, cpClient* cli)
+{
+    if (CPGS->max_data_size_to_log)
+    {
+        cli->current_len += size;
+    }
 }

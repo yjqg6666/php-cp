@@ -13,11 +13,10 @@ extern "C" {
 #endif
 #include <sys/mman.h>
 #include <sys/shm.h>
-#include <cpFunction.h>
 
     typedef struct _cpShareMemory {
         int size;
-        char mmap_name[CP_MMAP_NAME_LEN];
+        char mmap_name[100];
         void *mem;
     } cpShareMemory;
 

@@ -176,6 +176,8 @@ static CPINLINE int cp_zend_hash_find_ptr(HashTable *ht, zval *k, void **ret) {
 #else
 //------------下面是php7版本------------------------------------
 #include <ext/standard/php_smart_string.h>
+#include "zend_smart_str.h"
+
 #define cp_php_var_serialize                php_var_serialize
 typedef size_t zend_size_t;
 #define CP_RETVAL_STRINGL(s, l,dup)         RETVAL_STRINGL(s,l)

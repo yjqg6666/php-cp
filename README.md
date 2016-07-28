@@ -1,39 +1,52 @@
-## php-cp(php-connect-pool),redis and pdo local connect proxy
+## php-cp(php-connect-pool),redis和pdo的本地代理
 [中文简介] http://blog.sina.com.cn/s/blog_9eaa0f400102v9fd.html
 
-Provide local connection pool like java
+提供连接池，读写分离，负载均衡，慢查询日志，大数据块日志等功能
 
-## Requirement
+## 要求
 
 - PHP 5.3 + (no zts)
 - linux 2.6+
 - pdo and redis extension install
 
-## Install
+## 安装
 
 phpize=>./configure=>make install=>echo "extension=xx/connect_pool.so">php.ini
 
 
-##Technical characteristics:
+##技术特性:
 
-- After each time fetchAll (set/get)  call release() method, release the connection to the pool, avoid that the script jammed causing connection occupy high problem.
-- The maximum and minimum number of connections configuration support.
-- Support  small pressure automatic recovery connection.
-- Support graceful restart (reload).
-- Do a lot of optimization, although the request through the connection pool process forward, but no loss of QPS.
-- When the connection use out,support queue.
-- Simple! just change the new method and add release function (see demon),you used the tcp pool.
-- The connection proxy will start the ping process to monitor down list, if available will reflect to the return value of the get_disable_list(), use this function you can do some fun things,like LB.
-- support Read / write separate and slave load balancing
+- 提供了release方法，在每次fetch数据后(redis的get set) 调用，将连接放回到池子里面，避免其他耗时操作导致的db层连接数过高问题。
+- 提供最大最小连接数配置支持。
+- 根据压力自动获取（最大到最大连接数）或者释放（释放最小到最小连接数）池子里面的连接。
+- 做了大量优化虽然请求经过代理进程转发但基本没有性能损耗.
+- 当池子里面的连接被占用没了，接下来的挣钱连接的进程将会排队，直到持有连接的进程release连接.
+- 使用透明化，相对于传统的pdo和redis操作，只需要修改new的类名，以及适当时机release连接即可（可以集成到db层框架）
+- 支持pdo的读写分离和从库的负载均衡。
+- 支持cli模式下的pdo和redis异步查询。
+- 支持慢查询日志(max_hold_time_to_log)以及大的数据块(max_data_size_to_log)日志功能。
 
-## Example
-step 1 move the pool.ini file to /etc/ and modify it as you need.
 
-step 2 start the pool_server process：
+## 提示
+- 请求结束（rshutdown/mshutdown阶段）会调用自动调用release，不要依赖于这个release，否则连接利用率会很低
+- pool_server 必须以root用户启动
+- redis不支持pub/sub方法
+- 当你用完一个连接后（例如：fetchAll调用结束），请调用release来马上释放连接到池子里面(如果事务需要在事务commit或者rollback后release)，如果不想改业务代码可以在框架层每次fetch（或者get/set）用完之后调用release方法。
+
+## 集成好的框架
+- yii请参考项目中的frame_example
+- redis请参考项目中的frame_example
+- ci 请参考此项目 https://github.com/ethenoscar2011/codeigniter-phpcp
+- thinkphp 请参考 http://git.oschina.net/xavier007/THINKPHP_phpcp_driver
+
+## 使用
+step 1 将项目中的pool.ini文件mv到/etc/pool.ini,并根据需求修改配置文件
+
+step 2 启动代理进程：
 ```php pool_server start
 ```support "start" "stop" "restart"
 
-step 3 modify you php script:
+step 3 适当修改你的php脚本:
 
 ```
 <?php
@@ -155,28 +168,6 @@ $obj1->release();
 $sql = "insert into `test` (tid) values (5)";
 $rs = $obj1->exec($sql); //走主库
 $obj1->release();
-
-/* tips：
- * 1、The relase() method will release the connections to the pool that the process holds.
- * 2、after rshutdown/mshutdown will trigger the release() function.
- */
-
-
-/* 说明：
- * 1、relase方法：通知中间件,可以将这个进程持有的链接放回连接池
- * 2、请求结束（rshutdown/mshutdown阶段）会调用自动调用release
- */
-```
-
-## 提示
-- pool_server 必须以root用户启动
-- redis不支持pub/sub方法
-- 当你用完一个连接后（例如：fetchAll调用结束），请调用release来马上释放连接到池子里面(如果事务需要在事务commit或者rollback后release)，如果不想改业务代码可以在框架层每次fetch（或者get/set）用完之后调用release方法。
-
-## 集成好的框架
-- yii请参考项目中的frame_example
-- ci 请参考此项目 https://github.com/ethenoscar2011/codeigniter-phpcp
-- thinkphp 请参考 http://git.oschina.net/xavier007/THINKPHP_phpcp_driver
 
 ## contact us
 - http://weibo.com/u/2661945152

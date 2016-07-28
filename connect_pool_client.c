@@ -56,7 +56,6 @@ static void cpClient_attach_mem()
 
 static void* connect_pool_perisent(zval* zres, zval* data_source)
 {
-    //        cpLog_init("/tmp/pool_client.log");
     zend_resource sock_le;
     int ret;
     cpClient* cli = (cpClient*) pecalloc(sizeof (cpClient), 1, 1);
@@ -94,6 +93,8 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
     cli->server_fd = info.server_fd;
     cpClient_attach_mem();
     CONN(cli)->release = CP_FD_RELEASED;
+    bzero(&cli->big_data_tmp, sizeof (cli->big_data_tmp));
+    bzero(&cli->slow_log_tmp, sizeof (cli->slow_log_tmp));
     return cli;
 }
 
@@ -417,10 +418,13 @@ static CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data)
         {
             pause();
         }
+        log_start(cli);
+        log_write(send_data, cli);
         ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, cli);
     }
     else
     {
+        log_write(send_data, cli);
         ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, cli);
     }
     return ret;
@@ -463,6 +467,7 @@ static CPINLINE int cli_real_recv(cpClient *cli, int async)
         }
     } while (event.pid != cpPid); //有可能有脏数据  读出来
 
+    log_increase_size(event.len, cli);
     void * buf = get_attach_buf(CONN(cli)->worker_id, CPGS->max_buffer_len, CPGS->G[CONN(cli)->group_id].workers[CONN(cli)->worker_index].sm_obj.mmap_name);
     php_msgpack_unserialize(ret_value, buf, event.len);
     RecvData.type = event.type;

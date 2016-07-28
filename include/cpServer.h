@@ -135,6 +135,9 @@ extern "C" {
         int timeout_usec;
         int max_request;
 
+        int max_hold_time_to_log;
+        int max_data_size_to_log;
+
         char ini_file[MAX_INI_LENGTH];
         char log_file[128]; //日志文件
 
@@ -198,6 +201,8 @@ extern "C" {
         zval* group;
         int group_num;
         int max_buffer_len;
+        int max_hold_time_to_log;
+        int max_data_size_to_log;
 
         pthread_mutex_t mutex_lock;
         //        int (*global_lock)(struct _cpGroup *);
@@ -205,6 +210,8 @@ extern "C" {
 
         int default_min;
         int default_max;
+
+        char log_file[128]; //日志文件
     } cpServerGS;
 
     typedef struct _cpWorkerG {

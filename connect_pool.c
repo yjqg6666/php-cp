@@ -330,6 +330,7 @@ void send_oob2proxy(zend_resource *rsrc TSRMLS_DC)
                 }
 
             }
+            log_end(cli);
         }
     }
 }
