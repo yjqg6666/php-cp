@@ -678,6 +678,11 @@ static void pdo_proxy_stmt(zval * args)
             cp_zval_ptr_dtor(&pdo_stmt);
             pdo_stmt = NULL;
         }
+        if (!ret_value)
+        {
+            CP_INTERNAL_ERROR_SEND("call pdo stmt method error ret_value is null!");
+            return;
+        }
         if (Z_TYPE_P(ret_value) == IS_OBJECT)
         {
             CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_STMT_OBJ);
