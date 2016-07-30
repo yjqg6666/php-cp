@@ -43,7 +43,7 @@ static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
-#define CP_VERSION "1.4.6"
+#define CP_VERSION "1.4.7"
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
