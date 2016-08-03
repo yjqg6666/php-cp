@@ -71,12 +71,10 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
         pefree(cli, 1);
         return NULL;
     }
-    //printf("connect success \n");
 
     sock_le.type = le_cli_connect_pool;
     sock_le.ptr = cli;
     CP_ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
-    //printf("\n connect_pool_perisent "); zend_print_zval_r(data_source, 0);
 
 #if PHP_MAJOR_VERSION < 7
     cp_zend_hash_update(&EG(persistent_list), Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void*) &sock_le, sizeof (zend_resource), NULL);
@@ -120,27 +118,21 @@ static CPINLINE zval * cpConnect_pool_server(zval *data_source)
     if (cp_zend_hash_find_ptr(&EG(persistent_list), data_source, (void **) &p_sock_le) == SUCCESS)
 #endif
     {
-        printf(" find success \n");
         cli = (cpClient*) p_sock_le->ptr;
         CP_ZEND_REGISTER_RESOURCE(zres, cli, le_cli_connect_pool);
     }
     else
     {//create long connect to pool_server
 
-        printf("\n not find success \n");
-
         if (connect_pool_perisent(zres, data_source) == NULL)
         {// error
 #if PHP_MAJOR_VERSION < 7
             efree(zres);
 #endif
-            printf("connect_pool_perisent error \n");
             php_error_docref(NULL TSRMLS_CC, E_ERROR, CON_FAIL_MESSAGE);
             return NULL;
         }
     }
-    zend_print_zval_r(zres, 0);
-    //zend_print_zval_r(data_source, 0);
     return zres;
 }
 
@@ -392,14 +384,8 @@ static CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data)
     {
         zval *data_source;
 
-        printf("cli_real_send before find send_data is \n");
-        zend_print_zval_r(send_data, 0);
-        // cp_zend_hash_find(Z_ARRVAL_P(send_data), ZEND_STRS("data_source"), (void **) &data_source);
-        if (cp_zend_hash_find(Z_ARRVAL_P(send_data), ZEND_STRS("data_source"), (void **) &data_source)  == SUCCESS) {
-           // zend_print_zval_r(data_source, 0);
-        } else {
-            printf(" find data_source faild \n");
-        }
+        cp_zend_hash_find(Z_ARRVAL_P(send_data), ZEND_STRS("data_source"), (void **) &data_source);
+
         if (manager_pid != CPGS->manager_pid)
         {//restart server
             exit(0);
@@ -420,7 +406,6 @@ static CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data)
     {
         ret = CP_CLIENT_SERIALIZE_SEND_MEM(send_data, cli);
     }
-    printf(" cli_real_send ret:%d \n", ret);
     return ret;
 }
 
@@ -450,24 +435,28 @@ static CPINLINE int cli_real_recv(cpClient *cli)
         }
     } while (event.pid != cpPid); //有可能有脏数据  读出来
 
+    zval *ret_value;
+    CP_ALLOC_INIT_ZVAL(ret_value);
+    void * buf = get_attach_buf(CONN(cli)->worker_id, CPGS->max_buffer_len, CPGS->G[CONN(cli)->group_id].workers[CONN(cli)->worker_index].sm_obj.mmap_name);
+    php_msgpack_unserialize(ret_value, buf, event.len);
+    RecvData.type = event.type;
+    RecvData.ret_value = ret_value;
+    /*
 #if PHP_MAJOR_VERSION < 7
     zval *ret_value;
     CP_ALLOC_INIT_ZVAL(ret_value);
     void * buf = get_attach_buf(CONN(cli)->worker_id, CPGS->max_buffer_len, CPGS->G[CONN(cli)->group_id].workers[CONN(cli)->worker_index].sm_obj.mmap_name);
     php_msgpack_unserialize(ret_value, buf, event.len);
-    zend_print_zval_r(ret_value, 0);
-    printf("\n type is %d   len is %d buf is %s \n", event.type, event.len, buf);
     RecvData.type = event.type;
     RecvData.ret_value = ret_value;
 #else
     zval ret_value;
     void * buf = get_attach_buf(CONN(cli)->worker_id, CPGS->max_buffer_len, CPGS->G[CONN(cli)->group_id].workers[CONN(cli)->worker_index].sm_obj.mmap_name);
-    printf("\n else type is %d   len is %d buf is %s\n", event.type, event.len, buf);
     php_msgpack_unserialize(&ret_value, buf, event.len);
-    //zend_print_zval_r(&ret_value, 0);
     RecvData.type = event.type;
     RecvData.ret_value = &ret_value;
 #endif
+*/
     return SUCCESS;
 }
 
@@ -729,7 +718,6 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
         RETURN_FALSE;
     }
 
-    printf("cmd is %s\n", cmd);
     cpClient *cli;
     if (cp_zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
     {
@@ -765,10 +753,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     }
     cp_add_assoc_string(pass_data, "method_type", "PDOStatement", 1);
     cp_add_assoc_string(pass_data, "type", "pdo", 1);
-    //int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_PDOStatement_class_entry_ptr);
 
-    printf("\n  ---   before cli_real_send \n");
-    //zend_pritf_zval_r(pass_data,0);
     int ret = cli_real_send(&cli, pass_data);
     if (ret < 0)
     {
@@ -853,7 +838,6 @@ PHP_METHOD(pdo_connect_pool, __call)
     else
     {
         zres = cpConnect_pool_server(source_zval);
-        //zend_print_zval_r(pass_data,0);
 
 
         zend_update_property_string(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), Z_STRVAL_P(source_zval) TSRMLS_CC);
@@ -864,16 +848,13 @@ PHP_METHOD(pdo_connect_pool, __call)
     }
 
     //int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
-    //zend_print_zval_r(pass_data,0);
     int ret = cli_real_send(&cli, pass_data);
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
     }
 
-    printf("\n zres is:======== \n");  zend_print_zval_r(zres, 0);
     cli_real_recv(cli);
-    printf("\n zres is:======== \n");  zend_print_zval_r(zres, 0);
 
     if (RecvData.type == CP_SIGEVENT_PDO)
     {//返回一个模拟pdo类
@@ -934,7 +915,6 @@ PHP_METHOD(pdo_connect_pool, __construct)
             }
 
             add_assoc_zval(zval_conf, "master", master);
-            // zend_print_zval_r(zval_conf, 0);
 
             zend_update_property_bool(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("use_ms"), 0 TSRMLS_CC);
             zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("config"), zval_conf TSRMLS_CC);
