@@ -74,6 +74,18 @@ void cpServer_init_common(zval *conf)
         convert_to_long(v);
         CPGC.max_fail_num = (int) Z_LVAL_P(v);
     }
+
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_data_size_to_log"), (void **) &v) == SUCCESS)
+    {
+        convert_to_long(v);
+        CPGC.max_data_size_to_log = (int) Z_LVAL_P(v);
+    }
+
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("max_hold_time_to_log"), (void **) &v) == SUCCESS)
+    {
+        convert_to_long(v);
+        CPGC.max_hold_time_to_log = (int) Z_LVAL_P(v);
+    }
 }
 
 void cpKillClient()
@@ -145,6 +157,8 @@ void cpServer_init(zval *conf, char *ini_file)
     CPGC.ser_fail_hits = 1;
     CPGC.max_fail_num = 2;
     CPGC.port = CP_PORT_PDO;
+    CPGC.max_data_size_to_log = 0;
+    CPGC.max_hold_time_to_log = 0;
 
     strcpy(CPGC.ini_file, ini_file);
     //    MAKE_STD_ZVAL(CPGS->group);
@@ -157,7 +171,6 @@ void cpServer_init(zval *conf, char *ini_file)
 
     CP_HASHTABLE_FOREACH_START2(_ht, name, klen, ktype, config)
     {
-
         if (strcmp(name, "common") == 0)
         {//common config
             cpServer_init_common(config);
@@ -195,6 +208,9 @@ void cpServer_init(zval *conf, char *ini_file)
     CPGS->default_min = CP_DEF_MIN_NUM;
     CPGS->default_max = CP_DEF_MAX_NUM;
     CPGS->max_buffer_len = CPGC.max_read_len;
+    CPGS->max_data_size_to_log = CPGC.max_data_size_to_log;
+    CPGS->max_hold_time_to_log = CPGC.max_hold_time_to_log;
+    strcpy(CPGS->log_file, CPGC.log_file);
 
     cpServer_init_lock();
 
@@ -663,8 +679,8 @@ int static cpListen()
         cpLog("Listen fail.port=%d. Error: %s [%d]", CPGC.port, strerror(errno), errno);
         return FAILURE;
     }
-    cpSetNonBlock(sock);
-    // cpSetIsBlock(sock, 0);
+    //cpSetNonBlock(sock);
+    cpSetIsBlock(sock, 0);
 
     if (sock < 0)
     {

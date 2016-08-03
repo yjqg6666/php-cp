@@ -1,109 +1,174 @@
-## php-cp(php-connect-pool),redis and pdo sync connect pool
+## php-cp(php-connect-pool),redis和pdo的本地代理
 [中文简介] http://blog.sina.com.cn/s/blog_9eaa0f400102v9fd.html
 
-Provide local connection pool like java
+提供连接池，读写分离，负载均衡，慢查询日志，大数据块日志等功能
 
-## Requirement
+## 要求
 
 - PHP 5.3 + (no zts)
 - linux 2.6+
 - pdo and redis extension install
 
-## Install
+## 安装
 
-phpize=>./configure=>make install=>echo "extensions=xx/connect_pool.so">php.ini
+phpize=>./configure=>make install=>echo "extension=xx/connect_pool.so">php.ini
 
 
-##Technical characteristics:
+##技术特性:
 
-- After each time fetchAll (set/get)  call release() method, release the connection to the pool, avoid that the script jammed causing connection occupy high problem.
-- The maximum and minimum number of connections configuration support.
-- Support  small pressure automatic recovery connection.
-- Support graceful restart (reload).
-- Do a lot of optimization, although the request through the connection pool process forward, but no loss of QPS.
-- When the connection use out,support queue.
-- Simple! just change the new method and add release function (see demon),you used the tcp pool.
-- The connection proxy will start the ping process to monitor down list, if available will reflect to the return value of the get_disable_list(), use this function you can do some fun things,like LB.
-- support Read / write separate and slave load balancing
+- 提供了release方法，在每次fetch数据后(redis的get set) 调用，将连接放回到池子里面，避免其他耗时操作导致的db层连接数过高问题。
+- 提供最大最小连接数配置支持。
+- 连接自动ping 数据库， 防止压力小长时间不请求导致的gone away问题
+- 根据压力自动获取（最大到最大连接数）或者释放（释放最小到最小连接数）池子里面的连接。
+- 做了大量优化虽然请求经过代理进程转发但基本没有性能损耗.
+- 当池子里面的连接被占用没了，接下来的挣钱连接的进程将会排队，直到持有连接的进程release连接.
+- 使用透明化，相对于传统的pdo和redis操作，只需要修改new的类名，以及适当时机release连接即可（可以集成到db层框架）
+- 支持pdo的读写分离和从库的负载均衡。
+- 支持cli模式下的pdo和redis异步查询。
+- 支持慢查询日志(max_hold_time_to_log)以及大的数据块(max_data_size_to_log)日志功能。
 
-## Example
-step 1 move the pool.ini file to /etc/ and modify it as you need.
 
-step 2 start the pool_server process：
+## 提示
+- 请求结束（rshutdown/mshutdown阶段）会调用自动调用release，不要依赖于这个release，否则连接利用率会很低
+- pool_server 必须以root用户启动
+- redis不支持pub/sub方法
+- 当你用完一个连接后（例如：fetchAll调用结束），请调用release来马上释放连接到池子里面(如果事务需要在事务commit或者rollback后release)，如果不想改业务代码可以在框架层每次fetch（或者get/set）用完之后调用release方法。
+
+## 集成好的框架
+- yii请参考项目中的frame_example
+- redis请参考项目中的frame_example
+- ci 请参考此项目 https://github.com/ethenoscar2011/codeigniter-phpcp
+- thinkphp 请参考 http://git.oschina.net/xavier007/THINKPHP_phpcp_driver
+
+## 使用
+step 1 将项目中的pool.ini文件mv到/etc/pool.ini,并根据需求修改配置文件
+
+step 2 启动代理进程：
 ```php pool_server start
 ```support "start" "stop" "restart"
 
-step 3 modify you php script:
+step 3 适当修改你的php脚本:
+
 ```
 <?php
-$db = new PDO(xxxxx);
-=> $db = new pdoProxy(xxxx);//dont use persistent
+/* * ****************don't use pool(不用连接池 最原始的方式)************************ */
+$obj = new Redis();
+$rs = $obj->connect("192.168.20.130");
+$obj->select(5);
+$obj->set("test", '1111');
+var_dump($obj->get("test"));
 
-$redis = new Redis();
-=》$redis = new redisProxy();//dont use pconnect
+$obj = new PDO('mysql:host=192.168.20.130;dbname=test1', "admin", "admin");
+$rs = $obj->query("show tables");
+var_dump($rs->fetchAll());
 
-tips:use $db/$redis->release() to release the connection  as early as you can;
+//*****************use pool（使用了连接池）*********************************/
+$obj = new redisProxy();
+$rs = $obj->connect("192.168.20.130");
+$obj->select(5);
+$obj->set("test", '1111');
+var_dump($obj->get("test"));
+$obj->release();
 
+$obj1 = new pdoProxy('mysql:host=192.168.20.131;dbname=db1', "admin", "admin");
+$rs = $obj1->query("show tables");
+var_dump($rs->fetchAll());
+$obj1->release();
+
+
+/* * ****************异步 pdo和redis操作**********************************************
+ * 依赖 swoole的event函数
+ */
+include './asyncClass.php';
+$obj = new asyncRedisProxy();
+$obj->connect("127.0.0.1", "6379");
+$obj->set("a", 11111, function($obj, $ret) {
+    $obj->get("a", function($obj, $data) {
+        var_dump($data);
+        $obj->release(); //release to con pool
+    });
+});
+
+
+$obj2 = new asyncPdoProxy('mysql:host=192.168.1.19;dbname=mz_db', "public_user", "1qa2ws3ed");
+$obj2->query("select 1 from mz_user where user_id=299", function($obj, $stmt) {
+    $arr = $stmt->fetchAll();
+    var_dump($arr);
+    $obj->query("select 2 from mz_user where user_id=299", function($obj, $stmt) {
+        $arr = $stmt->fetchAll();
+        var_dump($arr);
+        $obj->release(); //release to con pool
+    });
+});
+
+
+$obj3 = new asyncPdoProxy('mysql:host=192.168.1.19;dbname=mz_db', "public_user", "1qa2ws3ed");
+$obj3->exec("insert into t1(name) values('111111')", function($obj, $data) {
+    var_dump($data);
+    $obj->release(); ////release to con pool
+});
+
+
+$obj4 = new asyncPdoProxy('mysql:host=192.168.1.19;dbname=mz_db', "public_user", "1qa2ws3ed");
+$stmt = $obj4->prepare("select * from mz_account where user_id=:user_id");
+$stmt->bindParam(':user_id', "311");
+$stmt->execute(function($stmt, $ret) {
+    $data = $stmt->fetchAll();
+    var_dump($data);
+    $stmt->release();
+});
 
 //*******************use master slave(最新版本支持了读写分离和从库的负载均衡 用法如下)***********************/
 $config = array(
     'master' => array(
-        'data_source' => "mysql:host=192.168.1.19;dbname=db1;charset=utf8",
+        'data_source' => "mysql:host=192.168.1.19;dbname=db1",
         'username' => "public_user",
         'pwd' => "1qa2ws3ed",
         'options' => array(
-            PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_TIMEOUT => 3,
-            PDO::ATTR_CASE =>PDO::CASE_UPPER,
+            PDO::ATTR_CASE => PDO::CASE_UPPER,
         ),
     ),
     'slave' => array(
         "0" => array(
-            'data_source' => "mysql:host=192.168.1.20;dbname=db2;charset=utf8",
+            'data_source' => "mysql:host=192.168.1.20;dbname=db2",
             'username' => "public_user",
             'pwd' => "1qa2ws3ed",
             'options' => array(
-                PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_TIMEOUT => 3,
-                PDO::ATTR_CASE =>PDO::CASE_UPPER,
+                PDO::ATTR_CASE => PDO::CASE_UPPER,
             ),
         ),
         "1" => array(
-            'data_source' => "mysql:host=192.168.1.21;dbname=db3;charset=utf8",
+            'data_source' => "mysql:host=192.168.1.21;dbname=db3",
             'username' => "public_user",
             'pwd' => "1qa2ws3ed",
             'options' => array(
-                PDO::ATTR_ERRMODE=>PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_TIMEOUT => 3,
-                PDO::ATTR_CASE =>PDO::CASE_LOWER,
+                PDO::ATTR_CASE => PDO::CASE_LOWER,
             ),
         ),
     ),
 );
-/***************************"select"和"show"开头的语句 走随机从库***********/
+/* * *************************"select"和"show"开头的语句 走随机从库********** */
 $obj1 = new pdoProxy($config);
 $rs = $obj1->query("select * from test limit 1");
-var_dump($rs->fetchAll());//走随机从库
+var_dump($rs->fetchAll()); //走随机从库
 $obj1->release();
 
-/****************************读强行走主库****************************/
+/* * **************************读强行走主库*************************** */
 $obj1->enable_slave = false;
 $rs = $obj1->query("select * from test limit 1");
-var_dump($rs->fetchAll());//读主库
+var_dump($rs->fetchAll()); //读主库
 $obj1->release();
 
-/***************************除了"select"和"show"开头的语句 都走主库***********/
+/* * *************************除了"select"和"show"开头的语句 都走主库********** */
 $sql = "insert into `test` (tid) values (5)";
-$rs = $obj1->exec($sql);//走主库
+$rs = $obj1->exec($sql); //走主库
 $obj1->release();
-
-?>
-```
-
-## 提示
-- pool_server 必须以root用户启动
-- redis不支持pub/sub方法
-- 当你用完一个连接后（例如：fetchAll调用结束），请调用release来马上释放连接到池子里面(如果事务需要在事务commit或者rollback后release)，如果不想改业务代码可以在框架层每次fetch（或者get/set）用完之后调用release方法。
 
 ## contact us
 - http://weibo.com/u/2661945152

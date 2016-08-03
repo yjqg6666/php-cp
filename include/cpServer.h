@@ -33,8 +33,10 @@ extern "C" {
 #define CP_DEF_MIN_NUM           1
 #define CP_SERVER_MMAP_FILE      "/tmp/cp_server_mmap_file"
 
-#define CP_GROUP_LEN 1000 //
-#define CP_GROUP_NUM 100 //the max group num of proxy process . todo  check it
+#define CP_GROUP_LEN     1000 //
+#define CP_GROUP_NUM     100 //the max group num of proxy process . todo  check it
+#define CP_MAX_ASYNC_NUM 100 //the max under async to protect db
+#define CP_SOURCE_MAX    100
 
 #define CP_PING_MEM_LEN          1024*1024
 #define CP_PING_DIS_LEN          409600  //disable list mem
@@ -133,6 +135,9 @@ extern "C" {
         int timeout_usec;
         int max_request;
 
+        int max_hold_time_to_log;
+        int max_data_size_to_log;
+
         char ini_file[MAX_INI_LENGTH];
         char log_file[128]; //日志文件
 
@@ -196,6 +201,8 @@ extern "C" {
         zval* group;
         int group_num;
         int max_buffer_len;
+        int max_hold_time_to_log;
+        int max_data_size_to_log;
 
         pthread_mutex_t mutex_lock;
         //        int (*global_lock)(struct _cpGroup *);
@@ -203,6 +210,8 @@ extern "C" {
 
         int default_min;
         int default_max;
+
+        char log_file[128]; //日志文件
     } cpServerGS;
 
     typedef struct _cpWorkerG {

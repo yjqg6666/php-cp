@@ -1,0 +1,3530 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ACS_BIN_VALUE	./mp7/msgpack/unpack_define.h	79;"	e	enum:__anon11
+ACS_BIN_VALUE	./msgpack7/msgpack/unpack_define.h	79;"	e	enum:__anon29
+ACS_RAW_VALUE	./mp/msgpack/unpack_define.h	77;"	e	enum:__anon1
+ACS_RAW_VALUE	./mp/unpack_define.h	77;"	e	enum:__anon9
+ACS_RAW_VALUE	./mp7/msgpack/unpack_define.h	80;"	e	enum:__anon11
+ACS_RAW_VALUE	./msgpack/msgpack/unpack_define.h	77;"	e	enum:__anon19
+ACS_RAW_VALUE	./msgpack/unpack_define.h	77;"	e	enum:__anon27
+ACS_RAW_VALUE	./msgpack7/msgpack/unpack_define.h	80;"	e	enum:__anon29
+AWK	./Makefile	13;"	m
+CC	./Makefile	26;"	m
+CDbCommand	./frame_example/yii1/db/CDbCommand.php	2;"	c
+CDbConnection	./frame_example/yii1/db/CDbConnection.php	2;"	c
+CDbDataReader	./frame_example/yii1/db/CDbDataReader.php	2;"	c
+CDbTransaction	./frame_example/yii1/db/CDbTransaction.php	2;"	c
+CFLAGS	./Makefile	27;"	m
+CFLAGS_CLEAN	./Makefile	28;"	m
+COMMON_FLAGS	./Makefile	50;"	m
+COMPILE_DL_CONNECT_POOL	./config.h	5;"	d
+CONFIGURE_COMMAND	./Makefile	7;"	m
+CONFIGURE_OPTIONS	./Makefile	8;"	m
+CONN	./include/cpClientNet.h	35;"	d
+CONPFUNCTION_H	./include/cpFunction.h	9;"	d
+CONPFUNCTION_H	include/cpFunction.h	9;"	d
+CON_FAIL_MESSAGE	./include/cpClientNet.h	37;"	d
+CON_FORMART_KEY	./include/cpClientNet.h	36;"	d
+CPGC	./include/cpServer.h	50;"	d
+CPGC	include/cpServer.h	50;"	d
+CPGL	./include/cpServer.h	51;"	d
+CPGL	include/cpServer.h	51;"	d
+CPGS	./include/cpServer.h	52;"	d
+CPGS	include/cpServer.h	52;"	d
+CPINLINE	./php_connect_pool.h	48;"	d
+CPINLINE	./php_connect_pool.h	50;"	d
+CPINLINE	./php_connect_pool.h	53;"	d
+CPINLINE	./php_connect_pool.h	55;"	d
+CPP	./Makefile	29;"	m
+CPPFLAGS	./Makefile	30;"	m
+CPPINGWORKER_H	./include/cpPingWorker.h	9;"	d
+CPWG	./include/cpServer.h	53;"	d
+CPWG	include/cpServer.h	53;"	d
+CP_ACCEPT_AGAIN	./include/cpServer.h	64;"	d
+CP_ACCEPT_AGAIN	include/cpServer.h	64;"	d
+CP_ACCEPT_MAX_COUNT	./include/cpServer.h	65;"	d
+CP_ACCEPT_MAX_COUNT	include/cpServer.h	65;"	d
+CP_ALLOC_INIT_ZVAL	./include/php7_wrapper.h	256;"	d
+CP_ALLOC_INIT_ZVAL	./include/php7_wrapper.h	58;"	d
+CP_BACKLOG	./include/cpServer.h	16;"	d
+CP_BACKLOG	include/cpServer.h	16;"	d
+CP_BUFFER_SIZE	./include/cpNetWork.h	16;"	d
+CP_CHECK_RETURN	./php_connect_pool.h	131;"	d
+CP_CLIENTNET_H	./include/cpClientNet.h	9;"	d
+CP_CLIENT_EOF_LEN	./include/cpNetWork.h	24;"	d
+CP_CLIENT_EOF_STR	./include/cpNetWork.h	20;"	d
+CP_CLIENT_SERIALIZE_SEND_MEM	./connect_pool_client.c	254;"	f
+CP_CLIENT_SERIALIZE_SEND_MEM	connect_pool_client.c	/^int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, cpClient *cli)$/;"	f
+CP_CONNECT_NORMAL	./include/cpServer.h	46;"	d
+CP_CONNECT_NORMAL	include/cpServer.h	46;"	d
+CP_CONNECT_PING	./include/cpServer.h	48;"	d
+CP_CONNECT_PING	include/cpServer.h	48;"	d
+CP_CONNECT_RECONNECT	./include/cpServer.h	47;"	d
+CP_CONNECT_RECONNECT	include/cpServer.h	47;"	d
+CP_CPU_NUM	./include/cpServer.h	15;"	d
+CP_CPU_NUM	include/cpServer.h	15;"	d
+CP_DEF_MAX_NUM	./include/cpServer.h	32;"	d
+CP_DEF_MAX_NUM	include/cpServer.h	32;"	d
+CP_DEF_MAX_READ_LEN	./include/cpServer.h	29;"	d
+CP_DEF_MAX_READ_LEN	include/cpServer.h	29;"	d
+CP_DEF_MIN_NUM	./include/cpServer.h	33;"	d
+CP_DEF_MIN_NUM	include/cpServer.h	33;"	d
+CP_EVENTLEN_ADD_TYPE	./php_connect_pool.h	150;"	d
+CP_EVENTLEN_GET_LEN	./php_connect_pool.h	154;"	d
+CP_EVENTLEN_GET_TYPE	./php_connect_pool.h	153;"	d
+CP_EVENTS	./php_connect_pool.h	175;"	g
+CP_EVENT_CLOSE	./php_connect_pool.h	174;"	d
+CP_EVENT_DEAULT	./php_connect_pool.h	177;"	e	enum:CP_EVENTS
+CP_EVENT_ERROR	./php_connect_pool.h	180;"	e	enum:CP_EVENTS
+CP_EVENT_READ	./php_connect_pool.h	178;"	e	enum:CP_EVENTS
+CP_EVENT_WRITE	./php_connect_pool.h	179;"	e	enum:CP_EVENTS
+CP_EXCEPTION_ARGS	./include/php7_wrapper.h	138;"	d
+CP_EXCEPTION_ARGS	./include/php7_wrapper.h	402;"	d
+CP_FALSE	./include/cpServer.h	76;"	d
+CP_FALSE	include/cpServer.h	76;"	d
+CP_FD_NCON	./include/cpServer.h	70;"	d
+CP_FD_NCON	include/cpServer.h	70;"	d
+CP_FD_NRELEASED	./include/cpServer.h	72;"	d
+CP_FD_NRELEASED	include/cpServer.h	72;"	d
+CP_FD_RELEASED	./include/cpServer.h	71;"	d
+CP_FD_RELEASED	include/cpServer.h	71;"	d
+CP_FD_WAITING	./include/cpServer.h	73;"	d
+CP_FD_WAITING	include/cpServer.h	73;"	d
+CP_FIFO_NAME_LEN	./include/cpFunction.h	32;"	d
+CP_FIFO_NAME_LEN	include/cpFunction.h	32;"	d
+CP_FIFO_NAME_PRE	./include/cpFunction.h	33;"	d
+CP_FIFO_NAME_PRE	include/cpFunction.h	33;"	d
+CP_GET_EXCEPTION_STR	./include/php7_wrapper.h	400;"	d
+CP_GET_PID	./php_connect_pool.h	138;"	d
+CP_GROUP_LEN	./include/cpServer.h	36;"	d
+CP_GROUP_LEN	include/cpServer.h	36;"	d
+CP_GROUP_NUM	./include/cpServer.h	37;"	d
+CP_GROUP_NUM	include/cpServer.h	37;"	d
+CP_HASHTABLE_FOREACH_END	./include/php7_wrapper.h	113;"	d
+CP_HASHTABLE_FOREACH_END	./include/php7_wrapper.h	216;"	d
+CP_HASHTABLE_FOREACH_START	./include/php7_wrapper.h	202;"	d
+CP_HASHTABLE_FOREACH_START	./include/php7_wrapper.h	82;"	d
+CP_HASHTABLE_FOREACH_START2	./include/php7_wrapper.h	205;"	d
+CP_HASHTABLE_FOREACH_START2	./include/php7_wrapper.h	96;"	d
+CP_HEADER_CON_SUCCESS	./include/cpNetWork.h	25;"	d
+CP_HEADER_ERROR	./include/cpNetWork.h	26;"	d
+CP_HOST_SIZE	./php_connect_pool.h	117;"	d
+CP_IDEL_TIME	./include/cpServer.h	27;"	d
+CP_IDEL_TIME	include/cpServer.h	27;"	d
+CP_INTERNAL_ERROR_SEND	./connect_pool.c	48;"	d	file:
+CP_INTERNAL_ERROR_SEND_RETURN	./connect_pool.c	59;"	d	file:
+CP_INTERNAL_NORMAL_SEND	./connect_pool.c	53;"	d	file:
+CP_INTERNAL_NORMAL_SEND_RETURN	./connect_pool.c	58;"	d	file:
+CP_INTERNAL_SEND_ROW	./include/php7_wrapper.h	37;"	d
+CP_INTERNAL_SEND_ROW	./include/php7_wrapper.h	395;"	d
+CP_INTERNAL_SERIALIZE_SEND_MEM	./connect_pool.c	402;"	f
+CP_LOG_FORMAT	./include/cpFunction.h	39;"	d
+CP_LOG_FORMAT	include/cpFunction.h	38;"	d
+CP_MAKE_STD_ZVAL	./include/php7_wrapper.h	249;"	d
+CP_MAKE_STD_ZVAL	./include/php7_wrapper.h	57;"	d
+CP_MAX_EVENT	./include/cpNetWork.h	15;"	d
+CP_MAX_FDS	./include/cpServer.h	22;"	d
+CP_MAX_FDS	include/cpServer.h	22;"	d
+CP_MAX_READ_LEN	./include/cpServer.h	30;"	d
+CP_MAX_READ_LEN	include/cpServer.h	30;"	d
+CP_MAX_REQUEST	./include/cpServer.h	24;"	d
+CP_MAX_REQUEST	include/cpServer.h	24;"	d
+CP_MAX_UINT	./include/cpNetWork.h	17;"	d
+CP_MAX_WORKER	./include/cpServer.h	25;"	d
+CP_MAX_WORKER	include/cpServer.h	25;"	d
+CP_MEMORY_H	./include/cpMemory.h	9;"	d
+CP_MIN_WORKER	./include/cpServer.h	26;"	d
+CP_MIN_WORKER	include/cpServer.h	26;"	d
+CP_MMAP_NAME_LEN	./include/cpFunction.h	35;"	d
+CP_MMAP_NAME_PRE	./include/cpFunction.h	34;"	d
+CP_MMAP_NAME_PRE	include/cpFunction.h	34;"	d
+CP_MULTI_PROCESS_ERR	./include/cpNetWork.h	23;"	d
+CP_NETWORK_H	./include/cpNetWork.h	9;"	d
+CP_PDO_HEADER_STATE	./include/cpNetWork.h	27;"	d
+CP_PING_DIS_LEN	./include/cpServer.h	40;"	d
+CP_PING_DIS_LEN	include/cpServer.h	40;"	d
+CP_PING_GET_DIS	./include/cpServer.h	44;"	d
+CP_PING_GET_DIS	include/cpServer.h	44;"	d
+CP_PING_GET_PRO	./include/cpServer.h	45;"	d
+CP_PING_GET_PRO	include/cpServer.h	45;"	d
+CP_PING_MD5_LEN	./include/cpServer.h	42;"	d
+CP_PING_MD5_LEN	include/cpServer.h	42;"	d
+CP_PING_MEM_LEN	./include/cpServer.h	39;"	d
+CP_PING_MEM_LEN	include/cpServer.h	39;"	d
+CP_PING_PID_LEN	./include/cpServer.h	43;"	d
+CP_PING_PID_LEN	include/cpServer.h	43;"	d
+CP_PING_PRO_LEN	./include/cpServer.h	41;"	d
+CP_PING_PRO_LEN	include/cpServer.h	41;"	d
+CP_PING_SLEEP	./include/cpServer.h	79;"	d
+CP_PING_SLEEP	include/cpServer.h	79;"	d
+CP_PIPES_NUM	./include/cpServer.h	17;"	d
+CP_PIPES_NUM	include/cpServer.h	17;"	d
+CP_PIPE_MOD	./php_connect_pool.h	163;"	d
+CP_PORT_PDO	./include/cpServer.h	18;"	d
+CP_PORT_PDO	include/cpServer.h	18;"	d
+CP_PORT_REDIS	./include/cpServer.h	19;"	d
+CP_PORT_REDIS	include/cpServer.h	19;"	d
+CP_PROCESS_MANAGER	./php_connect_pool.h	160;"	d
+CP_PROCESS_MASTER	./php_connect_pool.h	158;"	d
+CP_PROCESS_PING	./php_connect_pool.h	161;"	d
+CP_PROCESS_WORKER	./php_connect_pool.h	159;"	d
+CP_REACTOR_MAXEVENTS	./include/cpNetWork.h	14;"	d
+CP_REACTOR_TIMEO_SEC	./include/cpServer.h	20;"	d
+CP_REACTOR_TIMEO_SEC	include/cpServer.h	20;"	d
+CP_REACTOR_TIMEO_USEC	./include/cpServer.h	21;"	d
+CP_REACTOR_TIMEO_USEC	include/cpServer.h	21;"	d
+CP_RECYCLE_NUM	./include/cpServer.h	28;"	d
+CP_RECYCLE_NUM	include/cpServer.h	28;"	d
+CP_RELEASE_HEADER	./include/cpNetWork.h	28;"	d
+CP_RELEASE_HEADER_LEN	./include/cpNetWork.h	29;"	d
+CP_RES_CLIENT_NAME	./php_connect_pool.h	157;"	d
+CP_RES_SERVER_NAME	./php_connect_pool.h	156;"	d
+CP_RETURN_STRING	./include/php7_wrapper.h	260;"	d
+CP_RETURN_STRING	./include/php7_wrapper.h	7;"	d
+CP_RETURN_STRINGL	./include/php7_wrapper.h	251;"	d
+CP_RETURN_STRINGL	./include/php7_wrapper.h	69;"	d
+CP_RETVAL_STRINGL	./include/php7_wrapper.h	181;"	d
+CP_RETVAL_STRINGL	./include/php7_wrapper.h	59;"	d
+CP_SEND_EXCEPTION	./connect_pool.c	57;"	d	file:
+CP_SEND_EXCEPTION_ARGS	./include/php7_wrapper.h	130;"	d
+CP_SEND_EXCEPTION_ARGS	./include/php7_wrapper.h	415;"	d
+CP_SEND_EXCEPTION_RETURN	./connect_pool.c	60;"	d	file:
+CP_SERVER_H	./include/cpServer.h	9;"	d
+CP_SERVER_H	include/cpServer.h	9;"	d
+CP_SERVER_MMAP_FILE	./include/cpServer.h	34;"	d
+CP_SERVER_MMAP_FILE	include/cpServer.h	34;"	d
+CP_SIGEVENT_EXCEPTION	./php_connect_pool.h	147;"	d
+CP_SIGEVENT_PDO	./php_connect_pool.h	148;"	d
+CP_SIGEVENT_STMT_OBJ	./php_connect_pool.h	149;"	d
+CP_SIGEVENT_TURE	./php_connect_pool.h	146;"	d
+CP_SIG_EVENT	./php_connect_pool.h	132;"	d
+CP_SOURCE_LEN	./include/cpServer.h	31;"	d
+CP_SOURCE_LEN	include/cpServer.h	31;"	d
+CP_START_SLEEP	./include/cpServer.h	78;"	d
+CP_START_SLEEP	include/cpServer.h	78;"	d
+CP_TCPEVENT_ADD	./php_connect_pool.h	136;"	d
+CP_TCPEVENT_GET	./php_connect_pool.h	134;"	d
+CP_TCPEVENT_GETFD	./php_connect_pool.h	137;"	d
+CP_TCPEVENT_RELEASE	./php_connect_pool.h	135;"	d
+CP_TCP_KEEPCOUNT	./include/cpServer.h	66;"	d
+CP_TCP_KEEPCOUNT	include/cpServer.h	66;"	d
+CP_TCP_KEEPIDLE	./include/cpServer.h	67;"	d
+CP_TCP_KEEPIDLE	include/cpServer.h	67;"	d
+CP_TCP_KEEPINTERVAL	./include/cpServer.h	68;"	d
+CP_TCP_KEEPINTERVAL	include/cpServer.h	68;"	d
+CP_TEST_RETURN_FALSE	./include/php7_wrapper.h	145;"	d
+CP_TEST_RETURN_FALSE	./include/php7_wrapper.h	419;"	d
+CP_TEST_RETURN_TRUE	./connect_pool.c	61;"	d	file:
+CP_TOO_MANY_CON	./include/cpNetWork.h	21;"	d
+CP_TOO_MANY_CON_ERR	./include/cpNetWork.h	22;"	d
+CP_TRUE	./include/cpServer.h	75;"	d
+CP_TRUE	include/cpServer.h	75;"	d
+CP_TYPE_SIZE	./php_connect_pool.h	164;"	d
+CP_UNSOCK_BUFSIZE	./include/cpServer.h	55;"	d
+CP_UNSOCK_BUFSIZE	include/cpServer.h	55;"	d
+CP_VERSION	./connect_pool.c	46;"	d	file:
+CP_WORKER_BUSY	./include/cpServer.h	60;"	d
+CP_WORKER_BUSY	include/cpServer.h	60;"	d
+CP_WORKER_DEL	./include/cpServer.h	62;"	d
+CP_WORKER_DEL	include/cpServer.h	62;"	d
+CP_WORKER_DELING	./include/cpServer.h	59;"	d
+CP_WORKER_DELING	include/cpServer.h	59;"	d
+CP_WORKER_H	./include/cpWorker.h	9;"	d
+CP_WORKER_IDLE	./include/cpServer.h	61;"	d
+CP_WORKER_IDLE	include/cpServer.h	61;"	d
+CP_WORKER_RESTART	./include/cpServer.h	58;"	d
+CP_WORKER_RESTART	include/cpServer.h	58;"	d
+CP_WORKER_SENDTO_YIELD	./include/cpWorker.h	14;"	d
+CP_WORKER_STARTING	./include/cpServer.h	57;"	d
+CP_WORKER_STARTING	include/cpServer.h	57;"	d
+CP_ZEND_FETCH_RESOURCE	./include/php7_wrapper.h	55;"	d
+CP_ZEND_FETCH_RESOURCE_NO_RETURN	./include/php7_wrapper.h	257;"	d
+CP_ZEND_FETCH_RESOURCE_NO_RETURN	./include/php7_wrapper.h	54;"	d
+CP_ZEND_REGISTER_RESOURCE	./include/php7_wrapper.h	259;"	d
+CP_ZEND_REGISTER_RESOURCE	./include/php7_wrapper.h	56;"	d
+CP_ZVAL_STRING	./include/php7_wrapper.h	271;"	d
+CP_ZVAL_STRING	./include/php7_wrapper.h	52;"	d
+CP_ZVAL_STRINGL	./include/php7_wrapper.h	270;"	d
+CP_ZVAL_STRINGL	./include/php7_wrapper.h	53;"	d
+CP_Z_ARRVAL_P	./include/php7_wrapper.h	200;"	d
+CP_Z_ARRVAL_P	./include/php7_wrapper.h	8;"	d
+CP_Z_ARRVAL_PP	./include/php7_wrapper.h	9;"	d
+CP_Z_TYPE_P	./include/php7_wrapper.h	115;"	f
+CP_Z_TYPE_P	./include/php7_wrapper.h	221;"	d
+CP_Z_TYPE_PP	./include/php7_wrapper.h	129;"	d
+CP_Z_TYPE_PP	./include/php7_wrapper.h	222;"	d
+CPid	./include/cpWorker.h	25;"	m	struct:_cpWorker
+CS_ARRAY_16	./mp/msgpack/unpack_define.h	70;"	e	enum:__anon1
+CS_ARRAY_16	./mp/unpack_define.h	70;"	e	enum:__anon9
+CS_ARRAY_16	./mp7/msgpack/unpack_define.h	72;"	e	enum:__anon11
+CS_ARRAY_16	./msgpack/msgpack/unpack_define.h	70;"	e	enum:__anon19
+CS_ARRAY_16	./msgpack/unpack_define.h	70;"	e	enum:__anon27
+CS_ARRAY_16	./msgpack7/msgpack/unpack_define.h	72;"	e	enum:__anon29
+CS_ARRAY_32	./mp/msgpack/unpack_define.h	71;"	e	enum:__anon1
+CS_ARRAY_32	./mp/unpack_define.h	71;"	e	enum:__anon9
+CS_ARRAY_32	./mp7/msgpack/unpack_define.h	73;"	e	enum:__anon11
+CS_ARRAY_32	./msgpack/msgpack/unpack_define.h	71;"	e	enum:__anon19
+CS_ARRAY_32	./msgpack/unpack_define.h	71;"	e	enum:__anon27
+CS_ARRAY_32	./msgpack7/msgpack/unpack_define.h	73;"	e	enum:__anon29
+CS_BIN_16	./mp7/msgpack/unpack_define.h	45;"	e	enum:__anon11
+CS_BIN_16	./msgpack7/msgpack/unpack_define.h	45;"	e	enum:__anon29
+CS_BIN_32	./mp7/msgpack/unpack_define.h	46;"	e	enum:__anon11
+CS_BIN_32	./msgpack7/msgpack/unpack_define.h	46;"	e	enum:__anon29
+CS_BIN_8	./mp7/msgpack/unpack_define.h	44;"	e	enum:__anon11
+CS_BIN_8	./msgpack7/msgpack/unpack_define.h	44;"	e	enum:__anon29
+CS_DOUBLE	./mp/msgpack/unpack_define.h	52;"	e	enum:__anon1
+CS_DOUBLE	./mp/unpack_define.h	52;"	e	enum:__anon9
+CS_DOUBLE	./mp7/msgpack/unpack_define.h	53;"	e	enum:__anon11
+CS_DOUBLE	./msgpack/msgpack/unpack_define.h	52;"	e	enum:__anon19
+CS_DOUBLE	./msgpack/unpack_define.h	52;"	e	enum:__anon27
+CS_DOUBLE	./msgpack7/msgpack/unpack_define.h	53;"	e	enum:__anon29
+CS_FLOAT	./mp/msgpack/unpack_define.h	51;"	e	enum:__anon1
+CS_FLOAT	./mp/unpack_define.h	51;"	e	enum:__anon9
+CS_FLOAT	./mp7/msgpack/unpack_define.h	52;"	e	enum:__anon11
+CS_FLOAT	./msgpack/msgpack/unpack_define.h	51;"	e	enum:__anon19
+CS_FLOAT	./msgpack/unpack_define.h	51;"	e	enum:__anon27
+CS_FLOAT	./msgpack7/msgpack/unpack_define.h	52;"	e	enum:__anon29
+CS_HEADER	./mp/msgpack/unpack_define.h	38;"	e	enum:__anon1
+CS_HEADER	./mp/unpack_define.h	38;"	e	enum:__anon9
+CS_HEADER	./mp7/msgpack/unpack_define.h	38;"	e	enum:__anon11
+CS_HEADER	./msgpack/msgpack/unpack_define.h	38;"	e	enum:__anon19
+CS_HEADER	./msgpack/unpack_define.h	38;"	e	enum:__anon27
+CS_HEADER	./msgpack7/msgpack/unpack_define.h	38;"	e	enum:__anon29
+CS_INT_16	./mp/msgpack/unpack_define.h	58;"	e	enum:__anon1
+CS_INT_16	./mp/unpack_define.h	58;"	e	enum:__anon9
+CS_INT_16	./mp7/msgpack/unpack_define.h	59;"	e	enum:__anon11
+CS_INT_16	./msgpack/msgpack/unpack_define.h	58;"	e	enum:__anon19
+CS_INT_16	./msgpack/unpack_define.h	58;"	e	enum:__anon27
+CS_INT_16	./msgpack7/msgpack/unpack_define.h	59;"	e	enum:__anon29
+CS_INT_32	./mp/msgpack/unpack_define.h	59;"	e	enum:__anon1
+CS_INT_32	./mp/unpack_define.h	59;"	e	enum:__anon9
+CS_INT_32	./mp7/msgpack/unpack_define.h	60;"	e	enum:__anon11
+CS_INT_32	./msgpack/msgpack/unpack_define.h	59;"	e	enum:__anon19
+CS_INT_32	./msgpack/unpack_define.h	59;"	e	enum:__anon27
+CS_INT_32	./msgpack7/msgpack/unpack_define.h	60;"	e	enum:__anon29
+CS_INT_64	./mp/msgpack/unpack_define.h	60;"	e	enum:__anon1
+CS_INT_64	./mp/unpack_define.h	60;"	e	enum:__anon9
+CS_INT_64	./mp7/msgpack/unpack_define.h	61;"	e	enum:__anon11
+CS_INT_64	./msgpack/msgpack/unpack_define.h	60;"	e	enum:__anon19
+CS_INT_64	./msgpack/unpack_define.h	60;"	e	enum:__anon27
+CS_INT_64	./msgpack7/msgpack/unpack_define.h	61;"	e	enum:__anon29
+CS_INT_8	./mp/msgpack/unpack_define.h	57;"	e	enum:__anon1
+CS_INT_8	./mp/unpack_define.h	57;"	e	enum:__anon9
+CS_INT_8	./mp7/msgpack/unpack_define.h	58;"	e	enum:__anon11
+CS_INT_8	./msgpack/msgpack/unpack_define.h	57;"	e	enum:__anon19
+CS_INT_8	./msgpack/unpack_define.h	57;"	e	enum:__anon27
+CS_INT_8	./msgpack7/msgpack/unpack_define.h	58;"	e	enum:__anon29
+CS_MAP_16	./mp/msgpack/unpack_define.h	72;"	e	enum:__anon1
+CS_MAP_16	./mp/unpack_define.h	72;"	e	enum:__anon9
+CS_MAP_16	./mp7/msgpack/unpack_define.h	74;"	e	enum:__anon11
+CS_MAP_16	./msgpack/msgpack/unpack_define.h	72;"	e	enum:__anon19
+CS_MAP_16	./msgpack/unpack_define.h	72;"	e	enum:__anon27
+CS_MAP_16	./msgpack7/msgpack/unpack_define.h	74;"	e	enum:__anon29
+CS_MAP_32	./mp/msgpack/unpack_define.h	73;"	e	enum:__anon1
+CS_MAP_32	./mp/unpack_define.h	73;"	e	enum:__anon9
+CS_MAP_32	./mp7/msgpack/unpack_define.h	75;"	e	enum:__anon11
+CS_MAP_32	./msgpack/msgpack/unpack_define.h	73;"	e	enum:__anon19
+CS_MAP_32	./msgpack/unpack_define.h	73;"	e	enum:__anon27
+CS_MAP_32	./msgpack7/msgpack/unpack_define.h	75;"	e	enum:__anon29
+CS_RAW_16	./mp/msgpack/unpack_define.h	68;"	e	enum:__anon1
+CS_RAW_16	./mp/unpack_define.h	68;"	e	enum:__anon9
+CS_RAW_16	./mp7/msgpack/unpack_define.h	70;"	e	enum:__anon11
+CS_RAW_16	./msgpack/msgpack/unpack_define.h	68;"	e	enum:__anon19
+CS_RAW_16	./msgpack/unpack_define.h	68;"	e	enum:__anon27
+CS_RAW_16	./msgpack7/msgpack/unpack_define.h	70;"	e	enum:__anon29
+CS_RAW_32	./mp/msgpack/unpack_define.h	69;"	e	enum:__anon1
+CS_RAW_32	./mp/unpack_define.h	69;"	e	enum:__anon9
+CS_RAW_32	./mp7/msgpack/unpack_define.h	71;"	e	enum:__anon11
+CS_RAW_32	./msgpack/msgpack/unpack_define.h	69;"	e	enum:__anon19
+CS_RAW_32	./msgpack/unpack_define.h	69;"	e	enum:__anon27
+CS_RAW_32	./msgpack7/msgpack/unpack_define.h	71;"	e	enum:__anon29
+CS_RAW_8	./mp7/msgpack/unpack_define.h	69;"	e	enum:__anon11
+CS_RAW_8	./msgpack7/msgpack/unpack_define.h	69;"	e	enum:__anon29
+CS_UINT_16	./mp/msgpack/unpack_define.h	54;"	e	enum:__anon1
+CS_UINT_16	./mp/unpack_define.h	54;"	e	enum:__anon9
+CS_UINT_16	./mp7/msgpack/unpack_define.h	55;"	e	enum:__anon11
+CS_UINT_16	./msgpack/msgpack/unpack_define.h	54;"	e	enum:__anon19
+CS_UINT_16	./msgpack/unpack_define.h	54;"	e	enum:__anon27
+CS_UINT_16	./msgpack7/msgpack/unpack_define.h	55;"	e	enum:__anon29
+CS_UINT_32	./mp/msgpack/unpack_define.h	55;"	e	enum:__anon1
+CS_UINT_32	./mp/unpack_define.h	55;"	e	enum:__anon9
+CS_UINT_32	./mp7/msgpack/unpack_define.h	56;"	e	enum:__anon11
+CS_UINT_32	./msgpack/msgpack/unpack_define.h	55;"	e	enum:__anon19
+CS_UINT_32	./msgpack/unpack_define.h	55;"	e	enum:__anon27
+CS_UINT_32	./msgpack7/msgpack/unpack_define.h	56;"	e	enum:__anon29
+CS_UINT_64	./mp/msgpack/unpack_define.h	56;"	e	enum:__anon1
+CS_UINT_64	./mp/unpack_define.h	56;"	e	enum:__anon9
+CS_UINT_64	./mp7/msgpack/unpack_define.h	57;"	e	enum:__anon11
+CS_UINT_64	./msgpack/msgpack/unpack_define.h	56;"	e	enum:__anon19
+CS_UINT_64	./msgpack/unpack_define.h	56;"	e	enum:__anon27
+CS_UINT_64	./msgpack7/msgpack/unpack_define.h	57;"	e	enum:__anon29
+CS_UINT_8	./mp/msgpack/unpack_define.h	53;"	e	enum:__anon1
+CS_UINT_8	./mp/unpack_define.h	53;"	e	enum:__anon9
+CS_UINT_8	./mp7/msgpack/unpack_define.h	54;"	e	enum:__anon11
+CS_UINT_8	./msgpack/msgpack/unpack_define.h	53;"	e	enum:__anon19
+CS_UINT_8	./msgpack/unpack_define.h	53;"	e	enum:__anon27
+CS_UINT_8	./msgpack7/msgpack/unpack_define.h	54;"	e	enum:__anon29
+CT_ARRAY_ITEM	./mp/msgpack/unpack_define.h	82;"	e	enum:__anon2
+CT_ARRAY_ITEM	./mp/unpack_define.h	82;"	e	enum:__anon10
+CT_ARRAY_ITEM	./mp7/msgpack/unpack_define.h	85;"	e	enum:__anon12
+CT_ARRAY_ITEM	./msgpack/msgpack/unpack_define.h	82;"	e	enum:__anon20
+CT_ARRAY_ITEM	./msgpack/unpack_define.h	82;"	e	enum:__anon28
+CT_ARRAY_ITEM	./msgpack7/msgpack/unpack_define.h	85;"	e	enum:__anon30
+CT_MAP_KEY	./mp/msgpack/unpack_define.h	83;"	e	enum:__anon2
+CT_MAP_KEY	./mp/unpack_define.h	83;"	e	enum:__anon10
+CT_MAP_KEY	./mp7/msgpack/unpack_define.h	86;"	e	enum:__anon12
+CT_MAP_KEY	./msgpack/msgpack/unpack_define.h	83;"	e	enum:__anon20
+CT_MAP_KEY	./msgpack/unpack_define.h	83;"	e	enum:__anon28
+CT_MAP_KEY	./msgpack7/msgpack/unpack_define.h	86;"	e	enum:__anon30
+CT_MAP_VALUE	./mp/msgpack/unpack_define.h	84;"	e	enum:__anon2
+CT_MAP_VALUE	./mp/unpack_define.h	84;"	e	enum:__anon10
+CT_MAP_VALUE	./mp7/msgpack/unpack_define.h	87;"	e	enum:__anon12
+CT_MAP_VALUE	./msgpack/msgpack/unpack_define.h	84;"	e	enum:__anon20
+CT_MAP_VALUE	./msgpack/unpack_define.h	84;"	e	enum:__anon28
+CT_MAP_VALUE	./msgpack7/msgpack/unpack_define.h	87;"	e	enum:__anon30
+CUR_DIR	./run-tests.php	89;"	v
+CXX	./Makefile	31;"	m
+CXXFLAGS	./Makefile	32;"	m
+CXXFLAGS_CLEAN	./Makefile	33;"	m
+ConProxyG	./connect_pool.c	33;"	v
+ConProxyGS	./connect_pool.c	34;"	v
+ConProxyWG	./connect_pool.c	35;"	v
+DEFS	./Makefile	49;"	m
+DETAILED	./run-tests.php	219;"	v
+DETAILED	./run-tests.php	221;"	v
+DETAILED	./run-tests.php	678;"	v
+EGREP	./Makefile	5;"	m
+EPOLLRDHUP	./php_connect_pool.h	34;"	d
+EXTENSION_DIR	./Makefile	34;"	m
+EXTRA_LDFLAGS	./Makefile	36;"	m
+EXTRA_LIBS	./Makefile	37;"	m
+EXT_POOL_PHP7_WRAPPER_H_	./include/php7_wrapper.h	2;"	d
+FAILUREOR_MSG_SIZE	./include/cpFunction.h	40;"	d
+FAILUREOR_MSG_SIZE	include/cpFunction.h	39;"	d
+FILE_BINARY	./run-tests.php	79;"	d
+G	./include/cpServer.h	195;"	m	struct:_cpServerGS
+G	include/cpServer.h	/^        cpGroup G[CP_GROUP_NUM]; \/\/group TODO extend$/;"	m	struct:_cpServerGS
+HASH_KEY_NON_EXISTENT	./include/php7_wrapper.h	93;"	d
+HAVE_DLFCN_H	./config.h	8;"	d
+HAVE_INTTYPES_H	./config.h	14;"	d
+HAVE_KQUEUE	./config.h	17;"	d
+HAVE_MEMORY_H	./config.h	20;"	d
+HAVE_STDINT_H	./config.h	23;"	d
+HAVE_STDLIB_H	./config.h	26;"	d
+HAVE_STRINGS_H	./config.h	29;"	d
+HAVE_STRING_H	./config.h	32;"	d
+HAVE_SYS_STAT_H	./config.h	35;"	d
+HAVE_SYS_TYPES_H	./config.h	38;"	d
+HAVE_UNISTD_H	./config.h	41;"	d
+INCLUDES	./Makefile	38;"	m
+INSTALL	./Makefile	46;"	m
+INSTALL_DATA	./Makefile	47;"	m
+INSTALL_HEADERS	./Makefile	44;"	m
+IN_REDIRECT	./run-tests.php	1649;"	v
+IN_REDIRECT	./run-tests.php	1681;"	v
+IS_TRUE	./include/php7_wrapper.h	10;"	d
+IS_TRUE	./include/php7_wrapper.h	127;"	d
+JUNIT	./run-tests.php	2719;"	v
+JUNIT	./run-tests.php	2721;"	v
+JUNIT	./run-tests.php	2725;"	v
+LDFLAGS	./Makefile	40;"	m
+LFLAGS	./Makefile	39;"	m
+LIBTOOL	./Makefile	42;"	m
+MAP_ANONYMOUS	./php_connect_pool.h	60;"	d
+MAX_INI_LENGTH	./include/cpFunction.h	42;"	d
+MAX_INI_LENGTH	include/cpFunction.h	41;"	d
+MAX_TITLE_LENGTH	./include/cpFunction.h	41;"	d
+MAX_TITLE_LENGTH	include/cpFunction.h	40;"	d
+MSGPACK_BASE_OBJECT	./mp/msgpack_class.c	68;"	d	file:
+MSGPACK_BASE_OBJECT	./msgpack/msgpack_class.c	68;"	d	file:
+MSGPACK_CLASS_H	./mp/msgpack_class.h	3;"	d
+MSGPACK_CLASS_H	./mp7/msgpack_class.h	3;"	d
+MSGPACK_CLASS_H	./msgpack/msgpack_class.h	3;"	d
+MSGPACK_CLASS_H	./msgpack7/msgpack_class.h	3;"	d
+MSGPACK_CLASS_OPT_PHPONLY	./mp/msgpack_class.h	5;"	d
+MSGPACK_CLASS_OPT_PHPONLY	./mp7/msgpack_class.h	5;"	d
+MSGPACK_CLASS_OPT_PHPONLY	./msgpack/msgpack_class.h	5;"	d
+MSGPACK_CLASS_OPT_PHPONLY	./msgpack7/msgpack_class.h	5;"	d
+MSGPACK_CONVERT_COPY_ZVAL	./mp/msgpack_convert.c	14;"	d	file:
+MSGPACK_CONVERT_COPY_ZVAL	./msgpack/msgpack_convert.c	14;"	d	file:
+MSGPACK_CONVERT_H	./mp/msgpack_convert.h	3;"	d
+MSGPACK_CONVERT_H	./mp7/msgpack_convert.h	3;"	d
+MSGPACK_CONVERT_H	./msgpack/msgpack_convert.h	3;"	d
+MSGPACK_CONVERT_H	./msgpack7/msgpack_convert.h	3;"	d
+MSGPACK_CONVERT_UPDATE_PROPERTY	./mp/msgpack_convert.c	30;"	d	file:
+MSGPACK_CONVERT_UPDATE_PROPERTY	./msgpack/msgpack_convert.c	30;"	d	file:
+MSGPACK_EMBED_STACK_SIZE	./mp/msgpack/unpack_define.h	33;"	d
+MSGPACK_EMBED_STACK_SIZE	./mp/msgpack_unpack.h	7;"	d
+MSGPACK_EMBED_STACK_SIZE	./mp/unpack_define.h	33;"	d
+MSGPACK_EMBED_STACK_SIZE	./mp7/msgpack/unpack_define.h	33;"	d
+MSGPACK_EMBED_STACK_SIZE	./mp7/msgpack_unpack.h	7;"	d
+MSGPACK_EMBED_STACK_SIZE	./msgpack/msgpack/unpack_define.h	33;"	d
+MSGPACK_EMBED_STACK_SIZE	./msgpack/msgpack_unpack.h	7;"	d
+MSGPACK_EMBED_STACK_SIZE	./msgpack/unpack_define.h	33;"	d
+MSGPACK_EMBED_STACK_SIZE	./msgpack7/msgpack/unpack_define.h	33;"	d
+MSGPACK_EMBED_STACK_SIZE	./msgpack7/msgpack_unpack.h	7;"	d
+MSGPACK_ERROR	./mp/msgpack_errors.h	17;"	d
+MSGPACK_ERROR	./mp7/msgpack_errors.h	14;"	d
+MSGPACK_ERROR	./msgpack/msgpack_errors.h	17;"	d
+MSGPACK_ERROR	./msgpack7/msgpack_errors.h	14;"	d
+MSGPACK_ERRORS_H	./mp/msgpack_errors.h	3;"	d
+MSGPACK_ERRORS_H	./mp7/msgpack_errors.h	2;"	d
+MSGPACK_ERRORS_H	./msgpack/msgpack_errors.h	3;"	d
+MSGPACK_ERRORS_H	./msgpack7/msgpack_errors.h	2;"	d
+MSGPACK_EXTENSION_VERSION	./mp/php_msgpack.h	11;"	d
+MSGPACK_EXTENSION_VERSION	./msgpack/php_msgpack.h	11;"	d
+MSGPACK_G	./mp/php_msgpack.h	41;"	d
+MSGPACK_G	./mp7/php_msgpack.h	44;"	d
+MSGPACK_G	./msgpack/php_msgpack.h	41;"	d
+MSGPACK_G	./msgpack7/php_msgpack.h	37;"	d
+MSGPACK_IS_STACK_VALUE	./mp7/msgpack_unpack.c	63;"	d	file:
+MSGPACK_IS_STACK_VALUE	./msgpack7/msgpack_unpack.c	62;"	d	file:
+MSGPACK_IS_STACK_VALUE	msgpack7/msgpack_unpack.c	63;"	d	file:
+MSGPACK_METHOD	./mp/msgpack_class.c	52;"	d	file:
+MSGPACK_METHOD	./mp/msgpack_class.c	61;"	d	file:
+MSGPACK_METHOD	./msgpack/msgpack_class.c	52;"	d	file:
+MSGPACK_METHOD	./msgpack/msgpack_class.c	61;"	d	file:
+MSGPACK_METHOD1	./mp/msgpack_class.c	65;"	d	file:
+MSGPACK_METHOD1	./msgpack/msgpack_class.c	65;"	d	file:
+MSGPACK_METHOD_BASE	./mp/msgpack_class.c	28;"	d	file:
+MSGPACK_METHOD_BASE	./mp/msgpack_class.c	30;"	d	file:
+MSGPACK_METHOD_BASE	./msgpack/msgpack_class.c	28;"	d	file:
+MSGPACK_METHOD_BASE	./msgpack/msgpack_class.c	30;"	d	file:
+MSGPACK_METHOD_HELPER	./mp/msgpack_class.c	46;"	d	file:
+MSGPACK_METHOD_HELPER	./mp/msgpack_class.c	55;"	d	file:
+MSGPACK_METHOD_HELPER	./msgpack/msgpack_class.c	46;"	d	file:
+MSGPACK_METHOD_HELPER	./msgpack/msgpack_class.c	55;"	d	file:
+MSGPACK_NOTICE	./mp/msgpack_errors.h	5;"	d
+MSGPACK_NOTICE	./mp7/msgpack_errors.h	4;"	d
+MSGPACK_NOTICE	./msgpack/msgpack_errors.h	5;"	d
+MSGPACK_NOTICE	./msgpack7/msgpack_errors.h	4;"	d
+MSGPACK_PACK_DEFINE_H__	./mp/msgpack/pack_define.h	19;"	d
+MSGPACK_PACK_DEFINE_H__	./mp/pack_define.h	19;"	d
+MSGPACK_PACK_DEFINE_H__	./mp7/msgpack/pack_define.h	19;"	d
+MSGPACK_PACK_DEFINE_H__	./msgpack/msgpack/pack_define.h	19;"	d
+MSGPACK_PACK_DEFINE_H__	./msgpack/pack_define.h	19;"	d
+MSGPACK_PACK_DEFINE_H__	./msgpack7/msgpack/pack_define.h	19;"	d
+MSGPACK_PACK_H	./mp/msgpack_pack.h	3;"	d
+MSGPACK_PACK_H	./mp7/msgpack_pack.h	3;"	d
+MSGPACK_PACK_H	./msgpack/msgpack_pack.h	3;"	d
+MSGPACK_PACK_H	./msgpack7/msgpack_pack.h	3;"	d
+MSGPACK_SERIALIZE_TYPE_CUSTOM_OBJECT	./mp/msgpack_pack.h	15;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_CUSTOM_OBJECT	./mp7/msgpack_pack.h	14;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_CUSTOM_OBJECT	./msgpack/msgpack_pack.h	15;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_CUSTOM_OBJECT	./msgpack7/msgpack_pack.h	14;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_NONE	./mp/msgpack_pack.h	12;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_NONE	./mp7/msgpack_pack.h	11;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_NONE	./msgpack/msgpack_pack.h	12;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_NONE	./msgpack7/msgpack_pack.h	11;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_OBJECT	./mp/msgpack_pack.h	16;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_OBJECT	./mp7/msgpack_pack.h	15;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_OBJECT	./msgpack/msgpack_pack.h	16;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_OBJECT	./msgpack7/msgpack_pack.h	15;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_OBJECT_REFERENCE	./mp/msgpack_pack.h	17;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_OBJECT_REFERENCE	./mp7/msgpack_pack.h	16;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_OBJECT_REFERENCE	./msgpack/msgpack_pack.h	17;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_OBJECT_REFERENCE	./msgpack7/msgpack_pack.h	16;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_RECURSIVE	./mp/msgpack_pack.h	14;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_RECURSIVE	./mp7/msgpack_pack.h	13;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_RECURSIVE	./msgpack/msgpack_pack.h	14;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_RECURSIVE	./msgpack7/msgpack_pack.h	13;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_REFERENCE	./mp/msgpack_pack.h	13;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_REFERENCE	./mp7/msgpack_pack.h	12;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_REFERENCE	./msgpack/msgpack_pack.h	13;"	e	enum:msgpack_serialize_type
+MSGPACK_SERIALIZE_TYPE_REFERENCE	./msgpack7/msgpack_pack.h	12;"	e	enum:msgpack_serialize_type
+MSGPACK_SYSDEP_H__	./mp/msgpack/sysdep.h	19;"	d
+MSGPACK_SYSDEP_H__	./mp/sysdep.h	19;"	d
+MSGPACK_SYSDEP_H__	./mp7/msgpack/sysdep.h	19;"	d
+MSGPACK_SYSDEP_H__	./msgpack/msgpack/sysdep.h	19;"	d
+MSGPACK_SYSDEP_H__	./msgpack/sysdep.h	19;"	d
+MSGPACK_SYSDEP_H__	./msgpack7/msgpack/sysdep.h	19;"	d
+MSGPACK_UNPACKER_OBJECT	./mp/msgpack_class.c	72;"	d	file:
+MSGPACK_UNPACKER_OBJECT	./msgpack/msgpack_class.c	72;"	d	file:
+MSGPACK_UNPACK_CONTINUE	./mp/msgpack_unpack.h	15;"	e	enum:__anon6
+MSGPACK_UNPACK_CONTINUE	./mp7/msgpack_unpack.h	15;"	e	enum:__anon16
+MSGPACK_UNPACK_CONTINUE	./msgpack/msgpack_unpack.h	15;"	e	enum:__anon24
+MSGPACK_UNPACK_CONTINUE	./msgpack7/msgpack_unpack.h	15;"	e	enum:__anon34
+MSGPACK_UNPACK_DEFINE_H__	./mp/msgpack/unpack_define.h	19;"	d
+MSGPACK_UNPACK_DEFINE_H__	./mp/unpack_define.h	19;"	d
+MSGPACK_UNPACK_DEFINE_H__	./mp7/msgpack/unpack_define.h	19;"	d
+MSGPACK_UNPACK_DEFINE_H__	./msgpack/msgpack/unpack_define.h	19;"	d
+MSGPACK_UNPACK_DEFINE_H__	./msgpack/unpack_define.h	19;"	d
+MSGPACK_UNPACK_DEFINE_H__	./msgpack7/msgpack/unpack_define.h	19;"	d
+MSGPACK_UNPACK_EXTRA_BYTES	./mp/msgpack_unpack.h	14;"	e	enum:__anon6
+MSGPACK_UNPACK_EXTRA_BYTES	./mp7/msgpack_unpack.h	14;"	e	enum:__anon16
+MSGPACK_UNPACK_EXTRA_BYTES	./msgpack/msgpack_unpack.h	14;"	e	enum:__anon24
+MSGPACK_UNPACK_EXTRA_BYTES	./msgpack7/msgpack_unpack.h	14;"	e	enum:__anon34
+MSGPACK_UNPACK_H	./mp/msgpack_unpack.h	3;"	d
+MSGPACK_UNPACK_H	./mp7/msgpack_unpack.h	3;"	d
+MSGPACK_UNPACK_H	./msgpack/msgpack_unpack.h	3;"	d
+MSGPACK_UNPACK_H	./msgpack7/msgpack_unpack.h	3;"	d
+MSGPACK_UNPACK_PARSE_ERROR	./mp/msgpack_unpack.h	16;"	e	enum:__anon6
+MSGPACK_UNPACK_PARSE_ERROR	./mp7/msgpack_unpack.h	16;"	e	enum:__anon16
+MSGPACK_UNPACK_PARSE_ERROR	./msgpack/msgpack_unpack.h	16;"	e	enum:__anon24
+MSGPACK_UNPACK_PARSE_ERROR	./msgpack7/msgpack_unpack.h	16;"	e	enum:__anon34
+MSGPACK_UNPACK_SUCCESS	./mp/msgpack_unpack.h	13;"	e	enum:__anon6
+MSGPACK_UNPACK_SUCCESS	./mp7/msgpack_unpack.h	13;"	e	enum:__anon16
+MSGPACK_UNPACK_SUCCESS	./msgpack/msgpack_unpack.h	13;"	e	enum:__anon24
+MSGPACK_UNPACK_SUCCESS	./msgpack7/msgpack_unpack.h	13;"	e	enum:__anon34
+MSGPACK_UNSERIALIZE_ALLOC_STACK	./mp/msgpack_unpack.c	27;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_STACK	./mp7/msgpack_unpack.c	19;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_STACK	./msgpack/msgpack_unpack.c	27;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_STACK	./msgpack7/msgpack_unpack.c	18;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_STACK	msgpack7/msgpack_unpack.c	19;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_VALUE	./mp/msgpack_unpack.c	36;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_VALUE	./mp7/msgpack_unpack.c	26;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_VALUE	./msgpack/msgpack_unpack.c	36;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_VALUE	./msgpack7/msgpack_unpack.c	25;"	d	file:
+MSGPACK_UNSERIALIZE_ALLOC_VALUE	msgpack7/msgpack_unpack.c	26;"	d	file:
+MSGPACK_UNSERIALIZE_DEC_DEP	./mp7/msgpack_unpack.c	33;"	d	file:
+MSGPACK_UNSERIALIZE_DEC_DEP	./msgpack7/msgpack_unpack.c	32;"	d	file:
+MSGPACK_UNSERIALIZE_DEC_DEP	msgpack7/msgpack_unpack.c	33;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_ITEM	./mp/msgpack_unpack.c	45;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_ITEM	./mp7/msgpack_unpack.c	39;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_ITEM	./msgpack/msgpack_unpack.c	45;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_ITEM	./msgpack7/msgpack_unpack.c	38;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_ITEM	msgpack7/msgpack_unpack.c	39;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_MAP_ITEM	./mp/msgpack_unpack.c	52;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_MAP_ITEM	./mp7/msgpack_unpack.c	48;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_MAP_ITEM	./msgpack/msgpack_unpack.c	52;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_MAP_ITEM	./msgpack7/msgpack_unpack.c	47;"	d	file:
+MSGPACK_UNSERIALIZE_FINISH_MAP_ITEM	msgpack7/msgpack_unpack.c	48;"	d	file:
+MSGPACK_VERSION	./mp/msgpack/version.h	30;"	d
+MSGPACK_VERSION	./mp/version.h	30;"	d
+MSGPACK_VERSION	./mp7/msgpack/version.h	30;"	d
+MSGPACK_VERSION	./msgpack/msgpack/version.h	30;"	d
+MSGPACK_VERSION	./msgpack/version.h	30;"	d
+MSGPACK_VERSION	./msgpack7/msgpack/version.h	30;"	d
+MSGPACK_VERSION_H__	./mp/msgpack/version.h	19;"	d
+MSGPACK_VERSION_H__	./mp/version.h	19;"	d
+MSGPACK_VERSION_H__	./mp7/msgpack/version.h	19;"	d
+MSGPACK_VERSION_H__	./msgpack/msgpack/version.h	19;"	d
+MSGPACK_VERSION_H__	./msgpack/version.h	19;"	d
+MSGPACK_VERSION_H__	./msgpack7/msgpack/version.h	19;"	d
+MSGPACK_VERSION_MAJOR	./mp/msgpack/version.h	31;"	d
+MSGPACK_VERSION_MAJOR	./mp/version.h	31;"	d
+MSGPACK_VERSION_MAJOR	./mp7/msgpack/version.h	31;"	d
+MSGPACK_VERSION_MAJOR	./msgpack/msgpack/version.h	31;"	d
+MSGPACK_VERSION_MAJOR	./msgpack/version.h	31;"	d
+MSGPACK_VERSION_MAJOR	./msgpack7/msgpack/version.h	31;"	d
+MSGPACK_VERSION_MINOR	./mp/msgpack/version.h	32;"	d
+MSGPACK_VERSION_MINOR	./mp/version.h	32;"	d
+MSGPACK_VERSION_MINOR	./mp7/msgpack/version.h	32;"	d
+MSGPACK_VERSION_MINOR	./msgpack/msgpack/version.h	32;"	d
+MSGPACK_VERSION_MINOR	./msgpack/version.h	32;"	d
+MSGPACK_VERSION_MINOR	./msgpack7/msgpack/version.h	32;"	d
+MSGPACK_WARNING	./mp/msgpack_errors.h	10;"	d
+MSGPACK_WARNING	./mp7/msgpack_errors.h	9;"	d
+MSGPACK_WARNING	./msgpack/msgpack_errors.h	10;"	d
+MSGPACK_WARNING	./msgpack7/msgpack_errors.h	9;"	d
+NEXT_CS	./mp/msgpack/unpack_template.h	173;"	d
+NEXT_CS	./mp/msgpack/unpack_template.h	411;"	d
+NEXT_CS	./mp/unpack_template.h	173;"	d
+NEXT_CS	./mp/unpack_template.h	411;"	d
+NEXT_CS	./mp7/msgpack/unpack_template.h	173;"	d
+NEXT_CS	./mp7/msgpack/unpack_template.h	430;"	d
+NEXT_CS	./msgpack/msgpack/unpack_template.h	173;"	d
+NEXT_CS	./msgpack/msgpack/unpack_template.h	411;"	d
+NEXT_CS	./msgpack/unpack_template.h	173;"	d
+NEXT_CS	./msgpack/unpack_template.h	411;"	d
+NEXT_CS	./msgpack7/msgpack/unpack_template.h	173;"	d
+NEXT_CS	./msgpack7/msgpack/unpack_template.h	430;"	d
+NO_EPOLLRDHUP	./php_connect_pool.h	35;"	d
+ORWL_GIGA	./include/cpFunction.h	24;"	d
+ORWL_GIGA	include/cpFunction.h	24;"	d
+ORWL_NANO	./include/cpFunction.h	23;"	d
+ORWL_NANO	include/cpFunction.h	23;"	d
+PACKAGE_BUGREPORT	./config.h	47;"	d
+PACKAGE_NAME	./config.h	50;"	d
+PACKAGE_STRING	./config.h	53;"	d
+PACKAGE_TARNAME	./config.h	56;"	d
+PACKAGE_URL	./config.h	59;"	d
+PACKAGE_VERSION	./config.h	62;"	d
+PHP_CONNECT_POOL_API	./php_connect_pool.h	124;"	d
+PHP_CONNECT_POOL_API	./php_connect_pool.h	126;"	d
+PHP_CONNECT_POOL_API	./php_connect_pool.h	128;"	d
+PHP_CON_PROXY_H	./php_connect_pool.h	20;"	d
+PHP_DEPRECATED_DIRECTIVES_REGEX	./Makefile	130;"	m
+PHP_EXECUTABLE	./Makefile	35;"	m
+PHP_FAILED_TESTS	./run-tests.php	484;"	v
+PHP_FE_END	./php_connect_pool.h	110;"	d
+PHP_FUNCTION	./connect_pool.c	327;"	f
+PHP_FUNCTION	./connect_pool.c	359;"	f
+PHP_FUNCTION	./connect_pool.c	378;"	f
+PHP_FUNCTION	./connect_pool.c	383;"	f
+PHP_MAJOR_VERSION	./run-tests.php	71;"	d
+PHP_METHOD	./connect_pool.c	117;"	f
+PHP_METHOD	./connect_pool.c	130;"	f
+PHP_METHOD	./connect_pool.c	139;"	f
+PHP_METHOD	./connect_pool.c	149;"	f
+PHP_METHOD	./connect_pool.c	99;"	f
+PHP_METHOD	./connect_pool_client.c	1059;"	f
+PHP_METHOD	./connect_pool_client.c	703;"	f
+PHP_METHOD	./connect_pool_client.c	796;"	f
+PHP_METHOD	./connect_pool_client.c	865;"	f
+PHP_METHOD	./connect_pool_client.c	869;"	f
+PHP_METHOD	./connect_pool_client.c	921;"	f
+PHP_METHOD	./connect_pool_client.c	928;"	f
+PHP_METHOD	./connect_pool_client.c	935;"	f
+PHP_METHOD	./connect_pool_client.c	940;"	f
+PHP_METHOD	./connect_pool_client.c	946;"	f
+PHP_METHOD	./connect_pool_client.c	987;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool, __call)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool, __construct)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool, __destruct)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool, close)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool, done)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool, release)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool, setAsync)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool_PDOStatement, __call)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool_PDOStatement, done)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool_PDOStatement, release)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(pdo_connect_pool_PDOStatement, setAsync)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, __call)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, __construct)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, __destruct)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, close)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, connect)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, done)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, release)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, select)$/;"	f
+PHP_METHOD	connect_pool_client.c	/^PHP_METHOD(redis_connect_pool, setAsync)$/;"	f
+PHP_MINFO_FUNCTION	./connect_pool.c	258;"	f
+PHP_MODULES	./Makefile	16;"	m
+PHP_MSGPACK_API	./mp/php_msgpack.h	17;"	d
+PHP_MSGPACK_API	./mp/php_msgpack.h	19;"	d
+PHP_MSGPACK_API	./mp/php_msgpack.h	21;"	d
+PHP_MSGPACK_API	./mp7/php_msgpack.h	19;"	d
+PHP_MSGPACK_API	./mp7/php_msgpack.h	21;"	d
+PHP_MSGPACK_API	./mp7/php_msgpack.h	23;"	d
+PHP_MSGPACK_API	./msgpack/php_msgpack.h	17;"	d
+PHP_MSGPACK_API	./msgpack/php_msgpack.h	19;"	d
+PHP_MSGPACK_API	./msgpack/php_msgpack.h	21;"	d
+PHP_MSGPACK_API	./msgpack7/php_msgpack.h	12;"	d
+PHP_MSGPACK_API	./msgpack7/php_msgpack.h	14;"	d
+PHP_MSGPACK_API	./msgpack7/php_msgpack.h	16;"	d
+PHP_MSGPACK_H	./mp/php_msgpack.h	2;"	d
+PHP_MSGPACK_H	./mp7/php_msgpack.h	2;"	d
+PHP_MSGPACK_H	./msgpack/php_msgpack.h	2;"	d
+PHP_MSGPACK_H	./msgpack7/php_msgpack.h	2;"	d
+PHP_MSGPACK_VERSION	./mp7/php_msgpack.h	13;"	d
+PHP_MSGPACK_VERSION	./msgpack7/php_msgpack.h	6;"	d
+PHP_MSHUTDOWN_FUNCTION	./connect_pool.c	246;"	f
+PHP_PECL_EXTENSION	./Makefile	15;"	m
+PHP_QA_EMAIL	./run-tests.php	344;"	d
+PHP_RINIT_FUNCTION	./connect_pool.c	270;"	f
+PHP_RSHUTDOWN_FUNCTION	./connect_pool.c	275;"	f
+PHP_TEST_SETTINGS	./Makefile	118;"	m
+PHP_TEST_SHARED_EXTENSIONS	./Makefile	119;"	m
+PHP_VERSION_ID	./run-tests.php	70;"	d
+PHP_ZEND_EX	./Makefile	17;"	m
+PID_FILE_PATH	./include/cpFunction.h	44;"	d
+PID_FILE_PATH	include/cpFunction.h	43;"	d
+POP_EO_PARAM	./mp/msgpack_class.c	37;"	d	file:
+POP_EO_PARAM	./mp/msgpack_class.c	42;"	d	file:
+POP_EO_PARAM	./msgpack/msgpack_class.c	37;"	d	file:
+POP_EO_PARAM	./msgpack/msgpack_class.c	42;"	d	file:
+POP_PARAM	./mp/msgpack_class.c	35;"	d	file:
+POP_PARAM	./mp/msgpack_class.c	40;"	d	file:
+POP_PARAM	./msgpack/msgpack_class.c	35;"	d	file:
+POP_PARAM	./msgpack/msgpack_class.c	40;"	d	file:
+PS_SERIALIZER_DECODE_FUNC	./mp7/msgpack.c	166;"	f
+PS_SERIALIZER_DECODE_FUNC	./msgpack7/msgpack.c	155;"	f
+PS_SERIALIZER_DECODE_FUNC	msgpack7/msgpack.c	/^PS_SERIALIZER_DECODE_FUNC(msgpack) \/* {{{ *\/$/;"	f
+PUSH_EO_PARAM	./mp/msgpack_class.c	36;"	d	file:
+PUSH_EO_PARAM	./mp/msgpack_class.c	41;"	d	file:
+PUSH_EO_PARAM	./msgpack/msgpack_class.c	36;"	d	file:
+PUSH_EO_PARAM	./msgpack/msgpack_class.c	41;"	d	file:
+PUSH_PARAM	./mp/msgpack_class.c	34;"	d	file:
+PUSH_PARAM	./mp/msgpack_class.c	39;"	d	file:
+PUSH_PARAM	./msgpack/msgpack_class.c	34;"	d	file:
+PUSH_PARAM	./msgpack/msgpack_class.c	39;"	d	file:
+QA_REPORTS_PAGE	./run-tests.php	346;"	d
+QA_SUBMISSION_PAGE	./run-tests.php	345;"	d
+RE2C	./Makefile	12;"	m
+RESET_MAGIC_METHODS	./mp7/msgpack_unpack.c	59;"	d	file:
+RESET_MAGIC_METHODS	./msgpack7/msgpack_unpack.c	58;"	d	file:
+RESET_MAGIC_METHODS	msgpack7/msgpack_unpack.c	59;"	d	file:
+RecvData	./connect_pool_client.c	26;"	v
+RecvData	connect_pool_client.c	/^cpRecvEvent RecvData;$/;"	v
+SED	./Makefile	6;"	m
+SHARED_LIBTOOL	./Makefile	41;"	m
+SHELL	./Makefile	43;"	m
+SHLIB_DL_SUFFIX_NAME	./Makefile	10;"	m
+SHLIB_SUFFIX_NAME	./Makefile	9;"	m
+SHOW_ONLY_GROUPS	./run-tests.php	227;"	v
+SHOW_ONLY_GROUPS	./run-tests.php	229;"	v
+SHOW_ONLY_GROUPS	./run-tests.php	598;"	v
+SIGRTMIN	./php_connect_pool.h	41;"	d
+SOCK_NONBLOCK	./php_connect_pool.h	64;"	d
+STDC_HEADERS	./config.h	65;"	d
+SWITCH_RANGE	./mp/msgpack/unpack_template.h	178;"	d
+SWITCH_RANGE	./mp/unpack_template.h	178;"	d
+SWITCH_RANGE	./mp7/msgpack/unpack_template.h	178;"	d
+SWITCH_RANGE	./msgpack/msgpack/unpack_template.h	178;"	d
+SWITCH_RANGE	./msgpack/unpack_template.h	178;"	d
+SWITCH_RANGE	./msgpack7/msgpack/unpack_template.h	178;"	d
+SWITCH_RANGE_BEGIN	./mp/msgpack/unpack_template.h	177;"	d
+SWITCH_RANGE_BEGIN	./mp/unpack_template.h	177;"	d
+SWITCH_RANGE_BEGIN	./mp7/msgpack/unpack_template.h	177;"	d
+SWITCH_RANGE_BEGIN	./msgpack/msgpack/unpack_template.h	177;"	d
+SWITCH_RANGE_BEGIN	./msgpack/unpack_template.h	177;"	d
+SWITCH_RANGE_BEGIN	./msgpack7/msgpack/unpack_template.h	177;"	d
+SWITCH_RANGE_DEFAULT	./mp/msgpack/unpack_template.h	179;"	d
+SWITCH_RANGE_DEFAULT	./mp/unpack_template.h	179;"	d
+SWITCH_RANGE_DEFAULT	./mp7/msgpack/unpack_template.h	179;"	d
+SWITCH_RANGE_DEFAULT	./msgpack/msgpack/unpack_template.h	179;"	d
+SWITCH_RANGE_DEFAULT	./msgpack/unpack_template.h	179;"	d
+SWITCH_RANGE_DEFAULT	./msgpack7/msgpack/unpack_template.h	179;"	d
+SWITCH_RANGE_END	./mp/msgpack/unpack_template.h	180;"	d
+SWITCH_RANGE_END	./mp/unpack_template.h	180;"	d
+SWITCH_RANGE_END	./mp7/msgpack/unpack_template.h	180;"	d
+SWITCH_RANGE_END	./msgpack/msgpack/unpack_template.h	180;"	d
+SWITCH_RANGE_END	./msgpack/unpack_template.h	180;"	d
+SWITCH_RANGE_END	./msgpack7/msgpack/unpack_template.h	180;"	d
+SW_LOG_BUFFER_SIZE	./include/cpFunction.h	36;"	d
+SW_LOG_BUFFER_SIZE	include/cpFunction.h	35;"	d
+SW_LOG_DATE_STRLEN	./include/cpFunction.h	38;"	d
+SW_LOG_DATE_STRLEN	include/cpFunction.h	37;"	d
+SW_PID_BUFFER_SIZE	./include/cpFunction.h	37;"	d
+SW_PID_BUFFER_SIZE	include/cpFunction.h	36;"	d
+TAKE8_16	./mp/msgpack/pack_template.h	21;"	d
+TAKE8_16	./mp/msgpack/pack_template.h	26;"	d
+TAKE8_16	./mp/msgpack/pack_template.h	754;"	d
+TAKE8_16	./mp/pack_template.h	21;"	d
+TAKE8_16	./mp/pack_template.h	26;"	d
+TAKE8_16	./mp/pack_template.h	754;"	d
+TAKE8_16	./mp7/msgpack/pack_template.h	21;"	d
+TAKE8_16	./mp7/msgpack/pack_template.h	26;"	d
+TAKE8_16	./mp7/msgpack/pack_template.h	759;"	d
+TAKE8_16	./msgpack/msgpack/pack_template.h	21;"	d
+TAKE8_16	./msgpack/msgpack/pack_template.h	26;"	d
+TAKE8_16	./msgpack/msgpack/pack_template.h	754;"	d
+TAKE8_16	./msgpack/pack_template.h	21;"	d
+TAKE8_16	./msgpack/pack_template.h	26;"	d
+TAKE8_16	./msgpack/pack_template.h	754;"	d
+TAKE8_16	./msgpack7/msgpack/pack_template.h	21;"	d
+TAKE8_16	./msgpack7/msgpack/pack_template.h	26;"	d
+TAKE8_16	./msgpack7/msgpack/pack_template.h	759;"	d
+TAKE8_32	./mp/msgpack/pack_template.h	22;"	d
+TAKE8_32	./mp/msgpack/pack_template.h	27;"	d
+TAKE8_32	./mp/msgpack/pack_template.h	755;"	d
+TAKE8_32	./mp/pack_template.h	22;"	d
+TAKE8_32	./mp/pack_template.h	27;"	d
+TAKE8_32	./mp/pack_template.h	755;"	d
+TAKE8_32	./mp7/msgpack/pack_template.h	22;"	d
+TAKE8_32	./mp7/msgpack/pack_template.h	27;"	d
+TAKE8_32	./mp7/msgpack/pack_template.h	760;"	d
+TAKE8_32	./msgpack/msgpack/pack_template.h	22;"	d
+TAKE8_32	./msgpack/msgpack/pack_template.h	27;"	d
+TAKE8_32	./msgpack/msgpack/pack_template.h	755;"	d
+TAKE8_32	./msgpack/pack_template.h	22;"	d
+TAKE8_32	./msgpack/pack_template.h	27;"	d
+TAKE8_32	./msgpack/pack_template.h	755;"	d
+TAKE8_32	./msgpack7/msgpack/pack_template.h	22;"	d
+TAKE8_32	./msgpack7/msgpack/pack_template.h	27;"	d
+TAKE8_32	./msgpack7/msgpack/pack_template.h	760;"	d
+TAKE8_64	./mp/msgpack/pack_template.h	23;"	d
+TAKE8_64	./mp/msgpack/pack_template.h	28;"	d
+TAKE8_64	./mp/msgpack/pack_template.h	756;"	d
+TAKE8_64	./mp/pack_template.h	23;"	d
+TAKE8_64	./mp/pack_template.h	28;"	d
+TAKE8_64	./mp/pack_template.h	756;"	d
+TAKE8_64	./mp7/msgpack/pack_template.h	23;"	d
+TAKE8_64	./mp7/msgpack/pack_template.h	28;"	d
+TAKE8_64	./mp7/msgpack/pack_template.h	761;"	d
+TAKE8_64	./msgpack/msgpack/pack_template.h	23;"	d
+TAKE8_64	./msgpack/msgpack/pack_template.h	28;"	d
+TAKE8_64	./msgpack/msgpack/pack_template.h	756;"	d
+TAKE8_64	./msgpack/pack_template.h	23;"	d
+TAKE8_64	./msgpack/pack_template.h	28;"	d
+TAKE8_64	./msgpack/pack_template.h	756;"	d
+TAKE8_64	./msgpack7/msgpack/pack_template.h	23;"	d
+TAKE8_64	./msgpack7/msgpack/pack_template.h	28;"	d
+TAKE8_64	./msgpack7/msgpack/pack_template.h	761;"	d
+TAKE8_8	./mp/msgpack/pack_template.h	20;"	d
+TAKE8_8	./mp/msgpack/pack_template.h	25;"	d
+TAKE8_8	./mp/msgpack/pack_template.h	753;"	d
+TAKE8_8	./mp/pack_template.h	20;"	d
+TAKE8_8	./mp/pack_template.h	25;"	d
+TAKE8_8	./mp/pack_template.h	753;"	d
+TAKE8_8	./mp7/msgpack/pack_template.h	20;"	d
+TAKE8_8	./mp7/msgpack/pack_template.h	25;"	d
+TAKE8_8	./mp7/msgpack/pack_template.h	758;"	d
+TAKE8_8	./msgpack/msgpack/pack_template.h	20;"	d
+TAKE8_8	./msgpack/msgpack/pack_template.h	25;"	d
+TAKE8_8	./msgpack/msgpack/pack_template.h	753;"	d
+TAKE8_8	./msgpack/pack_template.h	20;"	d
+TAKE8_8	./msgpack/pack_template.h	25;"	d
+TAKE8_8	./msgpack/pack_template.h	753;"	d
+TAKE8_8	./msgpack7/msgpack/pack_template.h	20;"	d
+TAKE8_8	./msgpack7/msgpack/pack_template.h	25;"	d
+TAKE8_8	./msgpack7/msgpack/pack_template.h	758;"	d
+TESTED_PHP_VERSION	./run-tests.php	289;"	d
+TRAVIS_CI	./run-tests.php	347;"	d
+UNSET_MAGIC_METHODS	./mp7/msgpack_unpack.c	53;"	d	file:
+UNSET_MAGIC_METHODS	./msgpack7/msgpack_unpack.c	52;"	d	file:
+UNSET_MAGIC_METHODS	msgpack7/msgpack_unpack.c	53;"	d	file:
+USE_CASE_RANGE	./mp/msgpack/unpack_template.h	45;"	d
+USE_CASE_RANGE	./mp/unpack_template.h	45;"	d
+USE_CASE_RANGE	./mp7/msgpack/unpack_template.h	45;"	d
+USE_CASE_RANGE	./msgpack/msgpack/unpack_template.h	45;"	d
+USE_CASE_RANGE	./msgpack/unpack_template.h	45;"	d
+USE_CASE_RANGE	./msgpack7/msgpack/unpack_template.h	45;"	d
+VAR_ENTRIES_MAX	./mp/msgpack_unpack.c	18;"	d	file:
+VAR_ENTRIES_MAX	./mp7/msgpack_unpack.c	11;"	d	file:
+VAR_ENTRIES_MAX	./msgpack/msgpack_unpack.c	18;"	d	file:
+VAR_ENTRIES_MAX	./msgpack7/msgpack_unpack.c	10;"	d	file:
+VAR_ENTRIES_MAX	msgpack7/msgpack_unpack.c	11;"	d	file:
+ZEND_EXT_TYPE	./Makefile	11;"	m
+ZEND_FUNCTION	./msgpack7/msgpack.c	252;"	f	file:
+ZEND_FUNCTION	./msgpack7/msgpack.c	272;"	f	file:
+ZEND_GET_MODULE	./connect_pool.c	210;"	f
+ZEND_GET_MODULE	./mp/msgpack.c	137;"	f
+ZEND_GET_MODULE	./mp7/msgpack.c	146;"	f
+ZEND_GET_MODULE	./msgpack/msgpack.c	137;"	f
+ZEND_GET_MODULE	./msgpack7/msgpack.c	135;"	f
+ZEND_GET_MODULE	msgpack7/msgpack.c	/^ZEND_GET_MODULE(msgpack)$/;"	f
+ZEND_METHOD	./mp/msgpack_class.c	274;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	288;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	316;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	340;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	382;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	398;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	427;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	441;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	469;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	491;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	584;"	f	file:
+ZEND_METHOD	./mp/msgpack_class.c	622;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	177;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	189;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	214;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	239;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	271;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	286;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	310;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	318;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	343;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	361;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	432;"	f	file:
+ZEND_METHOD	./mp7/msgpack_class.c	462;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	274;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	288;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	316;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	340;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	382;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	398;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	427;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	441;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	469;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	491;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	584;"	f	file:
+ZEND_METHOD	./msgpack/msgpack_class.c	622;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	177;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	189;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	214;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	239;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	271;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	286;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	310;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	318;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	343;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	361;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	432;"	f	file:
+ZEND_METHOD	./msgpack7/msgpack_class.c	462;"	f	file:
+ZEND_MINFO_FUNCTION	./mp/msgpack.c	105;"	f	file:
+ZEND_MINFO_FUNCTION	./mp7/msgpack.c	116;"	f	file:
+ZEND_MINFO_FUNCTION	./msgpack/msgpack.c	105;"	f	file:
+ZEND_MINFO_FUNCTION	./msgpack7/msgpack.c	107;"	f	file:
+ZEND_MINFO_FUNCTION	msgpack7/msgpack.c	/^static ZEND_MINFO_FUNCTION(msgpack) \/* {{{ *\/$/;"	f	file:
+ZEND_MINIT_FUNCTION	./mp/msgpack.c	80;"	f	file:
+ZEND_MINIT_FUNCTION	./mp7/msgpack.c	87;"	f	file:
+ZEND_MINIT_FUNCTION	./msgpack/msgpack.c	80;"	f	file:
+ZEND_MINIT_FUNCTION	./msgpack7/msgpack.c	82;"	f	file:
+ZEND_MINIT_FUNCTION	msgpack7/msgpack.c	/^static ZEND_MINIT_FUNCTION(msgpack) \/* {{{ *\/$/;"	f	file:
+ZEND_MOD_END	./php_connect_pool.h	114;"	d
+ZEND_MSHUTDOWN_FUNCTION	./mp/msgpack.c	98;"	f	file:
+ZEND_MSHUTDOWN_FUNCTION	./mp7/msgpack.c	107;"	f	file:
+ZEND_MSHUTDOWN_FUNCTION	./msgpack/msgpack.c	98;"	f	file:
+ZEND_MSHUTDOWN_FUNCTION	./msgpack7/msgpack.c	100;"	f	file:
+ZEND_MSHUTDOWN_FUNCTION	msgpack7/msgpack.c	/^static ZEND_MSHUTDOWN_FUNCTION(msgpack) \/* {{{ *\/$/;"	f	file:
+ZEND_SET_SYMBOL	./include/php7_wrapper.h	182;"	d
+ZVAL_DUP	./include/php7_wrapper.h	78;"	d
+Z_ADDREF_PP	./mp/msgpack_unpack.c	13;"	d	file:
+Z_ADDREF_PP	./msgpack/msgpack_unpack.c	13;"	d	file:
+Z_ARRVAL_PP	./include/php7_wrapper.h	218;"	d
+Z_BVAL_P	./include/php7_wrapper.h	184;"	f
+Z_BVAL_PP	./include/php7_wrapper.h	220;"	d
+Z_ISREF_P	./mp/msgpack_pack.c	35;"	d	file:
+Z_ISREF_P	./msgpack/msgpack_pack.c	35;"	d	file:
+Z_LVAL_PP	./include/php7_wrapper.h	225;"	d
+Z_MSGPACK_BASE_P	./mp7/msgpack_class.c	30;"	d	file:
+Z_MSGPACK_BASE_P	./msgpack7/msgpack_class.c	30;"	d	file:
+Z_MSGPACK_UNPACKER_P	./mp7/msgpack_class.c	35;"	d	file:
+Z_MSGPACK_UNPACKER_P	./msgpack7/msgpack_class.c	35;"	d	file:
+Z_REFCOUNT_P	./mp/msgpack_convert.c	9;"	d	file:
+Z_REFCOUNT_P	./msgpack/msgpack_convert.c	9;"	d	file:
+Z_SET_ISREF_P	./mp/msgpack_convert.c	10;"	d	file:
+Z_SET_ISREF_P	./msgpack/msgpack_convert.c	10;"	d	file:
+Z_SET_ISREF_PP	./mp/msgpack_unpack.c	14;"	d	file:
+Z_SET_ISREF_PP	./msgpack/msgpack_unpack.c	14;"	d	file:
+Z_STRLEN_PP	./include/php7_wrapper.h	224;"	d
+Z_STRVAL_PP	./include/php7_wrapper.h	223;"	d
+Z_UNSET_ISREF_P	./mp/msgpack_convert.c	11;"	d	file:
+Z_UNSET_ISREF_P	./msgpack/msgpack_convert.c	11;"	d	file:
+Z_UNSET_ISREF_PP	./mp/msgpack_unpack.c	15;"	d	file:
+Z_UNSET_ISREF_PP	./msgpack/msgpack_unpack.c	15;"	d	file:
+__BIG_ENDIAN__	./mp/msgpack/sysdep.h	72;"	d
+__BIG_ENDIAN__	./mp/sysdep.h	72;"	d
+__BIG_ENDIAN__	./mp7/msgpack/sysdep.h	72;"	d
+__BIG_ENDIAN__	./msgpack/msgpack/sysdep.h	72;"	d
+__BIG_ENDIAN__	./msgpack/sysdep.h	72;"	d
+__BIG_ENDIAN__	./msgpack7/msgpack/sysdep.h	72;"	d
+__DIR__	./run-tests.php	76;"	d
+__LITTLE_ENDIAN__	./mp/msgpack/sysdep.h	70;"	d
+__LITTLE_ENDIAN__	./mp/sysdep.h	70;"	d
+__LITTLE_ENDIAN__	./mp7/msgpack/sysdep.h	70;"	d
+__LITTLE_ENDIAN__	./msgpack/msgpack/sysdep.h	70;"	d
+__LITTLE_ENDIAN__	./msgpack/sysdep.h	70;"	d
+__LITTLE_ENDIAN__	./msgpack7/msgpack/sysdep.h	70;"	d
+__construct	./frame_example/yii1/db/CDbDataReader.php	16;"	f
+_active	./frame_example/yii1/db/CDbTransaction.php	10;"	v
+_active	./frame_example/yii1/db/CDbTransaction.php	24;"	v
+_array	./mp/msgpack/pack_template.h	686;"	f
+_array	./mp/pack_template.h	686;"	f
+_array	./mp7/msgpack/pack_template.h	686;"	f
+_array	./msgpack/msgpack/pack_template.h	686;"	f
+_array	./msgpack/pack_template.h	686;"	f
+_array	./msgpack7/msgpack/pack_template.h	686;"	f
+_closed	./frame_example/yii1/db/CDbDataReader.php	5;"	v
+_closed	./frame_example/yii1/db/CDbDataReader.php	66;"	v
+_connection	./frame_example/yii1/db/CDbDataReader.php	10;"	v
+_connection	./frame_example/yii1/db/CDbDataReader.php	20;"	v
+_cpClient	./include/cpClientNet.h	15;"	s
+_cpConfig	./include/cpServer.h	112;"	s
+_cpConfig	include/cpServer.h	/^    typedef struct _cpConfig {$/;"	s
+_cpConnection	./include/cpServer.h	91;"	s
+_cpConnection	include/cpServer.h	/^    typedef struct _cpConnection {$/;"	s
+_cpFd	./include/cpNetWork.h	34;"	s
+_cpGroup	./include/cpServer.h	160;"	s
+_cpGroup	include/cpServer.h	/^    typedef struct _cpGroup {$/;"	s
+_cpIdelList	./include/cpServer.h	107;"	s
+_cpIdelList	include/cpServer.h	/^    typedef struct _cpIdelList {$/;"	s
+_cpMasterInfo	./include/cpMemory.h	24;"	s
+_cpRecvEvent	./php_connect_pool.h	140;"	s
+_cpServerG	./include/cpServer.h	148;"	s
+_cpServerG	include/cpServer.h	/^    typedef struct _cpServerG {$/;"	s
+_cpServerGS	./include/cpServer.h	179;"	s
+_cpServerGS	include/cpServer.h	/^    typedef struct _cpServerGS {$/;"	s
+_cpShareMemory	./include/cpMemory.h	18;"	s
+_cpTcpEvent	./include/cpMemory.h	34;"	s
+_cpThread	./include/cpServer.h	141;"	s
+_cpThread	include/cpServer.h	/^    typedef struct _cpThread {$/;"	s
+_cpWorker	./include/cpWorker.h	16;"	s
+_cpWorkerG	./include/cpServer.h	208;"	s
+_cpWorkerG	include/cpServer.h	/^    typedef struct _cpWorkerG {$/;"	s
+_cpWorkerInfo	./include/cpMemory.h	28;"	s
+_double	./mp/msgpack/pack_template.h	644;"	f
+_double	./mp/pack_template.h	644;"	f
+_double	./mp7/msgpack/pack_template.h	644;"	f
+_double	./msgpack/msgpack/pack_template.h	644;"	f
+_double	./msgpack/pack_template.h	644;"	f
+_double	./msgpack7/msgpack/pack_template.h	644;"	f
+_false	./mp/msgpack/pack_template.h	675;"	f
+_false	./mp/pack_template.h	675;"	f
+_false	./mp7/msgpack/pack_template.h	675;"	f
+_false	./msgpack/msgpack/pack_template.h	675;"	f
+_false	./msgpack/pack_template.h	675;"	f
+_false	./msgpack7/msgpack/pack_template.h	675;"	f
+_float	./mp/msgpack/pack_template.h	635;"	f
+_float	./mp/pack_template.h	635;"	f
+_float	./mp7/msgpack/pack_template.h	635;"	f
+_float	./msgpack/msgpack/pack_template.h	635;"	f
+_float	./msgpack/pack_template.h	635;"	f
+_float	./msgpack7/msgpack/pack_template.h	635;"	f
+_index	./frame_example/yii1/db/CDbDataReader.php	59;"	v
+_index	./frame_example/yii1/db/CDbDataReader.php	7;"	v
+_instead_smart	./mp/php_msgpack.h	5;"	s
+_instead_smart	./mp7/php_msgpack.h	6;"	s
+_instead_smart	./msgpack/php_msgpack.h	5;"	s
+_int	./mp/msgpack/pack_template.h	409;"	f
+_int	./mp/pack_template.h	409;"	f
+_int	./mp7/msgpack/pack_template.h	409;"	f
+_int	./msgpack/msgpack/pack_template.h	409;"	f
+_int	./msgpack/pack_template.h	409;"	f
+_int	./msgpack7/msgpack/pack_template.h	409;"	f
+_int16	./mp/msgpack/pack_template.h	310;"	f
+_int16	./mp/msgpack/pack_template.h	360;"	f
+_int16	./mp/pack_template.h	310;"	f
+_int16	./mp/pack_template.h	360;"	f
+_int16	./mp7/msgpack/pack_template.h	310;"	f
+_int16	./mp7/msgpack/pack_template.h	360;"	f
+_int16	./msgpack/msgpack/pack_template.h	310;"	f
+_int16	./msgpack/msgpack/pack_template.h	360;"	f
+_int16	./msgpack/pack_template.h	310;"	f
+_int16	./msgpack/pack_template.h	360;"	f
+_int16	./msgpack7/msgpack/pack_template.h	310;"	f
+_int16	./msgpack7/msgpack/pack_template.h	360;"	f
+_int32	./mp/msgpack/pack_template.h	317;"	f
+_int32	./mp/msgpack/pack_template.h	365;"	f
+_int32	./mp/pack_template.h	317;"	f
+_int32	./mp/pack_template.h	365;"	f
+_int32	./mp7/msgpack/pack_template.h	317;"	f
+_int32	./mp7/msgpack/pack_template.h	365;"	f
+_int32	./msgpack/msgpack/pack_template.h	317;"	f
+_int32	./msgpack/msgpack/pack_template.h	365;"	f
+_int32	./msgpack/pack_template.h	317;"	f
+_int32	./msgpack/pack_template.h	365;"	f
+_int32	./msgpack7/msgpack/pack_template.h	317;"	f
+_int32	./msgpack7/msgpack/pack_template.h	365;"	f
+_int64	./mp/msgpack/pack_template.h	324;"	f
+_int64	./mp/msgpack/pack_template.h	370;"	f
+_int64	./mp/pack_template.h	324;"	f
+_int64	./mp/pack_template.h	370;"	f
+_int64	./mp7/msgpack/pack_template.h	324;"	f
+_int64	./mp7/msgpack/pack_template.h	370;"	f
+_int64	./msgpack/msgpack/pack_template.h	324;"	f
+_int64	./msgpack/msgpack/pack_template.h	370;"	f
+_int64	./msgpack/pack_template.h	324;"	f
+_int64	./msgpack/pack_template.h	370;"	f
+_int64	./msgpack7/msgpack/pack_template.h	324;"	f
+_int64	./msgpack7/msgpack/pack_template.h	370;"	f
+_int8	./mp/msgpack/pack_template.h	304;"	f
+_int8	./mp/msgpack/pack_template.h	355;"	f
+_int8	./mp/pack_template.h	304;"	f
+_int8	./mp/pack_template.h	355;"	f
+_int8	./mp7/msgpack/pack_template.h	304;"	f
+_int8	./mp7/msgpack/pack_template.h	355;"	f
+_int8	./msgpack/msgpack/pack_template.h	304;"	f
+_int8	./msgpack/msgpack/pack_template.h	355;"	f
+_int8	./msgpack/pack_template.h	304;"	f
+_int8	./msgpack/pack_template.h	355;"	f
+_int8	./msgpack7/msgpack/pack_template.h	304;"	f
+_int8	./msgpack7/msgpack/pack_template.h	355;"	f
+_long	./mp/msgpack/pack_template.h	440;"	f
+_long	./mp/pack_template.h	440;"	f
+_long	./mp7/msgpack/pack_template.h	440;"	f
+_long	./msgpack/msgpack/pack_template.h	440;"	f
+_long	./msgpack/pack_template.h	440;"	f
+_long	./msgpack7/msgpack/pack_template.h	440;"	f
+_long_long	./mp/msgpack/pack_template.h	471;"	f
+_long_long	./mp/pack_template.h	471;"	f
+_long_long	./mp7/msgpack/pack_template.h	471;"	f
+_long_long	./msgpack/msgpack/pack_template.h	471;"	f
+_long_long	./msgpack/pack_template.h	471;"	f
+_long_long	./msgpack7/msgpack/pack_template.h	471;"	f
+_map	./mp/msgpack/pack_template.h	707;"	f
+_map	./mp/pack_template.h	707;"	f
+_map	./mp7/msgpack/pack_template.h	707;"	f
+_map	./msgpack/msgpack/pack_template.h	707;"	f
+_map	./msgpack/pack_template.h	707;"	f
+_map	./msgpack7/msgpack/pack_template.h	707;"	f
+_msgpack_atomic_counter_t	./mp/msgpack/sysdep.h	41;"	t
+_msgpack_atomic_counter_t	./mp/msgpack/sysdep.h	45;"	t
+_msgpack_atomic_counter_t	./mp/sysdep.h	41;"	t
+_msgpack_atomic_counter_t	./mp/sysdep.h	45;"	t
+_msgpack_atomic_counter_t	./mp7/msgpack/sysdep.h	41;"	t
+_msgpack_atomic_counter_t	./mp7/msgpack/sysdep.h	45;"	t
+_msgpack_atomic_counter_t	./msgpack/msgpack/sysdep.h	41;"	t
+_msgpack_atomic_counter_t	./msgpack/msgpack/sysdep.h	45;"	t
+_msgpack_atomic_counter_t	./msgpack/sysdep.h	41;"	t
+_msgpack_atomic_counter_t	./msgpack/sysdep.h	45;"	t
+_msgpack_atomic_counter_t	./msgpack7/msgpack/sysdep.h	41;"	t
+_msgpack_atomic_counter_t	./msgpack7/msgpack/sysdep.h	45;"	t
+_msgpack_be16	./mp/msgpack/sysdep.h	100;"	d
+_msgpack_be16	./mp/msgpack/sysdep.h	78;"	d
+_msgpack_be16	./mp/sysdep.h	100;"	d
+_msgpack_be16	./mp/sysdep.h	78;"	d
+_msgpack_be16	./mp7/msgpack/sysdep.h	100;"	d
+_msgpack_be16	./mp7/msgpack/sysdep.h	78;"	d
+_msgpack_be16	./msgpack/msgpack/sysdep.h	100;"	d
+_msgpack_be16	./msgpack/msgpack/sysdep.h	78;"	d
+_msgpack_be16	./msgpack/sysdep.h	100;"	d
+_msgpack_be16	./msgpack/sysdep.h	78;"	d
+_msgpack_be16	./msgpack7/msgpack/sysdep.h	100;"	d
+_msgpack_be16	./msgpack7/msgpack/sysdep.h	78;"	d
+_msgpack_be32	./mp/msgpack/sysdep.h	101;"	d
+_msgpack_be32	./mp/msgpack/sysdep.h	79;"	d
+_msgpack_be32	./mp/sysdep.h	101;"	d
+_msgpack_be32	./mp/sysdep.h	79;"	d
+_msgpack_be32	./mp7/msgpack/sysdep.h	101;"	d
+_msgpack_be32	./mp7/msgpack/sysdep.h	79;"	d
+_msgpack_be32	./msgpack/msgpack/sysdep.h	101;"	d
+_msgpack_be32	./msgpack/msgpack/sysdep.h	79;"	d
+_msgpack_be32	./msgpack/sysdep.h	101;"	d
+_msgpack_be32	./msgpack/sysdep.h	79;"	d
+_msgpack_be32	./msgpack7/msgpack/sysdep.h	101;"	d
+_msgpack_be32	./msgpack7/msgpack/sysdep.h	79;"	d
+_msgpack_be64	./mp/msgpack/sysdep.h	102;"	d
+_msgpack_be64	./mp/msgpack/sysdep.h	82;"	d
+_msgpack_be64	./mp/msgpack/sysdep.h	84;"	d
+_msgpack_be64	./mp/msgpack/sysdep.h	86;"	d
+_msgpack_be64	./mp/msgpack/sysdep.h	88;"	d
+_msgpack_be64	./mp/sysdep.h	102;"	d
+_msgpack_be64	./mp/sysdep.h	82;"	d
+_msgpack_be64	./mp/sysdep.h	84;"	d
+_msgpack_be64	./mp/sysdep.h	86;"	d
+_msgpack_be64	./mp/sysdep.h	88;"	d
+_msgpack_be64	./mp7/msgpack/sysdep.h	102;"	d
+_msgpack_be64	./mp7/msgpack/sysdep.h	82;"	d
+_msgpack_be64	./mp7/msgpack/sysdep.h	84;"	d
+_msgpack_be64	./mp7/msgpack/sysdep.h	86;"	d
+_msgpack_be64	./mp7/msgpack/sysdep.h	88;"	d
+_msgpack_be64	./msgpack/msgpack/sysdep.h	102;"	d
+_msgpack_be64	./msgpack/msgpack/sysdep.h	82;"	d
+_msgpack_be64	./msgpack/msgpack/sysdep.h	84;"	d
+_msgpack_be64	./msgpack/msgpack/sysdep.h	86;"	d
+_msgpack_be64	./msgpack/msgpack/sysdep.h	88;"	d
+_msgpack_be64	./msgpack/sysdep.h	102;"	d
+_msgpack_be64	./msgpack/sysdep.h	82;"	d
+_msgpack_be64	./msgpack/sysdep.h	84;"	d
+_msgpack_be64	./msgpack/sysdep.h	86;"	d
+_msgpack_be64	./msgpack/sysdep.h	88;"	d
+_msgpack_be64	./msgpack7/msgpack/sysdep.h	102;"	d
+_msgpack_be64	./msgpack7/msgpack/sysdep.h	82;"	d
+_msgpack_be64	./msgpack7/msgpack/sysdep.h	84;"	d
+_msgpack_be64	./msgpack7/msgpack/sysdep.h	86;"	d
+_msgpack_be64	./msgpack7/msgpack/sysdep.h	88;"	d
+_msgpack_load16	./mp/msgpack/sysdep.h	114;"	d
+_msgpack_load16	./mp/sysdep.h	114;"	d
+_msgpack_load16	./mp7/msgpack/sysdep.h	114;"	d
+_msgpack_load16	./msgpack/msgpack/sysdep.h	114;"	d
+_msgpack_load16	./msgpack/sysdep.h	114;"	d
+_msgpack_load16	./msgpack7/msgpack/sysdep.h	114;"	d
+_msgpack_load32	./mp/msgpack/sysdep.h	115;"	d
+_msgpack_load32	./mp/sysdep.h	115;"	d
+_msgpack_load32	./mp7/msgpack/sysdep.h	115;"	d
+_msgpack_load32	./msgpack/msgpack/sysdep.h	115;"	d
+_msgpack_load32	./msgpack/sysdep.h	115;"	d
+_msgpack_load32	./msgpack7/msgpack/sysdep.h	115;"	d
+_msgpack_load64	./mp/msgpack/sysdep.h	116;"	d
+_msgpack_load64	./mp/sysdep.h	116;"	d
+_msgpack_load64	./mp7/msgpack/sysdep.h	116;"	d
+_msgpack_load64	./msgpack/msgpack/sysdep.h	116;"	d
+_msgpack_load64	./msgpack/sysdep.h	116;"	d
+_msgpack_load64	./msgpack7/msgpack/sysdep.h	116;"	d
+_msgpack_store16	./mp/msgpack/sysdep.h	106;"	d
+_msgpack_store16	./mp/sysdep.h	106;"	d
+_msgpack_store16	./mp7/msgpack/sysdep.h	106;"	d
+_msgpack_store16	./msgpack/msgpack/sysdep.h	106;"	d
+_msgpack_store16	./msgpack/sysdep.h	106;"	d
+_msgpack_store16	./msgpack7/msgpack/sysdep.h	106;"	d
+_msgpack_store32	./mp/msgpack/sysdep.h	108;"	d
+_msgpack_store32	./mp/sysdep.h	108;"	d
+_msgpack_store32	./mp7/msgpack/sysdep.h	108;"	d
+_msgpack_store32	./msgpack/msgpack/sysdep.h	108;"	d
+_msgpack_store32	./msgpack/sysdep.h	108;"	d
+_msgpack_store32	./msgpack7/msgpack/sysdep.h	108;"	d
+_msgpack_store64	./mp/msgpack/sysdep.h	110;"	d
+_msgpack_store64	./mp/sysdep.h	110;"	d
+_msgpack_store64	./mp7/msgpack/sysdep.h	110;"	d
+_msgpack_store64	./msgpack/msgpack/sysdep.h	110;"	d
+_msgpack_store64	./msgpack/sysdep.h	110;"	d
+_msgpack_store64	./msgpack7/msgpack/sysdep.h	110;"	d
+_msgpack_sync_decr_and_fetch	./mp/msgpack/sysdep.h	42;"	d
+_msgpack_sync_decr_and_fetch	./mp/msgpack/sysdep.h	46;"	d
+_msgpack_sync_decr_and_fetch	./mp/sysdep.h	42;"	d
+_msgpack_sync_decr_and_fetch	./mp/sysdep.h	46;"	d
+_msgpack_sync_decr_and_fetch	./mp7/msgpack/sysdep.h	42;"	d
+_msgpack_sync_decr_and_fetch	./mp7/msgpack/sysdep.h	46;"	d
+_msgpack_sync_decr_and_fetch	./msgpack/msgpack/sysdep.h	42;"	d
+_msgpack_sync_decr_and_fetch	./msgpack/msgpack/sysdep.h	46;"	d
+_msgpack_sync_decr_and_fetch	./msgpack/sysdep.h	42;"	d
+_msgpack_sync_decr_and_fetch	./msgpack/sysdep.h	46;"	d
+_msgpack_sync_decr_and_fetch	./msgpack7/msgpack/sysdep.h	42;"	d
+_msgpack_sync_decr_and_fetch	./msgpack7/msgpack/sysdep.h	46;"	d
+_msgpack_sync_incr_and_fetch	./mp/msgpack/sysdep.h	43;"	d
+_msgpack_sync_incr_and_fetch	./mp/msgpack/sysdep.h	47;"	d
+_msgpack_sync_incr_and_fetch	./mp/sysdep.h	43;"	d
+_msgpack_sync_incr_and_fetch	./mp/sysdep.h	47;"	d
+_msgpack_sync_incr_and_fetch	./mp7/msgpack/sysdep.h	43;"	d
+_msgpack_sync_incr_and_fetch	./mp7/msgpack/sysdep.h	47;"	d
+_msgpack_sync_incr_and_fetch	./msgpack/msgpack/sysdep.h	43;"	d
+_msgpack_sync_incr_and_fetch	./msgpack/msgpack/sysdep.h	47;"	d
+_msgpack_sync_incr_and_fetch	./msgpack/sysdep.h	43;"	d
+_msgpack_sync_incr_and_fetch	./msgpack/sysdep.h	47;"	d
+_msgpack_sync_incr_and_fetch	./msgpack7/msgpack/sysdep.h	43;"	d
+_msgpack_sync_incr_and_fetch	./msgpack7/msgpack/sysdep.h	47;"	d
+_nil	./mp/msgpack/pack_template.h	658;"	f
+_nil	./mp/pack_template.h	658;"	f
+_nil	./mp7/msgpack/pack_template.h	658;"	f
+_nil	./msgpack/msgpack/pack_template.h	658;"	f
+_nil	./msgpack/pack_template.h	658;"	f
+_nil	./msgpack7/msgpack/pack_template.h	658;"	f
+_raw	./mp/msgpack/pack_template.h	728;"	f
+_raw	./mp/pack_template.h	728;"	f
+_raw	./mp7/msgpack/pack_template.h	728;"	f
+_raw	./msgpack/msgpack/pack_template.h	728;"	f
+_raw	./msgpack/pack_template.h	728;"	f
+_raw	./msgpack7/msgpack/pack_template.h	728;"	f
+_raw_body	./mp/msgpack/pack_template.h	744;"	f
+_raw_body	./mp/pack_template.h	744;"	f
+_raw_body	./mp7/msgpack/pack_template.h	749;"	f
+_raw_body	./msgpack/msgpack/pack_template.h	744;"	f
+_raw_body	./msgpack/pack_template.h	744;"	f
+_raw_body	./msgpack7/msgpack/pack_template.h	749;"	f
+_row	./frame_example/yii1/db/CDbDataReader.php	6;"	v
+_row	./frame_example/yii1/db/CDbDataReader.php	98;"	v
+_short	./mp/msgpack/pack_template.h	378;"	f
+_short	./mp/pack_template.h	378;"	f
+_short	./mp7/msgpack/pack_template.h	378;"	f
+_short	./msgpack/msgpack/pack_template.h	378;"	f
+_short	./msgpack/pack_template.h	378;"	f
+_short	./msgpack7/msgpack/pack_template.h	378;"	f
+_statement	./frame_example/yii1/db/CDbDataReader.php	18;"	v
+_statement	./frame_example/yii1/db/CDbDataReader.php	4;"	v
+_true	./mp/msgpack/pack_template.h	669;"	f
+_true	./mp/pack_template.h	669;"	f
+_true	./mp7/msgpack/pack_template.h	669;"	f
+_true	./msgpack/msgpack/pack_template.h	669;"	f
+_true	./msgpack/pack_template.h	669;"	f
+_true	./msgpack7/msgpack/pack_template.h	669;"	f
+_uint16	./mp/msgpack/pack_template.h	283;"	f
+_uint16	./mp/msgpack/pack_template.h	340;"	f
+_uint16	./mp/pack_template.h	283;"	f
+_uint16	./mp/pack_template.h	340;"	f
+_uint16	./mp7/msgpack/pack_template.h	283;"	f
+_uint16	./mp7/msgpack/pack_template.h	340;"	f
+_uint16	./msgpack/msgpack/pack_template.h	283;"	f
+_uint16	./msgpack/msgpack/pack_template.h	340;"	f
+_uint16	./msgpack/pack_template.h	283;"	f
+_uint16	./msgpack/pack_template.h	340;"	f
+_uint16	./msgpack7/msgpack/pack_template.h	283;"	f
+_uint16	./msgpack7/msgpack/pack_template.h	340;"	f
+_uint32	./mp/msgpack/pack_template.h	290;"	f
+_uint32	./mp/msgpack/pack_template.h	345;"	f
+_uint32	./mp/pack_template.h	290;"	f
+_uint32	./mp/pack_template.h	345;"	f
+_uint32	./mp7/msgpack/pack_template.h	290;"	f
+_uint32	./mp7/msgpack/pack_template.h	345;"	f
+_uint32	./msgpack/msgpack/pack_template.h	290;"	f
+_uint32	./msgpack/msgpack/pack_template.h	345;"	f
+_uint32	./msgpack/pack_template.h	290;"	f
+_uint32	./msgpack/pack_template.h	345;"	f
+_uint32	./msgpack7/msgpack/pack_template.h	290;"	f
+_uint32	./msgpack7/msgpack/pack_template.h	345;"	f
+_uint64	./mp/msgpack/pack_template.h	297;"	f
+_uint64	./mp/msgpack/pack_template.h	350;"	f
+_uint64	./mp/pack_template.h	297;"	f
+_uint64	./mp/pack_template.h	350;"	f
+_uint64	./mp7/msgpack/pack_template.h	297;"	f
+_uint64	./mp7/msgpack/pack_template.h	350;"	f
+_uint64	./msgpack/msgpack/pack_template.h	297;"	f
+_uint64	./msgpack/msgpack/pack_template.h	350;"	f
+_uint64	./msgpack/pack_template.h	297;"	f
+_uint64	./msgpack/pack_template.h	350;"	f
+_uint64	./msgpack7/msgpack/pack_template.h	297;"	f
+_uint64	./msgpack7/msgpack/pack_template.h	350;"	f
+_uint8	./mp/msgpack/pack_template.h	277;"	f
+_uint8	./mp/msgpack/pack_template.h	335;"	f
+_uint8	./mp/pack_template.h	277;"	f
+_uint8	./mp/pack_template.h	335;"	f
+_uint8	./mp7/msgpack/pack_template.h	277;"	f
+_uint8	./mp7/msgpack/pack_template.h	335;"	f
+_uint8	./msgpack/msgpack/pack_template.h	277;"	f
+_uint8	./msgpack/msgpack/pack_template.h	335;"	f
+_uint8	./msgpack/pack_template.h	277;"	f
+_uint8	./msgpack/pack_template.h	335;"	f
+_uint8	./msgpack7/msgpack/pack_template.h	277;"	f
+_uint8	./msgpack7/msgpack/pack_template.h	335;"	f
+_unsigned_int	./mp/msgpack/pack_template.h	533;"	f
+_unsigned_int	./mp/pack_template.h	533;"	f
+_unsigned_int	./mp7/msgpack/pack_template.h	533;"	f
+_unsigned_int	./msgpack/msgpack/pack_template.h	533;"	f
+_unsigned_int	./msgpack/pack_template.h	533;"	f
+_unsigned_int	./msgpack7/msgpack/pack_template.h	533;"	f
+_unsigned_long	./mp/msgpack/pack_template.h	564;"	f
+_unsigned_long	./mp/pack_template.h	564;"	f
+_unsigned_long	./mp7/msgpack/pack_template.h	564;"	f
+_unsigned_long	./msgpack/msgpack/pack_template.h	564;"	f
+_unsigned_long	./msgpack/pack_template.h	564;"	f
+_unsigned_long	./msgpack7/msgpack/pack_template.h	564;"	f
+_unsigned_long_long	./mp/msgpack/pack_template.h	595;"	f
+_unsigned_long_long	./mp/pack_template.h	595;"	f
+_unsigned_long_long	./mp7/msgpack/pack_template.h	595;"	f
+_unsigned_long_long	./msgpack/msgpack/pack_template.h	595;"	f
+_unsigned_long_long	./msgpack/pack_template.h	595;"	f
+_unsigned_long_long	./msgpack7/msgpack/pack_template.h	595;"	f
+_unsigned_short	./mp/msgpack/pack_template.h	502;"	f
+_unsigned_short	./mp/pack_template.h	502;"	f
+_unsigned_short	./mp7/msgpack/pack_template.h	502;"	f
+_unsigned_short	./msgpack/msgpack/pack_template.h	502;"	f
+_unsigned_short	./msgpack/pack_template.h	502;"	f
+_unsigned_short	./msgpack7/msgpack/pack_template.h	502;"	f
+a	./msgpack7/bench/bench.php	27;"	v
+a	./msgpack7/bench/bench.php	32;"	v
+a	./msgpack7/bench/bench.php	40;"	v
+a	./msgpack7/bench/bench.php	45;"	v
+a	./run-tests.php	957;"	v
+ac_fn_c_check_func	./configure	1875;"	f
+ac_fn_c_check_header_compile	./configure	1845;"	f
+ac_fn_c_check_header_mongrel	./configure	1717;"	f
+ac_fn_c_try_compile	./configure	1594;"	f
+ac_fn_c_try_cpp	./configure	1632;"	f
+ac_fn_c_try_link	./configure	1669;"	f
+ac_fn_c_try_run	./configure	1803;"	f
+addr	./mp/php_msgpack.h	9;"	m	struct:_instead_smart
+addr	./mp7/php_msgpack.h	10;"	m	struct:_instead_smart
+addr	./msgpack/php_msgpack.h	9;"	m	struct:_instead_smart
+again_fixed_trail	./mp/msgpack/unpack_template.h	133;"	d
+again_fixed_trail	./mp/msgpack/unpack_template.h	407;"	d
+again_fixed_trail	./mp/unpack_template.h	133;"	d
+again_fixed_trail	./mp/unpack_template.h	407;"	d
+again_fixed_trail	./mp7/msgpack/unpack_template.h	133;"	d
+again_fixed_trail	./mp7/msgpack/unpack_template.h	426;"	d
+again_fixed_trail	./msgpack/msgpack/unpack_template.h	133;"	d
+again_fixed_trail	./msgpack/msgpack/unpack_template.h	407;"	d
+again_fixed_trail	./msgpack/unpack_template.h	133;"	d
+again_fixed_trail	./msgpack/unpack_template.h	407;"	d
+again_fixed_trail	./msgpack7/msgpack/unpack_template.h	133;"	d
+again_fixed_trail	./msgpack7/msgpack/unpack_template.h	426;"	d
+again_fixed_trail_if_zero	./mp/msgpack/unpack_template.h	137;"	d
+again_fixed_trail_if_zero	./mp/msgpack/unpack_template.h	408;"	d
+again_fixed_trail_if_zero	./mp/unpack_template.h	137;"	d
+again_fixed_trail_if_zero	./mp/unpack_template.h	408;"	d
+again_fixed_trail_if_zero	./mp7/msgpack/unpack_template.h	137;"	d
+again_fixed_trail_if_zero	./mp7/msgpack/unpack_template.h	427;"	d
+again_fixed_trail_if_zero	./msgpack/msgpack/unpack_template.h	137;"	d
+again_fixed_trail_if_zero	./msgpack/msgpack/unpack_template.h	408;"	d
+again_fixed_trail_if_zero	./msgpack/unpack_template.h	137;"	d
+again_fixed_trail_if_zero	./msgpack/unpack_template.h	408;"	d
+again_fixed_trail_if_zero	./msgpack7/msgpack/unpack_template.h	137;"	d
+again_fixed_trail_if_zero	./msgpack7/msgpack/unpack_template.h	427;"	d
+all_targets	./Makefile	18;"	m
+argc	./run-tests.php	527;"	v
+args	./run-tests.php	1752;"	v
+argv	./run-tests.php	523;"	v
+argv	./run-tests.php	526;"	v
+ary	./msgpack7/bench/bench.php	5;"	v
+ary	./msgpack7/bench/bench.php	7;"	v
+as_fn_append	./config.status	193;"	f
+as_fn_append	./configure	13368;"	f
+as_fn_append	./configure	379;"	f
+as_fn_arith	./config.status	210;"	f
+as_fn_arith	./configure	13385;"	f
+as_fn_arith	./configure	396;"	f
+as_fn_error	./config.status	143;"	f
+as_fn_error	./configure	13318;"	f
+as_fn_error	./configure	408;"	f
+as_fn_executable_p	./config.status	361;"	f
+as_fn_executable_p	./configure	13536;"	f
+as_fn_executable_p	./configure	363;"	f
+as_fn_exit	./config.status	166;"	f
+as_fn_exit	./configure	13341;"	f
+as_fn_exit	./configure	305;"	f
+as_fn_failure	./configure	179;"	f
+as_fn_mkdir_p	./config.status	306;"	f
+as_fn_mkdir_p	./configure	13481;"	f
+as_fn_mkdir_p	./configure	315;"	f
+as_fn_ret_failure	./configure	181;"	f
+as_fn_ret_success	./configure	180;"	f
+as_fn_set_status	./config.status	158;"	f
+as_fn_set_status	./configure	13333;"	f
+as_fn_set_status	./configure	297;"	f
+as_fn_success	./configure	178;"	f
+as_fn_unset	./config.status	176;"	f
+as_fn_unset	./configure	13351;"	f
+as_fn_unset	./configure	288;"	f
+async_done	connect_pool_client.c	/^static void async_done(zval *object, zend_class_entry *class_entry_ptr)$/;"	f	file:
+autoconf	./run-tests.php	418;"	v
+autoconf	./run-tests.php	420;"	v
+b	./msgpack7/bench/bench.php	29;"	v
+b	./msgpack7/bench/bench.php	34;"	v
+b	./msgpack7/bench/bench.php	42;"	v
+b	./msgpack7/bench/bench.php	47;"	v
+b	./run-tests.php	958;"	v
+backlog	./include/cpServer.h	113;"	m	struct:_cpConfig
+backlog	include/cpServer.h	/^        uint16_t backlog;$/;"	m	struct:_cpConfig
+bin_env	./run-tests.php	1109;"	v
+bork_info	./run-tests.php	1257;"	v
+bork_info	./run-tests.php	1263;"	v
+bork_info	./run-tests.php	1267;"	v
+bork_info	./run-tests.php	1271;"	v
+bork_info	./run-tests.php	1292;"	v
+bork_info	./run-tests.php	1320;"	v
+bork_info	./run-tests.php	1328;"	v
+bork_info	./run-tests.php	1348;"	v
+bork_info	./run-tests.php	1355;"	v
+bork_info	./run-tests.php	1688;"	v
+bork_info	./run-tests.php	1706;"	v
+borked	./run-tests.php	1256;"	v
+borked	./run-tests.php	1264;"	v
+borked	./run-tests.php	1268;"	v
+borked	./run-tests.php	1272;"	v
+borked	./run-tests.php	1293;"	v
+borked	./run-tests.php	1319;"	v
+borked	./run-tests.php	1322;"	v
+borked	./run-tests.php	1329;"	v
+borked	./run-tests.php	1349;"	v
+borked	./run-tests.php	1356;"	v
+br	./msgpack7/msgpack.php	2;"	v
+buffer	./mp/msgpack_class.c	17;"	m	struct:__anon4	file:
+buffer	./mp7/msgpack_class.c	16;"	m	struct:__anon14	file:
+buffer	./msgpack/msgpack_class.c	17;"	m	struct:__anon22	file:
+buffer	./msgpack7/msgpack_class.c	16;"	m	struct:__anon32	file:
+buffer	./msgpack7/test_streaming.php	12;"	v
+buffer	./msgpack7/test_streaming.php	20;"	v
+buffer	./msgpack7/test_streaming.php	8;"	v
+bufpid	./cpFunction.c	21;"	v	file:
+bufpid	cpFunction.c	/^static char bufpid[SW_PID_BUFFER_SIZE];$/;"	v	file:
+bufr	./cpFunction.c	20;"	v	file:
+bufr	cpFunction.c	/^static char bufr[SW_LOG_BUFFER_SIZE];$/;"	v	file:
+bug	./run-tests.php	65;"	v
+bug	./run-tests.php	67;"	v
+builddir	./Makefile	2;"	m
+c1	./run-tests.php	2301;"	v
+c2	./run-tests.php	2302;"	v
+cacheKey	./frame_example/yii1/db/CDbCommand.php	76;"	v
+cc_status	./run-tests.php	435;"	v
+cfg	./run-tests.php	510;"	v
+cfgfiles	./run-tests.php	509;"	v
+cfgtypes	./run-tests.php	508;"	v
+check_need_exchange	./connect_pool_client.c	453;"	f	file:
+check_need_exchange	connect_pool_client.c	/^static void check_need_exchange(zval * object, char *cur_type)$/;"	f	file:
+clean_params	./run-tests.php	1920;"	v
+cli_real_recv	./connect_pool_client.c	418;"	f	file:
+cli_real_recv	connect_pool_client.c	/^static CPINLINE int cli_real_recv(cpClient *cli, int async)$/;"	f	file:
+cli_real_send	./connect_pool_client.c	381;"	f
+cli_real_send	connect_pool_client.c	/^static CPINLINE int cli_real_send(cpClient **real_cli, zval *send_data)$/;"	f	file:
+client_open_log	cpClientNet.c	/^static int client_open_log = 0;$/;"	v	file:
+clock_gettime	./cpFunction.c	406;"	f
+clock_gettime	cpFunction.c	/^int clock_gettime(clock_id_t which_clock, struct timespec *t)$/;"	f
+close	./frame_example/yii1/db/CDbDataReader.php	63;"	f
+close_conn	connect_pool_client.c	/^static void close_conn(zval *object)$/;"	f	file:
+cmd	./run-tests.php	1786;"	v
+cmd	./run-tests.php	1820;"	v
+cmd	./run-tests.php	1837;"	v
+cmd	./run-tests.php	1852;"	v
+cmd	./run-tests.php	1865;"	v
+cmd	./run-tests.php	1873;"	v
+cmd	./run-tests.php	1883;"	v
+cmd	./run-tests.php	1885;"	v
+cmd	./run-tests.php	1887;"	v
+code	./run-tests.php	1166;"	v
+commit	./frame_example/yii1/db/CDbTransaction.php	4;"	f
+comp_line	./run-tests.php	2234;"	f
+compiler	./run-tests.php	440;"	v
+compression	./run-tests.php	491;"	v
+compute_summary	./run-tests.php	2422;"	f
+conf	./include/cpServer.h	155;"	m	struct:_cpServerG
+conf	include/cpServer.h	/^        cpConfig conf;$/;"	m	struct:_cpServerG
+conf_passed	./run-tests.php	505;"	v
+conf_passed	./run-tests.php	592;"	v
+config	./d1.php	39;"	v
+config	./demon.php	36;"	v
+conlist	./include/cpServer.h	188;"	m	struct:_cpServerGS
+conlist	include/cpServer.h	/^        cpConnection conlist[CP_MAX_FDS];$/;"	m	struct:_cpServerGS
+connect_count	./include/cpServer.h	184;"	m	struct:_cpServerGS
+connect_count	include/cpServer.h	/^        uint32_t connect_count;$/;"	m	struct:_cpServerGS
+connect_pool	./php_connect_pool.h	210;"	v
+connect_pool	./php_connect_pool.h	211;"	v
+connect_pool	./php_connect_pool.h	212;"	v
+connect_pool	./php_connect_pool.h	213;"	v
+connect_pool	./php_connect_pool.h	214;"	v
+connect_pool_module_entry	./connect_pool.c	189;"	v
+connect_pool_perisent	./connect_pool_client.c	56;"	f	file:
+connect_pool_perisent	connect_pool_client.c	/^static void* connect_pool_perisent(zval* zres, zval* data_source)$/;"	f	file:
+content_length	./run-tests.php	1825;"	v
+content_length	./run-tests.php	1846;"	v
+content_length	./run-tests.php	1859;"	v
+copy_file	./run-tests.php	1476;"	v
+count_array_diff	./run-tests.php	2243;"	f
+cpClient	./include/cpClientNet.h	27;"	t	typeref:struct:_cpClient
+cpClient_attach_mem	./connect_pool_client.c	38;"	f	file:
+cpClient_attach_mem	connect_pool_client.c	/^static void cpClient_attach_mem()$/;"	f	file:
+cpClient_close	./cpClientNet.c	19;"	f
+cpClient_close	cpClientNet.c	/^int cpClient_close(cpClient *cli)$/;"	f
+cpClient_connect	./cpClientNet.c	127;"	f
+cpClient_connect	cpClientNet.c	/^int cpClient_connect(cpClient *cli, char *host, int port, double timeout)$/;"	f
+cpClient_create	./cpClientNet.c	86;"	f
+cpClient_create	cpClientNet.c	/^int cpClient_create(cpClient *cli)$/;"	f
+cpClient_recv	./cpClientNet.c	32;"	f
+cpClient_recv	cpClientNet.c	/^int cpClient_recv(int sock, void *data, int len, int waitall)$/;"	f
+cpClient_send	./cpClientNet.c	51;"	f
+cpClient_send	cpClientNet.c	/^int cpClient_send(int sock, char *data, int length, int flag)$/;"	f
+cpClient_weekup	./connect_pool_client.c	34;"	f	file:
+cpClient_weekup	connect_pool_client.c	/^static void cpClient_weekup(int sig)$/;"	f	file:
+cpConfig	./include/cpServer.h	139;"	t	typeref:struct:_cpConfig
+cpConfig	include/cpServer.h	/^    } cpConfig;$/;"	t	typeref:struct:_cpConfig
+cpConnect_pool_server	./connect_pool_client.c	110;"	f	file:
+cpConnect_pool_server	connect_pool_client.c	/^static CPINLINE zval * cpConnect_pool_server(zval *data_source, int async)$/;"	f	file:
+cpConnection	./include/cpServer.h	105;"	t	typeref:struct:_cpConnection
+cpConnection	include/cpServer.h	/^    } cpConnection;$/;"	t	typeref:struct:_cpConnection
+cpCreateFifo	./cpFunction.c	251;"	f
+cpCreateFifo	cpFunction.c	/^int cpCreateFifo(char *file)$/;"	f
+cpCreate_ping_worker_mem	./cpPingWorker.c	176;"	f
+cpCreate_worker_mem	./cpWorker.c	356;"	f
+cpCreate_worker_mem	cpWorker.c	/^CPINLINE int cpCreate_worker_mem(int worker_id, int group_id)$/;"	f
+cpEpoll_add	./cpNetWork.c	41;"	f
+cpEpoll_del	./cpNetWork.c	63;"	f
+cpEpoll_wait	./cpNetWork.c	94;"	f
+cpFd	./include/cpNetWork.h	37;"	t	typeref:struct:_cpFd
+cpFifoRead	./cpFunction.c	92;"	f
+cpFifoRead	cpFunction.c	/^int cpFifoRead(int pipe_fd_read, void *buf, int len)$/;"	f
+cpFind_restart_worker	./cpWorker.c	276;"	f	file:
+cpFind_restart_worker	cpWorker.c	/^static void cpFind_restart_worker(int pid, sigset_t *block_alarm, int worker_exit_code)$/;"	f	file:
+cpFork_one_worker	./cpWorker.c	88;"	f
+cpFork_one_worker	cpWorker.c	/^int cpFork_one_worker(int worker_id, int group_id)$/;"	f
+cpFork_ping_worker	./cpPingWorker.c	151;"	f
+cpGetConfig	./include/cpFunction.h	80;"	f
+cpGetConfig	include/cpFunction.h	/^    static CPINLINE zval* cpGetConfig(char *filename) {$/;"	f
+cpGet_worker	./connect_pool_client.c	284;"	f	file:
+cpGet_worker	connect_pool_client.c	/^static cpGroup * cpGet_worker(cpClient *cli, zval *data_source)$/;"	f	file:
+cpGroup	./include/cpServer.h	177;"	t	typeref:struct:_cpGroup
+cpGroup	include/cpServer.h	/^    } cpGroup;$/;"	t	typeref:struct:_cpGroup
+cpIdelList	./include/cpServer.h	110;"	t	typeref:struct:_cpIdelList
+cpIdelList	include/cpServer.h	/^    } cpIdelList;$/;"	t	typeref:struct:_cpIdelList
+cpKillClient	./cpServer.c	79;"	f
+cpKillClient	cpServer.c	/^void cpKillClient()$/;"	f
+cpKqueue_add	./cpKqueue.c	32;"	f
+cpKqueue_add	cpKqueue.c	/^int cpKqueue_add(int epfd, int fd, int fdtype) {$/;"	f
+cpKqueue_del	./cpKqueue.c	77;"	f
+cpKqueue_del	cpKqueue.c	/^int cpKqueue_del(int epfd, int fd) {$/;"	f
+cpKqueue_free	./cpKqueue.c	108;"	f
+cpKqueue_free	cpKqueue.c	/^void cpKqueue_free() {$/;"	f
+cpKqueue_set	./cpKqueue.c	104;"	f
+cpKqueue_set	cpKqueue.c	/^int cpKqueue_set(int fd, int fdtype) {$/;"	f
+cpKqueue_wait	./cpKqueue.c	112;"	f
+cpKqueue_wait	cpKqueue.c	/^int cpKqueue_wait(epoll_wait_handle* handles, struct timeval *timeo, int epfd) {$/;"	f
+cpListen	./cpServer.c	638;"	f	file:
+cpListen	cpServer.c	/^int static cpListen()$/;"	f	file:
+cpLog	./include/cpFunction.h	45;"	d
+cpLog	include/cpFunction.h	44;"	d
+cpLog_init	./cpFunction.c	27;"	f
+cpLog_init	cpFunction.c	/^int cpLog_init(char *logfile)$/;"	f
+cpMD5	./cpFunction.c	286;"	f
+cpManagerAdd	./cpWorker.c	163;"	f	file:
+cpManagerAdd	cpWorker.c	/^static void cpManagerAdd(int sig)$/;"	f	file:
+cpManagerRecycle	./cpWorker.c	108;"	f	file:
+cpManagerRecycle	cpWorker.c	/^static void cpManagerRecycle(int sig)$/;"	f	file:
+cpManagerReload	./cpWorker.c	190;"	f	file:
+cpManagerReload	cpWorker.c	/^static void cpManagerReload(int sig)$/;"	f	file:
+cpMasterInfo	./include/cpMemory.h	26;"	t	typeref:struct:_cpMasterInfo
+cpMutexLock	./cpServer.c	726;"	f
+cpMutexLock	cpServer.c	/^int cpMutexLock(cpGroup *G)$/;"	f
+cpMutexTryLock	./cpServer.c	746;"	f
+cpMutexTryLock	cpServer.c	/^int cpMutexTryLock(cpGroup *G)$/;"	f
+cpMutexUnLock	./cpServer.c	736;"	f
+cpMutexUnLock	cpServer.c	/^int cpMutexUnLock(cpGroup *G)$/;"	f
+cpNetRead	./cpFunction.c	112;"	f
+cpNetRead	cpFunction.c	/^int cpNetRead(int fd, void *buf, int len)$/;"	f
+cpPid	./connect_pool_client.c	30;"	v	file:
+cpPid	connect_pool_client.c	/^static int cpPid = 0;$/;"	v	file:
+cpPingClear	./cpPingWorker.c	71;"	f	file:
+cpPing_add_dislist	./cpPingWorker.c	19;"	f	file:
+cpPing_del_prolist	./cpPingWorker.c	61;"	f	file:
+cpPing_worker_loop	./cpPingWorker.c	76;"	f	file:
+cpPopWaitQueue	./cpServer.c	756;"	f
+cpPopWaitQueue	cpServer.c	/^int cpPopWaitQueue(cpGroup *G, cpConnection *conn)$/;"	f
+cpQueueFunc	./include/cpFunction.h	61;"	t
+cpQueueFunc	include/cpFunction.h	/^    typedef void (*cpQueueFunc) (int, siginfo_t *, void *);$/;"	t
+cpQueueSignalSet	./cpFunction.c	384;"	f
+cpQueueSignalSet	cpFunction.c	/^int cpQueueSignalSet(int sig, cpQueueFunc func)$/;"	f
+cpReactorEpollGetType	./cpNetWork.c	23;"	f	file:
+cpReactorKqueueGetType	./cpKqueue.c	8;"	f	file:
+cpReactorKqueueGetType	cpKqueue.c	/^static int cpReactorKqueueGetType(int fdtype) {$/;"	f	file:
+cpReactor_add	./cpReactorBase.c	22;"	f
+cpReactor_client_close	./cpServer.c	492;"	f	file:
+cpReactor_client_close	cpServer.c	/^static int cpReactor_client_close(int fd)$/;"	f	file:
+cpReactor_client_receive	./cpServer.c	507;"	f	file:
+cpReactor_client_receive	cpServer.c	/^static int cpReactor_client_receive(int fd)$/;"	f	file:
+cpReactor_client_release	./cpServer.c	419;"	f	file:
+cpReactor_client_release	cpServer.c	/^static int cpReactor_client_release(int fd)$/;"	f	file:
+cpReactor_create	./cpReactorBase.c	7;"	f
+cpReactor_del	./cpReactorBase.c	32;"	f
+cpReactor_error	./cpNetWork.c	85;"	f
+cpReactor_free	./cpReactorBase.c	46;"	f
+cpReactor_set	./cpReactorBase.c	42;"	f
+cpReactor_start	./cpServer.c	599;"	f	file:
+cpReactor_start	cpServer.c	/^int static cpReactor_start(int sock)$/;"	f	file:
+cpReactor_thread_loop	./cpServer.c	571;"	f	file:
+cpReactor_thread_loop	cpServer.c	/^int static cpReactor_thread_loop(int *id)$/;"	f	file:
+cpReactor_wait	./cpReactorBase.c	50;"	f
+cpRecvEvent	./php_connect_pool.h	144;"	t	typeref:struct:_cpRecvEvent
+cpRedis_conn_pool_server	./connect_pool_client.c	967;"	f	file:
+cpRedis_conn_pool_server	connect_pool_client.c	/^static cpClient * cpRedis_conn_pool_server(zval *obj, char *source_char, int async)$/;"	f	file:
+cpServerG	./include/cpServer.h	158;"	t	typeref:struct:_cpServerG
+cpServerG	include/cpServer.h	/^    } cpServerG;$/;"	t	typeref:struct:_cpServerG
+cpServerGS	./include/cpServer.h	206;"	t	typeref:struct:_cpServerGS
+cpServerGS	include/cpServer.h	/^    } cpServerGS;$/;"	t	typeref:struct:_cpServerGS
+cpServer_create	./cpServer.c	203;"	f
+cpServer_create	cpServer.c	/^int cpServer_create()$/;"	f
+cpServer_init	./cpServer.c	111;"	f
+cpServer_init	cpServer.c	/^void cpServer_init(zval *conf, char *ini_file)$/;"	f
+cpServer_init_common	./cpServer.c	26;"	f
+cpServer_init_common	cpServer.c	/^void cpServer_init_common(zval *conf)$/;"	f
+cpServer_init_lock	./cpServer.c	93;"	f	file:
+cpServer_init_lock	cpServer.c	/^static void cpServer_init_lock()$/;"	f	file:
+cpServer_master_onAccept	./cpServer.c	316;"	f	file:
+cpServer_master_onAccept	cpServer.c	/^static int cpServer_master_onAccept(int fd)$/;"	f	file:
+cpServer_start	./cpServer.c	237;"	f
+cpServer_start	cpServer.c	/^int cpServer_start()$/;"	f
+cpSetIsBlock	./cpFunction.c	200;"	f
+cpSetIsBlock	cpFunction.c	/^void cpSetIsBlock(int sock, int block)$/;"	f
+cpSetNonBlock	./cpFunction.c	179;"	f
+cpSetTimeout	./cpFunction.c	233;"	f
+cpSetTimeout	cpFunction.c	/^int cpSetTimeout(int sock, double timeout)$/;"	f
+cpSettitle	./cpFunction.c	139;"	f
+cpSettitle	cpFunction.c	/^void cpSettitle(char *title_name)$/;"	f
+cpShareMemory	./include/cpMemory.h	22;"	t	typeref:struct:_cpShareMemory
+cpSignalFunc	./include/cpFunction.h	60;"	t
+cpSignalFunc	include/cpFunction.h	/^    typedef void (*cpSignalFunc)(int);$/;"	t
+cpSignalHanlde	./cpServer.c	686;"	f	file:
+cpSignalHanlde	cpServer.c	/^static void cpSignalHanlde(int sig)$/;"	f	file:
+cpSignalInit	./cpServer.c	778;"	f	file:
+cpSignalInit	cpServer.c	/^void static cpSignalInit(void)$/;"	f	file:
+cpSignalSet	./cpFunction.c	365;"	f
+cpSignalSet	cpFunction.c	/^cpSignalFunc cpSignalSet(int sig, cpSignalFunc func, int restart, int mask)$/;"	f
+cpTcpEvent	./include/cpMemory.h	37;"	t	typeref:struct:_cpTcpEvent
+cpThread	./include/cpServer.h	146;"	t	typeref:struct:_cpThread
+cpThread	include/cpServer.h	/^    } cpThread;$/;"	t	typeref:struct:_cpThread
+cpWorker	./include/cpWorker.h	30;"	t	typeref:struct:_cpWorker
+cpWorkerG	./include/cpServer.h	217;"	t	typeref:struct:_cpWorkerG
+cpWorkerG	include/cpServer.h	/^    } cpWorkerG;$/;"	t	typeref:struct:_cpWorkerG
+cpWorkerInfo	./include/cpMemory.h	32;"	t	typeref:struct:_cpWorkerInfo
+cpWorker_attach_mem	./cpWorker.c	368;"	f
+cpWorker_attach_mem	cpWorker.c	/^CPINLINE int cpWorker_attach_mem(int worker_id, int group_id)$/;"	f
+cpWorker_do_ping	./cpWorker.c	380;"	f
+cpWorker_do_ping	cpWorker.c	/^void cpWorker_do_ping()$/;"	f
+cpWorker_do_stop	./cpWorker.c	22;"	f	file:
+cpWorker_do_stop	cpWorker.c	/^static void cpWorker_do_stop()$/;"	f	file:
+cpWorker_init	./cpWorker.c	36;"	f	file:
+cpWorker_init	cpWorker.c	/^static void cpWorker_init(int worker_id, int group_id)$/;"	f	file:
+cpWorker_loop	./cpWorker.c	55;"	f	file:
+cpWorker_loop	cpWorker.c	/^static int cpWorker_loop(int worker_id, int group_id)$/;"	f	file:
+cpWorker_manager_loop	./cpWorker.c	310;"	f
+cpWorker_manager_loop	cpWorker.c	/^int cpWorker_manager_loop()$/;"	f
+cpWrite	./cpFunction.c	61;"	f
+cpWrite	cpFunction.c	/^int cpWrite(int fd, void *buf, int count)$/;"	f
+cp_add_assoc_string	./include/php7_wrapper.h	11;"	d
+cp_add_assoc_string	./include/php7_wrapper.h	261;"	d
+cp_add_assoc_stringl	./include/php7_wrapper.h	193;"	d
+cp_add_assoc_stringl	./include/php7_wrapper.h	65;"	d
+cp_add_assoc_stringl_ex	./include/php7_wrapper.h	195;"	f
+cp_add_assoc_stringl_ex	./include/php7_wrapper.h	64;"	d
+cp_add_fail_into_mem	./connect_pool.c	923;"	f	file:
+cp_add_index_string	./include/php7_wrapper.h	12;"	d
+cp_add_index_string	./include/php7_wrapper.h	262;"	d
+cp_call_user_function_ex	./include/php7_wrapper.h	233;"	f
+cp_call_user_function_ex	./include/php7_wrapper.h	63;"	d
+cp_convert_to_string_ex	./include/php7_wrapper.h	13;"	d
+cp_convert_to_string_ex	./include/php7_wrapper.h	219;"	d
+cp_create_mmap_file	./cpMemory.c	58;"	f
+cp_destory_client	./connect_pool.c	280;"	f	file:
+cp_error	./cpFunction.c	24;"	v
+cp_error	cpFunction.c	/^int cp_error;$/;"	v
+cp_explode	./include/php7_wrapper.h	358;"	f
+cp_explode	./include/php7_wrapper.h	70;"	d
+cp_functions	./connect_pool.c	65;"	v
+cp_internal_call_user_function	./include/php7_wrapper.h	154;"	f
+cp_internal_call_user_function	./include/php7_wrapper.h	375;"	f
+cp_log_fn	./cpFunction.c	25;"	v
+cp_log_fn	cpFunction.c	/^FILE *cp_log_fn = NULL;$/;"	v
+cp_mmap_calloc	./cpMemory.c	19;"	f
+cp_mmap_calloc_with_file	./cpMemory.c	73;"	f
+cp_php_var_serialize	./include/php7_wrapper.h	126;"	d
+cp_php_var_serialize	./include/php7_wrapper.h	179;"	d
+cp_php_var_unserialize	./include/php7_wrapper.h	246;"	d
+cp_php_var_unserialize	./include/php7_wrapper.h	61;"	d
+cp_redis_select	./connect_pool.c	704;"	f	file:
+cp_ser_and_setdis	./cpFunction.c	353;"	f
+cp_ser_and_setdis	cpFunction.c	/^void cp_ser_and_setdis(zval *arr)$/;"	f
+cp_ser_and_setpro	./cpFunction.c	341;"	f
+cp_ser_and_setpro	cpFunction.c	/^void cp_ser_and_setpro(zval *arr)$/;"	f
+cp_serialize	./cpFunction.c	313;"	f
+cp_serialize	cpFunction.c	/^void cp_serialize(smart_str *ser_data, zval *array)$/;"	f
+cp_smart_str	./include/php7_wrapper.h	272;"	d
+cp_smart_str	./include/php7_wrapper.h	60;"	d
+cp_strndup	./include/php7_wrapper.h	226;"	d
+cp_strndup	./include/php7_wrapper.h	68;"	d
+cp_system_random	./connect_pool_client.c	516;"	f
+cp_system_random	connect_pool_client.c	/^int cp_system_random(int min, int max)$/;"	f
+cp_unserialize	./cpFunction.c	328;"	f
+cp_unserialize	cpFunction.c	/^zval * cp_unserialize(char *data, int len)$/;"	f
+cp_zend_call_method_with_0_params	./include/php7_wrapper.h	266;"	d
+cp_zend_call_method_with_0_params	./include/php7_wrapper.h	74;"	d
+cp_zend_call_method_with_1_params	./include/php7_wrapper.h	267;"	d
+cp_zend_call_method_with_1_params	./include/php7_wrapper.h	75;"	d
+cp_zend_call_method_with_2_params	./include/php7_wrapper.h	76;"	d
+cp_zend_fetch_class	./include/php7_wrapper.h	191;"	d
+cp_zend_fetch_class	./include/php7_wrapper.h	72;"	d
+cp_zend_hash_add	./include/php7_wrapper.h	292;"	f
+cp_zend_hash_add	./include/php7_wrapper.h	44;"	d
+cp_zend_hash_copy	./include/php7_wrapper.h	263;"	d
+cp_zend_hash_copy	./include/php7_wrapper.h	46;"	d
+cp_zend_hash_del	./include/php7_wrapper.h	288;"	f
+cp_zend_hash_del	./include/php7_wrapper.h	42;"	d
+cp_zend_hash_exists	./include/php7_wrapper.h	346;"	f
+cp_zend_hash_exists	./include/php7_wrapper.h	47;"	d
+cp_zend_hash_find	./include/php7_wrapper.h	15;"	f
+cp_zend_hash_find	./include/php7_wrapper.h	314;"	f
+cp_zend_hash_find_ptr	./include/php7_wrapper.h	173;"	f
+cp_zend_hash_find_ptr	./include/php7_wrapper.h	325;"	f
+cp_zend_hash_get_current_key	./include/php7_wrapper.h	306;"	f
+cp_zend_hash_get_current_key	./include/php7_wrapper.h	48;"	d
+cp_zend_hash_index_find	./include/php7_wrapper.h	26;"	f
+cp_zend_hash_index_find	./include/php7_wrapper.h	335;"	f
+cp_zend_hash_index_update	./include/php7_wrapper.h	297;"	f
+cp_zend_hash_index_update	./include/php7_wrapper.h	45;"	d
+cp_zend_hash_update	./include/php7_wrapper.h	302;"	f
+cp_zend_hash_update	./include/php7_wrapper.h	43;"	d
+cp_zend_is_callable	./include/php7_wrapper.h	279;"	f
+cp_zend_is_callable	./include/php7_wrapper.h	62;"	d
+cp_zend_read_property	./include/php7_wrapper.h	274;"	f
+cp_zend_read_property	./include/php7_wrapper.h	50;"	d
+cp_zend_register_internal_class_ex	./include/php7_wrapper.h	264;"	d
+cp_zend_register_internal_class_ex	./include/php7_wrapper.h	71;"	d
+cp_zval_add_ref	./include/php7_wrapper.h	230;"	d
+cp_zval_add_ref	./include/php7_wrapper.h	67;"	d
+cp_zval_ptr_dtor	./include/php7_wrapper.h	231;"	d
+cp_zval_ptr_dtor	./include/php7_wrapper.h	66;"	d
+create_pass_data	./connect_pool_client.c	543;"	f	file:
+create_pass_data	connect_pool_client.c	/^static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, char* cur_type, zval** pass_data)$/;"	f	file:
+current	./frame_example/yii1/db/CDbDataReader.php	87;"	f
+cwd	./run-tests.php	103;"	v
+daemonize	./include/cpServer.h	126;"	m	struct:_cpConfig
+daemonize	include/cpServer.h	/^        uint8_t daemonize;$/;"	m	struct:_cpConfig
+data	./frame_example/yii1/db/CDbDataReader.php	24;"	v
+data	./frame_example/yii1/db/CDbDataReader.php	32;"	v
+data	./frame_example/yii1/db/CDbDataReader.php	40;"	v
+data	./frame_example/yii1/db/CDbDataReader.php	48;"	v
+data	./frame_example/yii1/db/CDbDataReader.php	73;"	v
+data	./frame_example/yii1/db/CDbDataReader.php	81;"	v
+data	./include/cpMemory.h	36;"	m	struct:_cpTcpEvent
+data	./mp/msgpack_unpack.c	22;"	m	struct:__anon5	file:
+data	./mp7/msgpack_unpack.c	14;"	m	struct:__anon15	file:
+data	./msgpack/msgpack_unpack.c	22;"	m	struct:__anon23	file:
+data	./msgpack7/msgpack_unpack.c	13;"	m	struct:__anon33	file:
+data	./msgpack7/test_normal.php	5;"	v
+data	./run-tests.php	1032;"	v
+data	./run-tests.php	1107;"	v
+data	msgpack7/msgpack_unpack.c	/^    zval data[VAR_ENTRIES_MAX];$/;"	m	struct:__anon1	file:
+data_length	./run-tests.php	1033;"	v
+default_max	./include/cpServer.h	205;"	m	struct:_cpServerGS
+default_max	include/cpServer.h	/^        int default_max;$/;"	m	struct:_cpServerGS
+default_min	./include/cpServer.h	204;"	m	struct:_cpServerGS
+default_min	include/cpServer.h	/^        int default_min;$/;"	m	struct:_cpServerGS
+deps	./mp/msgpack_unpack.h	23;"	m	struct:__anon7
+deps	./mp7/msgpack_unpack.h	23;"	m	struct:__anon17
+deps	./msgpack/msgpack_unpack.h	23;"	m	struct:__anon25
+deps	./msgpack7/msgpack_unpack.h	23;"	m	struct:__anon35
+dev_random_fd	./connect_pool_client.c	32;"	v	file:
+dev_random_fd	connect_pool_client.c	/^static int dev_random_fd = -1;$/;"	v	file:
+diff	./run-tests.php	2180;"	v
+diff	./run-tests.php	2182;"	v
+diff	./run-tests.php	2227;"	v
+diff	./run-tests.php	2289;"	v
+diff	./run-tests.php	2357;"	v
+diff	./run-tests.php	2694;"	v
+diff	./run-tests.php	2696;"	v
+diff_filename	./run-tests.php	1457;"	v
+dummy_source_index	connect_pool_client.c	/^static uint16_t dummy_source_index = 0; \/\/for multi async fun and the same source$/;"	v	file:
+e	./run-tests.php	1136;"	v
+e	./run-tests.php	1532;"	v
+end	./msgpack7/benchmark.php	102;"	v
+end	./msgpack7/benchmark.php	125;"	v
+end	./msgpack7/benchmark.php	133;"	v
+end	./msgpack7/benchmark.php	156;"	v
+end	./msgpack7/benchmark.php	164;"	v
+end	./msgpack7/benchmark.php	183;"	v
+end	./msgpack7/benchmark.php	191;"	v
+end	./msgpack7/benchmark.php	94;"	v
+end	./run-tests.php	2027;"	v
+end	./run-tests.php	2030;"	v
+end_time	./run-tests.php	842;"	v
+end_time	./run-tests.php	979;"	v
+env	./run-tests.php	1103;"	v
+environment	./run-tests.php	133;"	v
+epfd	./include/cpServer.h	143;"	m	struct:_cpThread
+epfd	./include/cpServer.h	156;"	m	struct:_cpServerG
+epfd	include/cpServer.h	/^        int epfd;$/;"	m	struct:_cpServerG
+epfd	include/cpServer.h	/^        int epfd;$/;"	m	struct:_cpThread
+epoll_wait_handle	./include/cpNetWork.h	32;"	t
+eq	./run-tests.php	2258;"	v
+eq	./run-tests.php	2269;"	v
+eq1	./run-tests.php	2254;"	v
+eq1	./run-tests.php	2261;"	v
+eq2	./run-tests.php	2265;"	v
+eq2	./run-tests.php	2271;"	v
+equal	./run-tests.php	2245;"	v
+error	./mp/msgpack_class.c	24;"	m	struct:__anon4	file:
+error	./mp7/msgpack_class.c	23;"	m	struct:__anon14	file:
+error	./msgpack/msgpack_class.c	24;"	m	struct:__anon22	file:
+error	./msgpack7/msgpack_class.c	23;"	m	struct:__anon32	file:
+error	./run-tests.php	2362;"	f
+errorInfo	./frame_example/yii1/db/CDbCommand.php	123;"	v
+errorInfo	./frame_example/yii1/db/CDbCommand.php	40;"	v
+error_display	./mp/php_msgpack.h	29;"	v
+error_display	./mp7/php_msgpack.h	31;"	v
+error_display	./msgpack/php_msgpack.h	29;"	v
+error_display	./msgpack7/php_msgpack.h	24;"	v
+error_report	./run-tests.php	1086;"	f
+escaped_details	./run-tests.php	2805;"	v
+escaped_details	./run-tests.php	2806;"	v
+escaped_message	./run-tests.php	2809;"	v
+escaped_test_name	./run-tests.php	2811;"	v
+event	./include/cpServer.h	216;"	m	struct:_cpWorkerG
+event	include/cpServer.h	/^        cpWorkerInfo event;$/;"	m	struct:_cpWorkerG
+event_num	./include/cpServer.h	145;"	m	struct:_cpThread
+event_num	include/cpServer.h	/^        uint16_t event_num;$/;"	m	struct:_cpThread
+exceed	./mp/php_msgpack.h	8;"	m	struct:_instead_smart
+exceed	./mp7/php_msgpack.h	9;"	m	struct:_instead_smart
+exceed	./msgpack/php_msgpack.h	8;"	m	struct:_instead_smart
+exec_prefix	./Makefile	21;"	m
+execute	./frame_example/yii1/db/CDbCommand.php	4;"	f
+exp_filename	./run-tests.php	1459;"	v
+ext	./run-tests.php	321;"	v
+ext_dir	./run-tests.php	1545;"	v
+extensions	./run-tests.php	1546;"	v
+extra	./run-tests.php	1579;"	v
+extra	./run-tests.php	1923;"	v
+extra	./run-tests.php	2661;"	v
+extra	./run-tests.php	2682;"	v
+extra	./run-tests.php	2686;"	v
+extra	./run-tests.php	2689;"	v
+exts_skipped	./run-tests.php	883;"	v
+exts_tested	./run-tests.php	882;"	v
+exts_to_test	./run-tests.php	239;"	v
+exts_to_test	./run-tests.php	311;"	v
+failed_headers	./run-tests.php	1966;"	v
+failed_headers	./run-tests.php	1993;"	v
+failed_test_summary	./run-tests.php	2508;"	v
+failed_tests_data	./run-tests.php	394;"	v
+failed_tests_file	./run-tests.php	487;"	v
+failed_tests_file	./run-tests.php	586;"	v
+failed_tests_file	./run-tests.php	589;"	v
+fd	./include/cpNetWork.h	35;"	m	struct:_cpFd
+fd	./include/cpServer.h	92;"	m	struct:_cpConnection
+fd	./include/cpWorker.h	24;"	m	struct:_cpWorker
+fd	include/cpServer.h	/^        int fd;$/;"	m	struct:_cpConnection
+fdtype	./include/cpNetWork.h	36;"	m	struct:_cpFd
+file	./run-tests.php	1243;"	v
+file	./run-tests.php	1703;"	v
+filename_copy	./run-tests.php	1061;"	v
+find_files	./run-tests.php	908;"	f
+finished	./mp/msgpack_class.c	23;"	m	struct:__anon4	file:
+finished	./mp7/msgpack_class.c	22;"	m	struct:__anon14	file:
+finished	./msgpack/msgpack_class.c	23;"	m	struct:__anon22	file:
+finished	./msgpack7/msgpack_class.c	22;"	m	struct:__anon32	file:
+first_wait_id	./include/cpServer.h	168;"	m	struct:_cpGroup
+first_wait_id	include/cpServer.h	/^        int first_wait_id; \/\/server fd$/;"	m	struct:_cpGroup
+flags	./run-tests.php	434;"	v
+for	./frame_example/yii1/db/CDbConnection.php	4;"	f
+fp	./run-tests.php	1254;"	v
+fp	./run-tests.php	356;"	v
+fpm_pid	./include/cpServer.h	103;"	m	struct:_cpConnection
+fpm_pid	include/cpServer.h	/^        int fpm_pid; \/\/连接对应的fpm$/;"	m	struct:_cpConnection
+fs	./run-tests.php	1035;"	v
+func_extract_an_archive	./libtool	665;"	f
+func_extract_an_archive	./ltmain.sh	312;"	f
+func_extract_archives	./libtool	681;"	f
+func_extract_archives	./ltmain.sh	328;"	f
+func_infer_tag	./libtool	604;"	f
+func_infer_tag	./ltmain.sh	251;"	f
+func_mktempdir	./libtool	519;"	f
+func_mktempdir	./ltmain.sh	166;"	f
+func_win32_libid	./libtool	558;"	f
+func_win32_libid	./ltmain.sh	205;"	f
+function	./msgpack7/msgpack.php	14;"	v
+functions	./msgpack7/msgpack.php	8;"	v
+generate_array_diff	./run-tests.php	2285;"	f
+generate_diff	./run-tests.php	2352;"	f
+getColumnCount	./frame_example/yii1/db/CDbDataReader.php	79;"	f
+getRowCount	./frame_example/yii1/db/CDbDataReader.php	71;"	f
+getSize	./msgpack7/bench/bench.php	12;"	f
+get_attach_buf	./connect_pool_client.c	222;"	f	file:
+get_attach_buf	connect_pool_client.c	/^static void* get_attach_buf(int worker_id, int max, char *mm_name)$/;"	f	file:
+get_readfd	./connect_pool_client.c	193;"	f	file:
+get_readfd	connect_pool_client.c	/^static int get_readfd(int worker_id)$/;"	f	file:
+get_summary	./run-tests.php	2450;"	f
+get_writefd	./connect_pool_client.c	164;"	f	file:
+get_writefd	connect_pool_client.c	/^static int get_writefd(int worker_id)$/;"	f	file:
+gid	./include/cpServer.h	210;"	m	struct:_cpWorkerG
+gid	include/cpServer.h	/^        int gid; \/\/current worker's group id$/;"	m	struct:_cpWorkerG
+group	./include/cpServer.h	196;"	m	struct:_cpServerGS
+group	include/cpServer.h	/^        zval* group;$/;"	m	struct:_cpServerGS
+group_id	./include/cpServer.h	94;"	m	struct:_cpConnection
+group_id	include/cpServer.h	/^        uint16_t group_id; \/\/0 1 2 3 $/;"	m	struct:_cpConnection
+group_num	./include/cpServer.h	197;"	m	struct:_cpServerGS
+group_num	include/cpServer.h	/^        int group_num;$/;"	m	struct:_cpServerGS
+headers	./run-tests.php	1951;"	v
+headers	./run-tests.php	1956;"	v
+headers	./run-tests.php	1982;"	v
+headers	./run-tests.php	1988;"	v
+host	./run-tests.php	1021;"	v
+host	./run-tests.php	1028;"	v
+html_file	./run-tests.php	501;"	v
+html_file	./run-tests.php	695;"	v
+html_output	./run-tests.php	500;"	v
+html_output	./run-tests.php	696;"	v
+id	./include/cpServer.h	142;"	m	struct:_cpThread
+id	./include/cpServer.h	161;"	m	struct:_cpGroup
+id	./include/cpServer.h	209;"	m	struct:_cpWorkerG
+id	include/cpServer.h	/^        int id; \/\/0.1.2.3$/;"	m	struct:_cpThread
+id	include/cpServer.h	/^        int id; \/\/Current Proccess Worker's id 0,1,2,3...n$/;"	m	struct:_cpWorkerG
+id	include/cpServer.h	/^        int id; \/\/Current worker group  id 0,1,2,3...n$/;"	m	struct:_cpGroup
+idel_time	./include/cpServer.h	124;"	m	struct:_cpConfig
+idel_time	include/cpServer.h	/^        uint8_t idel_time;$/;"	m	struct:_cpConfig
+idx1	./run-tests.php	2287;"	v
+idx2	./run-tests.php	2288;"	v
+igbinary_pack	./msgpack7/benchmark.php	74;"	v
+igbinary_size	./msgpack7/benchmark.php	76;"	v
+igbinary_status	./msgpack7/benchmark.php	171;"	v
+igbinary_status	./msgpack7/benchmark.php	77;"	v
+igbinary_unpack	./msgpack7/benchmark.php	75;"	v
+ignored_by_ext	./run-tests.php	884;"	v
+illegal_key_insert	./mp/php_msgpack.h	31;"	v
+illegal_key_insert	./mp7/php_msgpack.h	33;"	v
+illegal_key_insert	./msgpack/php_msgpack.h	31;"	v
+illegal_key_insert	./msgpack7/php_msgpack.h	26;"	v
+index	./run-tests.php	1177;"	v
+index	./run-tests.php	1183;"	v
+index	./run-tests.php	1185;"	v
+info	./include/cpClientNet.h	22;"	m	struct:_cpClient
+info	./run-tests.php	1571;"	v
+info	./run-tests.php	1623;"	v
+info	./run-tests.php	1630;"	v
+info	./run-tests.php	2097;"	v
+info	./run-tests.php	2127;"	v
+info	./run-tests.php	2161;"	v
+info_file	./run-tests.php	275;"	v
+info_params	./run-tests.php	285;"	v
+info_params_ex	./run-tests.php	313;"	v
+ini_file	./include/cpServer.h	136;"	m	struct:_cpConfig
+ini_file	include/cpServer.h	/^        char ini_file[MAX_INI_LENGTH];$/;"	m	struct:_cpConfig
+ini_overwrites	./run-tests.php	240;"	v
+ini_overwrites	./run-tests.php	323;"	v
+ini_settings	./run-tests.php	1541;"	v
+ini_settings	./run-tests.php	2419;"	v
+initReactor_fdtype	./php_connect_pool.h	198;"	f
+install_targets	./Makefile	19;"	m
+instead_smart	./mp/php_msgpack.h	10;"	t	typeref:struct:_instead_smart
+instead_smart	./mp7/php_msgpack.h	11;"	t	typeref:struct:_instead_smart
+instead_smart	./msgpack/php_msgpack.h	10;"	t	typeref:struct:_instead_smart
+int16_t	./mp/msgpack/sysdep.h	26;"	t
+int16_t	./mp/sysdep.h	26;"	t
+int16_t	./mp7/msgpack/sysdep.h	26;"	t
+int16_t	./msgpack/msgpack/sysdep.h	26;"	t
+int16_t	./msgpack/sysdep.h	26;"	t
+int16_t	./msgpack7/msgpack/sysdep.h	26;"	t
+int32_t	./mp/msgpack/sysdep.h	28;"	t
+int32_t	./mp/sysdep.h	28;"	t
+int32_t	./mp7/msgpack/sysdep.h	28;"	t
+int32_t	./msgpack/msgpack/sysdep.h	28;"	t
+int32_t	./msgpack/sysdep.h	28;"	t
+int32_t	./msgpack7/msgpack/sysdep.h	28;"	t
+int64_t	./mp/msgpack/sysdep.h	30;"	t
+int64_t	./mp/sysdep.h	30;"	t
+int64_t	./mp7/msgpack/sysdep.h	30;"	t
+int64_t	./msgpack/msgpack/sysdep.h	30;"	t
+int64_t	./msgpack/sysdep.h	30;"	t
+int64_t	./msgpack7/msgpack/sysdep.h	30;"	t
+int8_t	./mp/msgpack/sysdep.h	24;"	t
+int8_t	./mp/sysdep.h	24;"	t
+int8_t	./mp7/msgpack/sysdep.h	24;"	t
+int8_t	./msgpack/msgpack/sysdep.h	24;"	t
+int8_t	./msgpack/sysdep.h	24;"	t
+int8_t	./msgpack7/msgpack/sysdep.h	24;"	t
+isReactor_event_error	./php_connect_pool.h	193;"	f
+isReactor_event_read	./php_connect_pool.h	183;"	f
+isReactor_event_write	./php_connect_pool.h	188;"	f
+is_ext_dir	./run-tests.php	908;"	v
+is_switch	./run-tests.php	533;"	v
+is_switch	./run-tests.php	543;"	v
+is_switch	./run-tests.php	551;"	v
+is_switch	./run-tests.php	560;"	v
+json	./msgpack7/bench/bench.php	46;"	v
+json_pack	./msgpack7/benchmark.php	70;"	v
+json_size	./msgpack7/benchmark.php	72;"	v
+json_status	./msgpack7/benchmark.php	143;"	v
+json_status	./msgpack7/benchmark.php	73;"	v
+json_unpack	./msgpack7/benchmark.php	71;"	v
+jsoned	./msgpack7/bench/bench.php	41;"	v
+junit_enabled	./run-tests.php	2780;"	f
+junit_finish_timer	./run-tests.php	2906;"	f
+junit_get_suite_xml	./run-tests.php	2753;"	f
+junit_get_suitename_for	./run-tests.php	2876;"	f
+junit_get_timer	./run-tests.php	2852;"	f
+junit_init	./run-tests.php	2717;"	f
+junit_init_suite	./run-tests.php	2885;"	f
+junit_mark_test_as	./run-tests.php	2794;"	f
+junit_path_to_classname	./run-tests.php	2880;"	f
+junit_save_xml	./run-tests.php	2742;"	f
+junit_start_timer	./run-tests.php	2863;"	f
+junit_suite_record	./run-tests.php	2845;"	f
+just_save_results	./run-tests.php	369;"	v
+just_save_results	./run-tests.php	498;"	v
+just_save_results	./run-tests.php	654;"	v
+k	./run-tests.php	1985;"	v
+k1	./run-tests.php	2317;"	v
+k1	./run-tests.php	2325;"	v
+k1	./run-tests.php	2326;"	v
+k1	./run-tests.php	2333;"	v
+k2	./run-tests.php	2318;"	v
+k2	./run-tests.php	2322;"	v
+k2	./run-tests.php	2329;"	v
+k2	./run-tests.php	2337;"	v
+key	./run-tests.php	1110;"	v
+key	./run-tests.php	1338;"	v
+key	./run-tests.php	896;"	v
+l1	./run-tests.php	2323;"	v
+l1	./run-tests.php	2331;"	v
+l2	./run-tests.php	2327;"	v
+l2	./run-tests.php	2335;"	v
+last	./run-tests.php	2306;"	v
+last	./run-tests.php	2309;"	v
+last_from_id	./include/cpWorker.h	18;"	m	struct:_cpWorker
+last_wait_id	./include/cpServer.h	169;"	m	struct:_cpGroup
+last_wait_id	include/cpServer.h	/^        int last_wait_id; \/\/server fd$/;"	m	struct:_cpGroup
+ldd	./run-tests.php	413;"	v
+ldd	./run-tests.php	445;"	v
+le_cli_connect_pool	./connect_pool.c	178;"	v
+le_cp_server	./connect_pool.c	177;"	v
+leak_check	./run-tests.php	499;"	v
+leak_check	./run-tests.php	608;"	v
+leaked	./run-tests.php	1936;"	v
+leaked	./run-tests.php	1940;"	v
+len	./include/cpMemory.h	29;"	m	struct:_cpWorkerInfo
+len	./mp/php_msgpack.h	6;"	m	struct:_instead_smart
+len	./mp7/php_msgpack.h	7;"	m	struct:_instead_smart
+len	./msgpack/php_msgpack.h	6;"	m	struct:_instead_smart
+len	./run-tests.php	2405;"	v
+length	./run-tests.php	2022;"	v
+level	./mp/php_msgpack.h	34;"	m	struct:__anon8
+level	./mp7/php_msgpack.h	37;"	m	struct:__anon18
+level	./msgpack/php_msgpack.h	34;"	m	struct:__anon26
+level	./msgpack7/php_msgpack.h	30;"	m	struct:__anon36
+libdir	./Makefile	22;"	m
+libtool	./run-tests.php	424;"	v
+line	./run-tests.php	1148;"	v
+line	./run-tests.php	1260;"	v
+line	./run-tests.php	1280;"	v
+line	./run-tests.php	1960;"	v
+line	./run-tests.php	1975;"	v
+line_length	./run-tests.php	2656;"	v
+lines	./run-tests.php	1971;"	v
+loaded	./run-tests.php	1547;"	v
+lock	./include/cpClientNet.h	25;"	m	struct:_cpClient
+lock	./include/cpServer.h	174;"	m	struct:_cpGroup
+lock	include/cpServer.h	/^        int (*lock)(struct _cpGroup *);$/;"	m	struct:_cpGroup
+log_end	cpClientNet.c	/^void log_end(cpClient* cli)$/;"	f
+log_file	./include/cpServer.h	137;"	m	struct:_cpConfig
+log_file	include/cpServer.h	/^        char log_file[128]; \/\/日志文件$/;"	m	struct:_cpConfig
+log_filename	./run-tests.php	1458;"	v
+log_format	./run-tests.php	212;"	v
+log_format	./run-tests.php	214;"	v
+log_increase_size	cpClientNet.c	/^void log_increase_size(int size, cpClient* cli)$/;"	f
+log_process	cpClientNet.c	/^static void log_process(zval *send_data, smart_str *buffer)$/;"	f	file:
+log_start	cpClientNet.c	/^void log_start(cpClient* cli)$/;"	f
+log_write	cpClientNet.c	/^void log_write(zval *send_data, cpClient* cli)$/;"	f
+logname	./run-tests.php	1089;"	v
+loop	./msgpack7/benchmark.php	2;"	v
+mail_qa_team	./run-tests.php	1014;"	f
+main	./config.guess	555;"	f
+main	./config.guess	702;"	f
+main_file_name	./run-tests.php	1455;"	v
+manager_pid	./connect_pool_client.c	31;"	v	file:
+manager_pid	./include/cpServer.h	181;"	m	struct:_cpServerGS
+manager_pid	connect_pool_client.c	/^static int manager_pid = 0;$/;"	v	file:
+manager_pid	include/cpServer.h	/^        pid_t manager_pid;$/;"	m	struct:_cpServerGS
+master_pid	./include/cpServer.h	180;"	m	struct:_cpServerGS
+master_pid	include/cpServer.h	/^        pid_t master_pid;$/;"	m	struct:_cpServerGS
+matches	./run-tests.php	572;"	v
+max	./mp/msgpack/sysdep.h	57;"	d
+max	./mp/php_msgpack.h	7;"	m	struct:_instead_smart
+max	./mp/sysdep.h	57;"	d
+max	./mp7/msgpack/sysdep.h	57;"	d
+max	./mp7/php_msgpack.h	8;"	m	struct:_instead_smart
+max	./msgpack/msgpack/sysdep.h	57;"	d
+max	./msgpack/php_msgpack.h	7;"	m	struct:_instead_smart
+max	./msgpack/sysdep.h	57;"	d
+max	./msgpack7/msgpack/sysdep.h	57;"	d
+max_buffer_len	./include/cpServer.h	198;"	m	struct:_cpServerGS
+max_buffer_len	include/cpServer.h	/^        int max_buffer_len;$/;"	m	struct:_cpServerGS
+max_conn	./include/cpServer.h	131;"	m	struct:_cpConfig
+max_conn	include/cpServer.h	/^        int max_conn;$/;"	m	struct:_cpConfig
+max_fail_num	./include/cpServer.h	122;"	m	struct:_cpConfig
+max_fail_num	include/cpServer.h	/^        uint16_t max_fail_num;$/;"	m	struct:_cpConfig
+max_read_len	./include/cpServer.h	129;"	m	struct:_cpConfig
+max_read_len	./include/cpServer.h	213;"	m	struct:_cpWorkerG
+max_read_len	include/cpServer.h	/^        uint64_t max_read_len;$/;"	m	struct:_cpConfig
+max_read_len	include/cpServer.h	/^        uint64_t max_read_len;$/;"	m	struct:_cpWorkerG
+max_request	./include/cpServer.h	134;"	m	struct:_cpConfig
+max_request	include/cpServer.h	/^        int max_request;$/;"	m	struct:_cpConfig
+mem	./include/cpMemory.h	21;"	m	struct:_cpShareMemory
+mem	./run-tests.php	2701;"	v
+mem	./run-tests.php	2703;"	v
+memcheck_filename	./run-tests.php	1461;"	v
+message	./frame_example/yii1/db/CDbCommand.php	124;"	v
+message	./frame_example/yii1/db/CDbCommand.php	41;"	v
+message	./run-tests.php	1616;"	v
+message	./run-tests.php	1640;"	v
+min	./mp/msgpack/sysdep.h	60;"	d
+min	./mp/sysdep.h	60;"	d
+min	./mp7/msgpack/sysdep.h	60;"	d
+min	./msgpack/msgpack/sysdep.h	60;"	d
+min	./msgpack/sysdep.h	60;"	d
+min	./msgpack7/msgpack/sysdep.h	60;"	d
+mkinstalldirs	./Makefile	45;"	m
+mmap_name	./include/cpMemory.h	20;"	m	struct:_cpShareMemory
+mode	./frame_example/yii1/db/CDbCommand.php	102;"	v
+module	./msgpack7/msgpack.php	7;"	v
+mp	./mp/msgpack_class.c	20;"	m	struct:__anon4	file:
+mp	./mp7/msgpack_class.c	19;"	m	struct:__anon14	file:
+mp	./msgpack/msgpack_class.c	20;"	m	struct:__anon22	file:
+mp	./msgpack7/msgpack_class.c	19;"	m	struct:__anon32	file:
+msg	./msgpack7/test_normal.php	9;"	v
+msg	./msgpack7/test_streaming.php	16;"	v
+msgpack	./msgpack7/msgpack.c	54;"	v
+msgpack_base_fetch_object	./mp7/msgpack_class.c	27;"	f	file:
+msgpack_base_fetch_object	./msgpack7/msgpack_class.c	27;"	f	file:
+msgpack_base_methods	./mp/msgpack_class.c	106;"	v	file:
+msgpack_base_methods	./mp7/msgpack_class.c	68;"	v	file:
+msgpack_base_methods	./msgpack/msgpack_class.c	106;"	v	file:
+msgpack_base_methods	./msgpack7/msgpack_class.c	68;"	v	file:
+msgpack_ce	./mp/msgpack_class.c	77;"	v	file:
+msgpack_ce	./mp7/msgpack_class.c	38;"	v	file:
+msgpack_ce	./msgpack/msgpack_class.c	77;"	v	file:
+msgpack_ce	./msgpack7/msgpack_class.c	38;"	v	file:
+msgpack_check_ht_is_map	./mp/msgpack_pack.c	38;"	f	file:
+msgpack_check_ht_is_map	./mp7/msgpack_pack.c	32;"	f	file:
+msgpack_check_ht_is_map	./msgpack/msgpack_pack.c	38;"	f	file:
+msgpack_check_ht_is_map	./msgpack7/msgpack_pack.c	23;"	f	file:
+msgpack_container_type	./mp/msgpack/unpack_define.h	85;"	t	typeref:enum:__anon2
+msgpack_container_type	./mp/unpack_define.h	85;"	t	typeref:enum:__anon10
+msgpack_container_type	./mp7/msgpack/unpack_define.h	88;"	t	typeref:enum:__anon12
+msgpack_container_type	./msgpack/msgpack/unpack_define.h	85;"	t	typeref:enum:__anon20
+msgpack_container_type	./msgpack/unpack_define.h	85;"	t	typeref:enum:__anon28
+msgpack_container_type	./msgpack7/msgpack/unpack_define.h	88;"	t	typeref:enum:__anon30
+msgpack_convert_array	./mp/msgpack_convert.c	173;"	f
+msgpack_convert_array	./mp7/msgpack_convert.c	102;"	f
+msgpack_convert_array	./msgpack/msgpack_convert.c	173;"	f
+msgpack_convert_array	./msgpack7/msgpack_convert.c	102;"	f
+msgpack_convert_long_to_properties	./mp/msgpack_convert.c	37;"	f
+msgpack_convert_long_to_properties	./mp7/msgpack_convert.c	7;"	f	file:
+msgpack_convert_long_to_properties	./msgpack/msgpack_convert.c	37;"	f
+msgpack_convert_long_to_properties	./msgpack7/msgpack_convert.c	7;"	f	file:
+msgpack_convert_object	./mp/msgpack_convert.c	430;"	f
+msgpack_convert_object	./mp7/msgpack_convert.c	250;"	f
+msgpack_convert_object	./msgpack/msgpack_convert.c	430;"	f
+msgpack_convert_object	./msgpack7/msgpack_convert.c	250;"	f
+msgpack_convert_string_to_properties	./mp/msgpack_convert.c	136;"	f
+msgpack_convert_string_to_properties	./mp7/msgpack_convert.c	72;"	f	file:
+msgpack_convert_string_to_properties	./msgpack/msgpack_convert.c	136;"	f
+msgpack_convert_string_to_properties	./msgpack7/msgpack_convert.c	72;"	f	file:
+msgpack_convert_template	./mp/msgpack_convert.c	772;"	f
+msgpack_convert_template	./mp7/msgpack_convert.c	441;"	f
+msgpack_convert_template	./msgpack/msgpack_convert.c	772;"	f
+msgpack_convert_template	./msgpack7/msgpack_convert.c	441;"	f
+msgpack_functions	./mp/msgpack.c	52;"	v	file:
+msgpack_functions	./mp7/msgpack.c	58;"	v	file:
+msgpack_functions	./msgpack/msgpack.c	52;"	v	file:
+msgpack_functions	./msgpack7/msgpack.c	57;"	v	file:
+msgpack_functions	msgpack7/msgpack.c	/^static zend_function_entry msgpack_functions[] = {$/;"	v	file:
+msgpack_handlers	./mp7/msgpack_class.c	39;"	v
+msgpack_handlers	./msgpack7/msgpack_class.c	39;"	v
+msgpack_init_class	./mp7/msgpack_class.c	495;"	f
+msgpack_init_class	./msgpack7/msgpack_class.c	495;"	f
+msgpack_init_globals	./mp/msgpack.c	60;"	f	file:
+msgpack_init_globals	./mp7/msgpack.c	66;"	f	file:
+msgpack_init_globals	./msgpack/msgpack.c	60;"	f	file:
+msgpack_init_globals	./msgpack7/msgpack.c	65;"	f	file:
+msgpack_init_globals	msgpack7/msgpack.c	/^static void msgpack_init_globals(zend_msgpack_globals *msgpack_globals) \/* {{{ *\/$/;"	f	file:
+msgpack_module_entry	./mp/msgpack.c	119;"	v
+msgpack_module_entry	./mp7/msgpack.c	131;"	v
+msgpack_module_entry	./msgpack/msgpack.c	119;"	v
+msgpack_module_entry	./msgpack7/msgpack.c	121;"	v
+msgpack_module_entry	msgpack7/msgpack.c	/^zend_module_entry msgpack_module_entry = {$/;"	v
+msgpack_pack	./msgpack7/benchmark.php	78;"	v
+msgpack_pack_append_buffer	./mp/msgpack/pack_template.h	751;"	d
+msgpack_pack_append_buffer	./mp/msgpack_pack.c	20;"	d	file:
+msgpack_pack_append_buffer	./mp/pack_template.h	751;"	d
+msgpack_pack_append_buffer	./mp7/msgpack/pack_template.h	756;"	d
+msgpack_pack_append_buffer	./mp7/msgpack_pack.c	19;"	d	file:
+msgpack_pack_append_buffer	./msgpack/msgpack/pack_template.h	751;"	d
+msgpack_pack_append_buffer	./msgpack/msgpack_pack.c	20;"	d	file:
+msgpack_pack_append_buffer	./msgpack/pack_template.h	751;"	d
+msgpack_pack_append_buffer	./msgpack7/msgpack/pack_template.h	756;"	d
+msgpack_pack_append_buffer	./msgpack7/msgpack_pack.c	18;"	d	file:
+msgpack_pack_inline_func	./mp/msgpack/pack_template.h	749;"	d
+msgpack_pack_inline_func	./mp/msgpack_pack.c	16;"	d	file:
+msgpack_pack_inline_func	./mp/pack_template.h	749;"	d
+msgpack_pack_inline_func	./mp7/msgpack/pack_template.h	754;"	d
+msgpack_pack_inline_func	./mp7/msgpack_pack.c	15;"	d	file:
+msgpack_pack_inline_func	./msgpack/msgpack/pack_template.h	749;"	d
+msgpack_pack_inline_func	./msgpack/msgpack_pack.c	16;"	d	file:
+msgpack_pack_inline_func	./msgpack/pack_template.h	749;"	d
+msgpack_pack_inline_func	./msgpack7/msgpack/pack_template.h	754;"	d
+msgpack_pack_inline_func	./msgpack7/msgpack_pack.c	14;"	d	file:
+msgpack_pack_inline_func_cint	./mp/msgpack/pack_template.h	626;"	d
+msgpack_pack_inline_func_cint	./mp/msgpack_pack.c	18;"	d	file:
+msgpack_pack_inline_func_cint	./mp/pack_template.h	626;"	d
+msgpack_pack_inline_func_cint	./mp7/msgpack/pack_template.h	626;"	d
+msgpack_pack_inline_func_cint	./mp7/msgpack_pack.c	17;"	d	file:
+msgpack_pack_inline_func_cint	./msgpack/msgpack/pack_template.h	626;"	d
+msgpack_pack_inline_func_cint	./msgpack/msgpack_pack.c	18;"	d	file:
+msgpack_pack_inline_func_cint	./msgpack/pack_template.h	626;"	d
+msgpack_pack_inline_func_cint	./msgpack7/msgpack/pack_template.h	626;"	d
+msgpack_pack_inline_func_cint	./msgpack7/msgpack_pack.c	16;"	d	file:
+msgpack_pack_inline_func_fixint	./mp/msgpack/pack_template.h	331;"	d
+msgpack_pack_inline_func_fixint	./mp/pack_template.h	331;"	d
+msgpack_pack_inline_func_fixint	./mp7/msgpack/pack_template.h	331;"	d
+msgpack_pack_inline_func_fixint	./msgpack/msgpack/pack_template.h	331;"	d
+msgpack_pack_inline_func_fixint	./msgpack/pack_template.h	331;"	d
+msgpack_pack_inline_func_fixint	./msgpack7/msgpack/pack_template.h	331;"	d
+msgpack_pack_real_int16	./mp/msgpack/pack_template.h	146;"	d
+msgpack_pack_real_int16	./mp/msgpack/pack_template.h	763;"	d
+msgpack_pack_real_int16	./mp/pack_template.h	146;"	d
+msgpack_pack_real_int16	./mp/pack_template.h	763;"	d
+msgpack_pack_real_int16	./mp7/msgpack/pack_template.h	146;"	d
+msgpack_pack_real_int16	./mp7/msgpack/pack_template.h	768;"	d
+msgpack_pack_real_int16	./msgpack/msgpack/pack_template.h	146;"	d
+msgpack_pack_real_int16	./msgpack/msgpack/pack_template.h	763;"	d
+msgpack_pack_real_int16	./msgpack/pack_template.h	146;"	d
+msgpack_pack_real_int16	./msgpack/pack_template.h	763;"	d
+msgpack_pack_real_int16	./msgpack7/msgpack/pack_template.h	146;"	d
+msgpack_pack_real_int16	./msgpack7/msgpack/pack_template.h	768;"	d
+msgpack_pack_real_int32	./mp/msgpack/pack_template.h	176;"	d
+msgpack_pack_real_int32	./mp/msgpack/pack_template.h	764;"	d
+msgpack_pack_real_int32	./mp/pack_template.h	176;"	d
+msgpack_pack_real_int32	./mp/pack_template.h	764;"	d
+msgpack_pack_real_int32	./mp7/msgpack/pack_template.h	176;"	d
+msgpack_pack_real_int32	./mp7/msgpack/pack_template.h	769;"	d
+msgpack_pack_real_int32	./msgpack/msgpack/pack_template.h	176;"	d
+msgpack_pack_real_int32	./msgpack/msgpack/pack_template.h	764;"	d
+msgpack_pack_real_int32	./msgpack/pack_template.h	176;"	d
+msgpack_pack_real_int32	./msgpack/pack_template.h	764;"	d
+msgpack_pack_real_int32	./msgpack7/msgpack/pack_template.h	176;"	d
+msgpack_pack_real_int32	./msgpack7/msgpack/pack_template.h	769;"	d
+msgpack_pack_real_int64	./mp/msgpack/pack_template.h	216;"	d
+msgpack_pack_real_int64	./mp/msgpack/pack_template.h	765;"	d
+msgpack_pack_real_int64	./mp/pack_template.h	216;"	d
+msgpack_pack_real_int64	./mp/pack_template.h	765;"	d
+msgpack_pack_real_int64	./mp7/msgpack/pack_template.h	216;"	d
+msgpack_pack_real_int64	./mp7/msgpack/pack_template.h	770;"	d
+msgpack_pack_real_int64	./msgpack/msgpack/pack_template.h	216;"	d
+msgpack_pack_real_int64	./msgpack/msgpack/pack_template.h	765;"	d
+msgpack_pack_real_int64	./msgpack/pack_template.h	216;"	d
+msgpack_pack_real_int64	./msgpack/pack_template.h	765;"	d
+msgpack_pack_real_int64	./msgpack7/msgpack/pack_template.h	216;"	d
+msgpack_pack_real_int64	./msgpack7/msgpack/pack_template.h	770;"	d
+msgpack_pack_real_int8	./mp/msgpack/pack_template.h	134;"	d
+msgpack_pack_real_int8	./mp/msgpack/pack_template.h	762;"	d
+msgpack_pack_real_int8	./mp/pack_template.h	134;"	d
+msgpack_pack_real_int8	./mp/pack_template.h	762;"	d
+msgpack_pack_real_int8	./mp7/msgpack/pack_template.h	134;"	d
+msgpack_pack_real_int8	./mp7/msgpack/pack_template.h	767;"	d
+msgpack_pack_real_int8	./msgpack/msgpack/pack_template.h	134;"	d
+msgpack_pack_real_int8	./msgpack/msgpack/pack_template.h	762;"	d
+msgpack_pack_real_int8	./msgpack/pack_template.h	134;"	d
+msgpack_pack_real_int8	./msgpack/pack_template.h	762;"	d
+msgpack_pack_real_int8	./msgpack7/msgpack/pack_template.h	134;"	d
+msgpack_pack_real_int8	./msgpack7/msgpack/pack_template.h	767;"	d
+msgpack_pack_real_uint16	./mp/msgpack/pack_template.h	60;"	d
+msgpack_pack_real_uint16	./mp/msgpack/pack_template.h	759;"	d
+msgpack_pack_real_uint16	./mp/pack_template.h	60;"	d
+msgpack_pack_real_uint16	./mp/pack_template.h	759;"	d
+msgpack_pack_real_uint16	./mp7/msgpack/pack_template.h	60;"	d
+msgpack_pack_real_uint16	./mp7/msgpack/pack_template.h	764;"	d
+msgpack_pack_real_uint16	./msgpack/msgpack/pack_template.h	60;"	d
+msgpack_pack_real_uint16	./msgpack/msgpack/pack_template.h	759;"	d
+msgpack_pack_real_uint16	./msgpack/pack_template.h	60;"	d
+msgpack_pack_real_uint16	./msgpack/pack_template.h	759;"	d
+msgpack_pack_real_uint16	./msgpack7/msgpack/pack_template.h	60;"	d
+msgpack_pack_real_uint16	./msgpack7/msgpack/pack_template.h	764;"	d
+msgpack_pack_real_uint32	./mp/msgpack/pack_template.h	760;"	d
+msgpack_pack_real_uint32	./mp/msgpack/pack_template.h	77;"	d
+msgpack_pack_real_uint32	./mp/pack_template.h	760;"	d
+msgpack_pack_real_uint32	./mp/pack_template.h	77;"	d
+msgpack_pack_real_uint32	./mp7/msgpack/pack_template.h	765;"	d
+msgpack_pack_real_uint32	./mp7/msgpack/pack_template.h	77;"	d
+msgpack_pack_real_uint32	./msgpack/msgpack/pack_template.h	760;"	d
+msgpack_pack_real_uint32	./msgpack/msgpack/pack_template.h	77;"	d
+msgpack_pack_real_uint32	./msgpack/pack_template.h	760;"	d
+msgpack_pack_real_uint32	./msgpack/pack_template.h	77;"	d
+msgpack_pack_real_uint32	./msgpack7/msgpack/pack_template.h	765;"	d
+msgpack_pack_real_uint32	./msgpack7/msgpack/pack_template.h	77;"	d
+msgpack_pack_real_uint64	./mp/msgpack/pack_template.h	103;"	d
+msgpack_pack_real_uint64	./mp/msgpack/pack_template.h	761;"	d
+msgpack_pack_real_uint64	./mp/pack_template.h	103;"	d
+msgpack_pack_real_uint64	./mp/pack_template.h	761;"	d
+msgpack_pack_real_uint64	./mp7/msgpack/pack_template.h	103;"	d
+msgpack_pack_real_uint64	./mp7/msgpack/pack_template.h	766;"	d
+msgpack_pack_real_uint64	./msgpack/msgpack/pack_template.h	103;"	d
+msgpack_pack_real_uint64	./msgpack/msgpack/pack_template.h	761;"	d
+msgpack_pack_real_uint64	./msgpack/pack_template.h	103;"	d
+msgpack_pack_real_uint64	./msgpack/pack_template.h	761;"	d
+msgpack_pack_real_uint64	./msgpack7/msgpack/pack_template.h	103;"	d
+msgpack_pack_real_uint64	./msgpack7/msgpack/pack_template.h	766;"	d
+msgpack_pack_real_uint8	./mp/msgpack/pack_template.h	48;"	d
+msgpack_pack_real_uint8	./mp/msgpack/pack_template.h	758;"	d
+msgpack_pack_real_uint8	./mp/pack_template.h	48;"	d
+msgpack_pack_real_uint8	./mp/pack_template.h	758;"	d
+msgpack_pack_real_uint8	./mp7/msgpack/pack_template.h	48;"	d
+msgpack_pack_real_uint8	./mp7/msgpack/pack_template.h	763;"	d
+msgpack_pack_real_uint8	./msgpack/msgpack/pack_template.h	48;"	d
+msgpack_pack_real_uint8	./msgpack/msgpack/pack_template.h	758;"	d
+msgpack_pack_real_uint8	./msgpack/pack_template.h	48;"	d
+msgpack_pack_real_uint8	./msgpack/pack_template.h	758;"	d
+msgpack_pack_real_uint8	./msgpack7/msgpack/pack_template.h	48;"	d
+msgpack_pack_real_uint8	./msgpack7/msgpack/pack_template.h	763;"	d
+msgpack_pack_user	./mp/msgpack/pack_template.h	750;"	d
+msgpack_pack_user	./mp/msgpack_pack.c	14;"	d	file:
+msgpack_pack_user	./mp/pack_template.h	750;"	d
+msgpack_pack_user	./mp7/msgpack/pack_template.h	755;"	d
+msgpack_pack_user	./mp7/msgpack_pack.c	14;"	d	file:
+msgpack_pack_user	./msgpack/msgpack/pack_template.h	750;"	d
+msgpack_pack_user	./msgpack/msgpack_pack.c	14;"	d	file:
+msgpack_pack_user	./msgpack/pack_template.h	750;"	d
+msgpack_pack_user	./msgpack7/msgpack/pack_template.h	755;"	d
+msgpack_pack_user	./msgpack7/msgpack_pack.c	13;"	d	file:
+msgpack_serialize_array	./mp/msgpack_pack.c	260;"	f	file:
+msgpack_serialize_array	./mp7/msgpack_pack.c	211;"	f	file:
+msgpack_serialize_array	./msgpack/msgpack_pack.c	260;"	f	file:
+msgpack_serialize_array	./msgpack7/msgpack_pack.c	202;"	f	file:
+msgpack_serialize_class	./mp/msgpack_pack.c	110;"	f	file:
+msgpack_serialize_class	./mp7/msgpack_pack.c	126;"	f	file:
+msgpack_serialize_class	./msgpack/msgpack_pack.c	110;"	f	file:
+msgpack_serialize_class	./msgpack7/msgpack_pack.c	117;"	f	file:
+msgpack_serialize_data_t	./mp/msgpack_pack.h	8;"	t
+msgpack_serialize_data_t	./mp7/msgpack_pack.h	7;"	t
+msgpack_serialize_data_t	./msgpack/msgpack_pack.h	8;"	t
+msgpack_serialize_data_t	./msgpack7/msgpack_pack.h	7;"	t
+msgpack_serialize_object	./mp/msgpack_pack.c	447;"	f	file:
+msgpack_serialize_object	./mp7/msgpack_pack.c	338;"	f	file:
+msgpack_serialize_object	./msgpack/msgpack_pack.c	447;"	f	file:
+msgpack_serialize_object	./msgpack7/msgpack_pack.c	329;"	f	file:
+msgpack_serialize_string	./mp/msgpack_pack.c	102;"	f	file:
+msgpack_serialize_string	./mp7/msgpack_pack.c	120;"	f	file:
+msgpack_serialize_string	./msgpack/msgpack_pack.c	102;"	f	file:
+msgpack_serialize_string	./msgpack7/msgpack_pack.c	111;"	f	file:
+msgpack_serialize_type	./mp/msgpack_pack.h	10;"	g
+msgpack_serialize_type	./mp7/msgpack_pack.h	9;"	g
+msgpack_serialize_type	./msgpack/msgpack_pack.h	10;"	g
+msgpack_serialize_type	./msgpack7/msgpack_pack.h	9;"	g
+msgpack_serialize_var_destroy	./mp/msgpack_unpack.c	298;"	f
+msgpack_serialize_var_destroy	./mp7/msgpack_pack.c	109;"	f
+msgpack_serialize_var_destroy	./msgpack/msgpack_unpack.c	298;"	f
+msgpack_serialize_var_destroy	./msgpack7/msgpack_pack.c	100;"	f
+msgpack_serialize_var_init	./mp/msgpack_unpack.c	284;"	f
+msgpack_serialize_var_init	./mp7/msgpack_pack.c	95;"	f
+msgpack_serialize_var_init	./msgpack/msgpack_unpack.c	284;"	f
+msgpack_serialize_var_init	./msgpack7/msgpack_pack.c	86;"	f
+msgpack_serialize_zval	./mp/msgpack_pack.c	538;"	f
+msgpack_serialize_zval	./mp7/msgpack_pack.c	415;"	f
+msgpack_serialize_zval	./msgpack/msgpack_pack.c	538;"	f
+msgpack_serialize_zval	./msgpack7/msgpack_pack.c	406;"	f
+msgpack_size	./msgpack7/benchmark.php	80;"	v
+msgpack_stack_pop	./mp/msgpack_unpack.c	165;"	f	file:
+msgpack_stack_pop	./mp7/msgpack_unpack.c	156;"	f	file:
+msgpack_stack_pop	./msgpack/msgpack_unpack.c	165;"	f	file:
+msgpack_stack_pop	./msgpack7/msgpack_unpack.c	155;"	f	file:
+msgpack_stack_pop	msgpack7/msgpack_unpack.c	/^static void msgpack_stack_pop(msgpack_unserialize_data_t *var_hashx, zval *v) \/* {{{ *\/ {$/;"	f	file:
+msgpack_stack_push	./mp/msgpack_unpack.c	121;"	f	file:
+msgpack_stack_push	./mp7/msgpack_unpack.c	126;"	f	file:
+msgpack_stack_push	./msgpack/msgpack_unpack.c	121;"	f	file:
+msgpack_stack_push	./msgpack7/msgpack_unpack.c	125;"	f	file:
+msgpack_stack_push	msgpack7/msgpack_unpack.c	/^static zval *msgpack_stack_push(msgpack_unserialize_data_t *var_hashx) \/* {{{ *\/ {$/;"	f	file:
+msgpack_status	./msgpack7/benchmark.php	198;"	v
+msgpack_status	./msgpack7/benchmark.php	81;"	v
+msgpack_unpack	./msgpack7/benchmark.php	79;"	v
+msgpack_unpack_callback	./mp/msgpack/unpack_template.h	399;"	d
+msgpack_unpack_callback	./mp/msgpack_unpack.h	73;"	d
+msgpack_unpack_callback	./mp/unpack_template.h	399;"	d
+msgpack_unpack_callback	./mp7/msgpack/unpack_template.h	418;"	d
+msgpack_unpack_callback	./mp7/msgpack_unpack.h	75;"	d
+msgpack_unpack_callback	./msgpack/msgpack/unpack_template.h	399;"	d
+msgpack_unpack_callback	./msgpack/msgpack_unpack.h	73;"	d
+msgpack_unpack_callback	./msgpack/unpack_template.h	399;"	d
+msgpack_unpack_callback	./msgpack7/msgpack/unpack_template.h	418;"	d
+msgpack_unpack_callback	./msgpack7/msgpack_unpack.h	75;"	d
+msgpack_unpack_func	./mp/msgpack/unpack_template.h	398;"	d
+msgpack_unpack_func	./mp/msgpack/unpack_template.h	70;"	f
+msgpack_unpack_func	./mp/msgpack/unpack_template.h	91;"	f
+msgpack_unpack_func	./mp/msgpack/unpack_template.h	97;"	f
+msgpack_unpack_func	./mp/msgpack_unpack.h	72;"	d
+msgpack_unpack_func	./mp/unpack_template.h	398;"	d
+msgpack_unpack_func	./mp/unpack_template.h	70;"	f
+msgpack_unpack_func	./mp/unpack_template.h	91;"	f
+msgpack_unpack_func	./mp/unpack_template.h	97;"	f
+msgpack_unpack_func	./mp7/msgpack/unpack_template.h	417;"	d
+msgpack_unpack_func	./mp7/msgpack/unpack_template.h	70;"	f
+msgpack_unpack_func	./mp7/msgpack/unpack_template.h	91;"	f
+msgpack_unpack_func	./mp7/msgpack/unpack_template.h	97;"	f
+msgpack_unpack_func	./mp7/msgpack_unpack.h	74;"	d
+msgpack_unpack_func	./msgpack/msgpack/unpack_template.h	398;"	d
+msgpack_unpack_func	./msgpack/msgpack/unpack_template.h	70;"	f
+msgpack_unpack_func	./msgpack/msgpack/unpack_template.h	91;"	f
+msgpack_unpack_func	./msgpack/msgpack/unpack_template.h	97;"	f
+msgpack_unpack_func	./msgpack/msgpack_unpack.h	72;"	d
+msgpack_unpack_func	./msgpack/unpack_template.h	398;"	d
+msgpack_unpack_func	./msgpack/unpack_template.h	70;"	f
+msgpack_unpack_func	./msgpack/unpack_template.h	91;"	f
+msgpack_unpack_func	./msgpack/unpack_template.h	97;"	f
+msgpack_unpack_func	./msgpack7/msgpack/unpack_template.h	417;"	d
+msgpack_unpack_func	./msgpack7/msgpack/unpack_template.h	70;"	f
+msgpack_unpack_func	./msgpack7/msgpack/unpack_template.h	91;"	f
+msgpack_unpack_func	./msgpack7/msgpack/unpack_template.h	97;"	f
+msgpack_unpack_func	./msgpack7/msgpack_unpack.h	74;"	d
+msgpack_unpack_object	./mp/msgpack/unpack_template.h	401;"	d
+msgpack_unpack_object	./mp/msgpack_unpack.h	75;"	d
+msgpack_unpack_object	./mp/unpack_template.h	401;"	d
+msgpack_unpack_object	./mp7/msgpack/unpack_template.h	420;"	d
+msgpack_unpack_object	./mp7/msgpack_unpack.h	77;"	d
+msgpack_unpack_object	./msgpack/msgpack/unpack_template.h	401;"	d
+msgpack_unpack_object	./msgpack/msgpack_unpack.h	75;"	d
+msgpack_unpack_object	./msgpack/unpack_template.h	401;"	d
+msgpack_unpack_object	./msgpack7/msgpack/unpack_template.h	420;"	d
+msgpack_unpack_object	./msgpack7/msgpack_unpack.h	77;"	d
+msgpack_unpack_return	./mp/msgpack_unpack.h	17;"	t	typeref:enum:__anon6
+msgpack_unpack_return	./mp7/msgpack_unpack.h	17;"	t	typeref:enum:__anon16
+msgpack_unpack_return	./msgpack/msgpack_unpack.h	17;"	t	typeref:enum:__anon24
+msgpack_unpack_return	./msgpack7/msgpack_unpack.h	17;"	t	typeref:enum:__anon34
+msgpack_unpack_state	./mp/msgpack/unpack_define.h	78;"	t	typeref:enum:__anon1
+msgpack_unpack_state	./mp/unpack_define.h	78;"	t	typeref:enum:__anon9
+msgpack_unpack_state	./mp7/msgpack/unpack_define.h	81;"	t	typeref:enum:__anon11
+msgpack_unpack_state	./msgpack/msgpack/unpack_define.h	78;"	t	typeref:enum:__anon19
+msgpack_unpack_state	./msgpack/unpack_define.h	78;"	t	typeref:enum:__anon27
+msgpack_unpack_state	./msgpack7/msgpack/unpack_define.h	81;"	t	typeref:enum:__anon29
+msgpack_unpack_struct	./mp/msgpack/unpack_template.h	400;"	d
+msgpack_unpack_struct	./mp/msgpack_unpack.h	71;"	d
+msgpack_unpack_struct	./mp/unpack_template.h	400;"	d
+msgpack_unpack_struct	./mp7/msgpack/unpack_template.h	419;"	d
+msgpack_unpack_struct	./mp7/msgpack_unpack.h	73;"	d
+msgpack_unpack_struct	./msgpack/msgpack/unpack_template.h	400;"	d
+msgpack_unpack_struct	./msgpack/msgpack_unpack.h	71;"	d
+msgpack_unpack_struct	./msgpack/unpack_template.h	400;"	d
+msgpack_unpack_struct	./msgpack7/msgpack/unpack_template.h	419;"	d
+msgpack_unpack_struct	./msgpack7/msgpack_unpack.h	73;"	d
+msgpack_unpack_struct_decl	./mp/msgpack/unpack_template.h	32;"	d
+msgpack_unpack_struct_decl	./mp/msgpack/unpack_template.h	49;"	f
+msgpack_unpack_struct_decl	./mp/msgpack/unpack_template.h	56;"	f
+msgpack_unpack_struct_decl	./mp/unpack_template.h	32;"	d
+msgpack_unpack_struct_decl	./mp/unpack_template.h	49;"	f
+msgpack_unpack_struct_decl	./mp/unpack_template.h	56;"	f
+msgpack_unpack_struct_decl	./mp7/msgpack/unpack_template.h	32;"	d
+msgpack_unpack_struct_decl	./mp7/msgpack/unpack_template.h	49;"	f
+msgpack_unpack_struct_decl	./mp7/msgpack/unpack_template.h	56;"	f
+msgpack_unpack_struct_decl	./msgpack/msgpack/unpack_template.h	32;"	d
+msgpack_unpack_struct_decl	./msgpack/msgpack/unpack_template.h	49;"	f
+msgpack_unpack_struct_decl	./msgpack/msgpack/unpack_template.h	56;"	f
+msgpack_unpack_struct_decl	./msgpack/unpack_template.h	32;"	d
+msgpack_unpack_struct_decl	./msgpack/unpack_template.h	49;"	f
+msgpack_unpack_struct_decl	./msgpack/unpack_template.h	56;"	f
+msgpack_unpack_struct_decl	./msgpack7/msgpack/unpack_template.h	32;"	d
+msgpack_unpack_struct_decl	./msgpack7/msgpack/unpack_template.h	49;"	f
+msgpack_unpack_struct_decl	./msgpack7/msgpack/unpack_template.h	56;"	f
+msgpack_unpack_t	./mp/msgpack_unpack.h	80;"	t	typeref:struct:template_context
+msgpack_unpack_t	./mp7/msgpack_unpack.h	82;"	t	typeref:struct:template_context
+msgpack_unpack_t	./msgpack/msgpack_unpack.h	80;"	t	typeref:struct:template_context
+msgpack_unpack_t	./msgpack7/msgpack_unpack.h	82;"	t	typeref:struct:template_context
+msgpack_unpack_user	./mp/msgpack/unpack_template.h	402;"	d
+msgpack_unpack_user	./mp/msgpack_unpack.h	77;"	d
+msgpack_unpack_user	./mp/unpack_template.h	402;"	d
+msgpack_unpack_user	./mp7/msgpack/unpack_template.h	421;"	d
+msgpack_unpack_user	./mp7/msgpack_unpack.h	79;"	d
+msgpack_unpack_user	./msgpack/msgpack/unpack_template.h	402;"	d
+msgpack_unpack_user	./msgpack/msgpack_unpack.h	77;"	d
+msgpack_unpack_user	./msgpack/unpack_template.h	402;"	d
+msgpack_unpack_user	./msgpack7/msgpack/unpack_template.h	421;"	d
+msgpack_unpack_user	./msgpack7/msgpack_unpack.h	79;"	d
+msgpack_unpacker_ce	./mp/msgpack_class.c	117;"	v	file:
+msgpack_unpacker_ce	./mp7/msgpack_class.c	78;"	v	file:
+msgpack_unpacker_ce	./msgpack/msgpack_class.c	117;"	v	file:
+msgpack_unpacker_ce	./msgpack7/msgpack_class.c	78;"	v	file:
+msgpack_unpacker_fetch_object	./mp7/msgpack_class.c	32;"	f	file:
+msgpack_unpacker_fetch_object	./msgpack7/msgpack_class.c	32;"	f	file:
+msgpack_unpacker_handlers	./mp7/msgpack_class.c	79;"	v
+msgpack_unpacker_handlers	./msgpack7/msgpack_class.c	79;"	v
+msgpack_unpacker_methods	./mp/msgpack_class.c	155;"	v	file:
+msgpack_unpacker_methods	./mp7/msgpack_class.c	117;"	v	file:
+msgpack_unpacker_methods	./msgpack/msgpack_class.c	155;"	v	file:
+msgpack_unpacker_methods	./msgpack7/msgpack_class.c	117;"	v	file:
+msgpack_unserialize_array	./mp/msgpack_unpack.c	510;"	f
+msgpack_unserialize_array	./mp7/msgpack_unpack.c	457;"	f
+msgpack_unserialize_array	./msgpack/msgpack_unpack.c	510;"	f
+msgpack_unserialize_array	./msgpack7/msgpack_unpack.c	456;"	f
+msgpack_unserialize_array	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_array(msgpack_unserialize_data *unpack, unsigned int count, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_array_item	./mp/msgpack_unpack.c	522;"	f
+msgpack_unserialize_array_item	./mp7/msgpack_unpack.c	470;"	f
+msgpack_unserialize_array_item	./msgpack/msgpack_unpack.c	522;"	f
+msgpack_unserialize_array_item	./msgpack7/msgpack_unpack.c	469;"	f
+msgpack_unserialize_array_item	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_array_item(msgpack_unserialize_data *unpack, zval **container, zval *obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_bin	./mp7/msgpack_unpack.c	448;"	f
+msgpack_unserialize_bin	./msgpack7/msgpack_unpack.c	447;"	f
+msgpack_unserialize_bin	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_bin(msgpack_unserialize_data *unpack, const char* base, const char* data, unsigned int len, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_class	./mp/msgpack_unpack.c	197;"	f	file:
+msgpack_unserialize_class	./mp7/msgpack_unpack.c	188;"	f	file:
+msgpack_unserialize_class	./msgpack/msgpack_unpack.c	197;"	f	file:
+msgpack_unserialize_class	./msgpack7/msgpack_unpack.c	187;"	f	file:
+msgpack_unserialize_class	msgpack7/msgpack_unpack.c	/^static zend_class_entry* msgpack_unserialize_class(zval **container, zend_string *class_name, zend_bool init_class) \/* {{{ *\/ {$/;"	f	file:
+msgpack_unserialize_data	./mp/msgpack_unpack.h	27;"	t	typeref:struct:__anon7
+msgpack_unserialize_data	./mp7/msgpack_unpack.h	27;"	t	typeref:struct:__anon17
+msgpack_unserialize_data	./msgpack/msgpack_unpack.h	27;"	t	typeref:struct:__anon25
+msgpack_unserialize_data	./msgpack7/msgpack_unpack.h	27;"	t	typeref:struct:__anon35
+msgpack_unserialize_data_t	./mp/msgpack_unpack.h	19;"	t	typeref:struct:php_unserialize_data
+msgpack_unserialize_data_t	./mp7/msgpack_unpack.h	19;"	t	typeref:struct:php_unserialize_data
+msgpack_unserialize_data_t	./msgpack/msgpack_unpack.h	19;"	t	typeref:struct:php_unserialize_data
+msgpack_unserialize_data_t	./msgpack7/msgpack_unpack.h	19;"	t	typeref:struct:php_unserialize_data
+msgpack_unserialize_double	./mp/msgpack_unpack.c	455;"	f
+msgpack_unserialize_double	./mp7/msgpack_unpack.c	398;"	f
+msgpack_unserialize_double	./msgpack/msgpack_unpack.c	455;"	f
+msgpack_unserialize_double	./msgpack7/msgpack_unpack.c	397;"	f
+msgpack_unserialize_double	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_double(msgpack_unserialize_data *unpack, double data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_false	./mp/msgpack_unpack.c	483;"	f
+msgpack_unserialize_false	./mp7/msgpack_unpack.c	425;"	f
+msgpack_unserialize_false	./msgpack/msgpack_unpack.c	483;"	f
+msgpack_unserialize_false	./msgpack7/msgpack_unpack.c	424;"	f
+msgpack_unserialize_false	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_false(msgpack_unserialize_data *unpack, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_float	./mp/msgpack_unpack.c	445;"	f
+msgpack_unserialize_float	./mp7/msgpack_unpack.c	389;"	f
+msgpack_unserialize_float	./msgpack/msgpack_unpack.c	445;"	f
+msgpack_unserialize_float	./msgpack7/msgpack_unpack.c	388;"	f
+msgpack_unserialize_float	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_float(msgpack_unserialize_data *unpack, float data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_init	./mp/msgpack_unpack.c	359;"	f
+msgpack_unserialize_init	./mp7/msgpack_unpack.c	311;"	f
+msgpack_unserialize_init	./msgpack/msgpack_unpack.c	359;"	f
+msgpack_unserialize_init	./msgpack7/msgpack_unpack.c	310;"	f
+msgpack_unserialize_init	msgpack7/msgpack_unpack.c	/^void msgpack_unserialize_init(msgpack_unserialize_data *unpack) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_int16	./mp/msgpack_unpack.c	415;"	f
+msgpack_unserialize_int16	./mp7/msgpack_unpack.c	362;"	f
+msgpack_unserialize_int16	./msgpack/msgpack_unpack.c	415;"	f
+msgpack_unserialize_int16	./msgpack7/msgpack_unpack.c	361;"	f
+msgpack_unserialize_int16	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_int16(msgpack_unserialize_data *unpack, int16_t data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_int32	./mp/msgpack_unpack.c	425;"	f
+msgpack_unserialize_int32	./mp7/msgpack_unpack.c	371;"	f
+msgpack_unserialize_int32	./msgpack/msgpack_unpack.c	425;"	f
+msgpack_unserialize_int32	./msgpack7/msgpack_unpack.c	370;"	f
+msgpack_unserialize_int32	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_int32(msgpack_unserialize_data *unpack, int32_t data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_int64	./mp/msgpack_unpack.c	435;"	f
+msgpack_unserialize_int64	./mp7/msgpack_unpack.c	380;"	f
+msgpack_unserialize_int64	./msgpack/msgpack_unpack.c	435;"	f
+msgpack_unserialize_int64	./msgpack7/msgpack_unpack.c	379;"	f
+msgpack_unserialize_int64	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_int64(msgpack_unserialize_data *unpack, int64_t data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_int8	./mp/msgpack_unpack.c	405;"	f
+msgpack_unserialize_int8	./mp7/msgpack_unpack.c	353;"	f
+msgpack_unserialize_int8	./msgpack/msgpack_unpack.c	405;"	f
+msgpack_unserialize_int8	./msgpack7/msgpack_unpack.c	352;"	f
+msgpack_unserialize_int8	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_int8(msgpack_unserialize_data *unpack, int8_t data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_map	./mp/msgpack_unpack.c	532;"	f
+msgpack_unserialize_map	./mp7/msgpack_unpack.c	484;"	f
+msgpack_unserialize_map	./msgpack/msgpack_unpack.c	532;"	f
+msgpack_unserialize_map	./msgpack7/msgpack_unpack.c	483;"	f
+msgpack_unserialize_map	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_map(msgpack_unserialize_data *unpack, unsigned int count, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_map_item	./mp/msgpack_unpack.c	557;"	f
+msgpack_unserialize_map_item	./mp7/msgpack_unpack.c	507;"	f
+msgpack_unserialize_map_item	./msgpack/msgpack_unpack.c	557;"	f
+msgpack_unserialize_map_item	./msgpack7/msgpack_unpack.c	506;"	f
+msgpack_unserialize_map_item	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_map_item(msgpack_unserialize_data *unpack, zval **container, zval *key, zval *val) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_nil	./mp/msgpack_unpack.c	465;"	f
+msgpack_unserialize_nil	./mp7/msgpack_unpack.c	407;"	f
+msgpack_unserialize_nil	./msgpack/msgpack_unpack.c	465;"	f
+msgpack_unserialize_nil	./msgpack7/msgpack_unpack.c	406;"	f
+msgpack_unserialize_nil	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_nil(msgpack_unserialize_data *unpack, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_raw	./mp/msgpack_unpack.c	492;"	f
+msgpack_unserialize_raw	./mp7/msgpack_unpack.c	434;"	f
+msgpack_unserialize_raw	./msgpack/msgpack_unpack.c	492;"	f
+msgpack_unserialize_raw	./msgpack7/msgpack_unpack.c	433;"	f
+msgpack_unserialize_raw	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_raw(msgpack_unserialize_data *unpack, const char* base, const char* data, unsigned int len, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_true	./mp/msgpack_unpack.c	474;"	f
+msgpack_unserialize_true	./mp7/msgpack_unpack.c	416;"	f
+msgpack_unserialize_true	./msgpack/msgpack_unpack.c	474;"	f
+msgpack_unserialize_true	./msgpack7/msgpack_unpack.c	415;"	f
+msgpack_unserialize_true	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_true(msgpack_unserialize_data *unpack, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_uint16	./mp/msgpack_unpack.c	375;"	f
+msgpack_unserialize_uint16	./mp7/msgpack_unpack.c	326;"	f
+msgpack_unserialize_uint16	./msgpack/msgpack_unpack.c	375;"	f
+msgpack_unserialize_uint16	./msgpack7/msgpack_unpack.c	325;"	f
+msgpack_unserialize_uint16	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_uint16(msgpack_unserialize_data *unpack, uint16_t data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_uint32	./mp/msgpack_unpack.c	385;"	f
+msgpack_unserialize_uint32	./mp7/msgpack_unpack.c	335;"	f
+msgpack_unserialize_uint32	./msgpack/msgpack_unpack.c	385;"	f
+msgpack_unserialize_uint32	./msgpack7/msgpack_unpack.c	334;"	f
+msgpack_unserialize_uint32	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_uint32(msgpack_unserialize_data *unpack, uint32_t data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_uint64	./mp/msgpack_unpack.c	395;"	f
+msgpack_unserialize_uint64	./mp7/msgpack_unpack.c	344;"	f
+msgpack_unserialize_uint64	./msgpack/msgpack_unpack.c	395;"	f
+msgpack_unserialize_uint64	./msgpack7/msgpack_unpack.c	343;"	f
+msgpack_unserialize_uint64	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_uint64(msgpack_unserialize_data *unpack, uint64_t data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_uint8	./mp/msgpack_unpack.c	365;"	f
+msgpack_unserialize_uint8	./mp7/msgpack_unpack.c	317;"	f
+msgpack_unserialize_uint8	./msgpack/msgpack_unpack.c	365;"	f
+msgpack_unserialize_uint8	./msgpack7/msgpack_unpack.c	316;"	f
+msgpack_unserialize_uint8	msgpack7/msgpack_unpack.c	/^int msgpack_unserialize_uint8(msgpack_unserialize_data *unpack, uint8_t data, zval **obj) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_var_destroy	./mp/msgpack_unpack.c	316;"	f
+msgpack_unserialize_var_destroy	./mp7/msgpack_unpack.c	283;"	f
+msgpack_unserialize_var_destroy	./msgpack/msgpack_unpack.c	316;"	f
+msgpack_unserialize_var_destroy	./msgpack7/msgpack_unpack.c	282;"	f
+msgpack_unserialize_var_destroy	msgpack7/msgpack_unpack.c	/^void msgpack_unserialize_var_destroy(msgpack_unserialize_data_t *var_hashx, zend_bool err) \/* {{{ *\/ {$/;"	f
+msgpack_unserialize_var_init	./mp/msgpack_unpack.c	310;"	f
+msgpack_unserialize_var_init	./mp7/msgpack_unpack.c	277;"	f
+msgpack_unserialize_var_init	./msgpack/msgpack_unpack.c	310;"	f
+msgpack_unserialize_var_init	./msgpack7/msgpack_unpack.c	276;"	f
+msgpack_unserialize_var_init	msgpack7/msgpack_unpack.c	/^void msgpack_unserialize_var_init(msgpack_unserialize_data_t *var_hashx) \/* {{{ *\/ {$/;"	f
+msgpack_var_access	./mp/msgpack_unpack.c	94;"	f	file:
+msgpack_var_access	./mp7/msgpack_unpack.c	102;"	f	file:
+msgpack_var_access	./msgpack/msgpack_unpack.c	94;"	f	file:
+msgpack_var_access	./msgpack7/msgpack_unpack.c	101;"	f	file:
+msgpack_var_access	msgpack7/msgpack_unpack.c	/^static zval *msgpack_var_access(msgpack_unserialize_data_t *var_hashx, long id) \/* {{{ *\/ {$/;"	f	file:
+msgpack_var_add	./mp/msgpack_pack.c	58;"	f	file:
+msgpack_var_add	./mp7/msgpack_pack.c	54;"	f	file:
+msgpack_var_add	./msgpack/msgpack_pack.c	58;"	f	file:
+msgpack_var_add	./msgpack7/msgpack_pack.c	45;"	f	file:
+msgpack_var_push	./mp/msgpack_unpack.c	57;"	f	file:
+msgpack_var_push	./mp7/msgpack_unpack.c	65;"	f	file:
+msgpack_var_push	./msgpack/msgpack_unpack.c	57;"	f	file:
+msgpack_var_push	./msgpack7/msgpack_unpack.c	64;"	f	file:
+msgpack_var_push	msgpack7/msgpack_unpack.c	/^static zval *msgpack_var_push(msgpack_unserialize_data_t *var_hashx) \/* {{{ *\/ {$/;"	f	file:
+msgpack_var_replace	./mp7/msgpack_unpack.c	95;"	f	file:
+msgpack_var_replace	./msgpack7/msgpack_unpack.c	94;"	f	file:
+msgpack_var_replace	msgpack7/msgpack_unpack.c	/^static inline void msgpack_var_replace(zval *old, zval *new) \/* {{{ *\/ {$/;"	f	file:
+msgs	./msgpack7/test_streaming.php	4;"	v
+mutex_lock	./include/cpServer.h	167;"	m	struct:_cpGroup
+mutex_lock	./include/cpServer.h	200;"	m	struct:_cpServerGS
+mutex_lock	include/cpServer.h	/^        pthread_mutex_t mutex_lock;$/;"	m	struct:_cpGroup
+mutex_lock	include/cpServer.h	/^        pthread_mutex_t mutex_lock;$/;"	m	struct:_cpServerGS
+n	./frame_example/yii1/db/CDbCommand.php	27;"	v
+n	./run-tests.php	1138;"	v
+n_total	./run-tests.php	2426;"	v
+name	./frame_example/yii1/db/CDbCommand.php	61;"	v
+name	./frame_example/yii1/db/CDbCommand.php	9;"	v
+name	./include/cpServer.h	172;"	m	struct:_cpGroup
+name	./run-tests.php	1180;"	v
+name	./run-tests.php	2374;"	v
+name	./run-tests.php	2396;"	v
+name	include/cpServer.h	/^        char name[100]; \/\/group name$/;"	m	struct:_cpGroup
+next	./frame_example/yii1/db/CDbDataReader.php	94;"	f
+next	./include/cpServer.h	108;"	m	struct:_cpIdelList	typeref:struct:_cpIdelList::_cpIdelList
+next	./mp/msgpack_unpack.c	24;"	m	struct:__anon5	file:
+next	./mp7/msgpack_unpack.c	16;"	m	struct:__anon15	file:
+next	./msgpack/msgpack_unpack.c	24;"	m	struct:__anon23	file:
+next	./msgpack7/msgpack_unpack.c	15;"	m	struct:__anon33	file:
+next	include/cpServer.h	/^        struct _cpIdelList *next;$/;"	m	struct:_cpIdelList	typeref:struct:_cpIdelList::_cpIdelList
+next	msgpack7/msgpack_unpack.c	/^    void *next;$/;"	m	struct:__anon1	file:
+nextResult	./frame_example/yii1/db/CDbDataReader.php	54;"	f
+next_wait_id	./include/cpServer.h	102;"	m	struct:_cpConnection
+next_wait_id	include/cpServer.h	/^        int next_wait_id; \/\/sever fd$/;"	m	struct:_cpConnection
+no_clean	./run-tests.php	506;"	v
+no_clean	./run-tests.php	632;"	v
+no_file_cache	./run-tests.php	268;"	v
+nread	./msgpack7/test_streaming.php	21;"	v
+nread	./msgpack7/test_streaming.php	9;"	v
+o	./run-tests.php	2355;"	v
+o	./run-tests.php	912;"	v
+obj	./d1.php	13;"	v
+obj	./d1.php	19;"	v
+obj	./d1.php	24;"	v
+obj	./demon.php	10;"	v
+obj	./demon.php	16;"	v
+obj	./demon.php	21;"	v
+obj1	./d1.php	31;"	v
+obj1	./d1.php	4;"	v
+obj1	./d1.php	74;"	v
+obj1	./demon.php	28;"	v
+obj1	./demon.php	2;"	v
+obj1	./demon.php	71;"	v
+obj1	d1.php	/^$obj1 = new pdoProxy('mysql:host=192.168.1.19;dbname=mz_gay_group2;charset=utf8', "public_user", "1qa2ws3ed");$/;"	v
+object	./mp/msgpack_class.c	11;"	m	struct:__anon3	file:
+object	./mp/msgpack_class.c	16;"	m	struct:__anon4	file:
+object	./mp7/msgpack_class.c	12;"	m	struct:__anon13	file:
+object	./mp7/msgpack_class.c	24;"	m	struct:__anon14	file:
+object	./msgpack/msgpack_class.c	11;"	m	struct:__anon21	file:
+object	./msgpack/msgpack_class.c	16;"	m	struct:__anon22	file:
+object	./msgpack7/msgpack_class.c	12;"	m	struct:__anon31	file:
+object	./msgpack7/msgpack_class.c	24;"	m	struct:__anon32	file:
+offset	./mp/msgpack_class.c	19;"	m	struct:__anon4	file:
+offset	./mp7/msgpack_class.c	18;"	m	struct:__anon14	file:
+offset	./msgpack/msgpack_class.c	19;"	m	struct:__anon22	file:
+offset	./msgpack7/msgpack_class.c	18;"	m	struct:__anon32	file:
+old1	./run-tests.php	2290;"	v
+old2	./run-tests.php	2291;"	v
+old_php	./run-tests.php	1384;"	v
+old_php	./run-tests.php	1387;"	v
+old_php	./run-tests.php	1391;"	v
+old_php	./run-tests.php	1394;"	v
+old_php	./run-tests.php	1397;"	v
+old_php	./run-tests.php	1416;"	v
+old_php	./run-tests.php	1419;"	v
+old_php	./run-tests.php	1423;"	v
+old_php	./run-tests.php	1426;"	v
+old_php	./run-tests.php	1429;"	v
+opt	./msgpack7/benchmark.php	115;"	v
+opt	./msgpack7/benchmark.php	118;"	v
+optionals	./run-tests.php	887;"	v
+org_file	./run-tests.php	1232;"	v
+org_headers	./run-tests.php	1981;"	v
+orwl_timebase	./include/cpFunction.h	26;"	v
+orwl_timebase	include/cpFunction.h	/^static double orwl_timebase = 0.0;$/;"	v
+orwl_timestart	./include/cpFunction.h	27;"	v
+orwl_timestart	include/cpFunction.h	/^static uint64_t orwl_timestart = 0;$/;"	v
+out	./run-tests.php	1909;"	v
+output	./run-tests.php	1592;"	v
+output	./run-tests.php	1948;"	v
+output	./run-tests.php	1954;"	v
+output	./run-tests.php	2143;"	v
+output_file	./run-tests.php	492;"	v
+output_file	./run-tests.php	495;"	v
+output_file	./run-tests.php	653;"	v
+output_filename	./run-tests.php	1460;"	v
+output_headers	./run-tests.php	1983;"	v
+output_headers	./run-tests.php	2000;"	v
+output_type	./run-tests.php	2815;"	v
+output_type	./run-tests.php	2819;"	v
+p	./frame_example/yii1/db/CDbCommand.php	60;"	v
+p	./frame_example/yii1/db/CDbCommand.php	8;"	v
+pack	./msgpack7/bench/bench.php	33;"	v
+pack	./msgpack7/benchmark.php	113;"	v
+pack	./msgpack7/benchmark.php	123;"	v
+pack	./msgpack7/benchmark.php	149;"	v
+pack	./msgpack7/benchmark.php	154;"	v
+pack	./msgpack7/benchmark.php	176;"	v
+pack	./msgpack7/benchmark.php	181;"	v
+pack	./msgpack7/benchmark.php	86;"	v
+pack	./msgpack7/benchmark.php	92;"	v
+packed	./msgpack7/bench/bench.php	28;"	v
+par	./frame_example/yii1/db/CDbCommand.php	11;"	v
+par	./frame_example/yii1/db/CDbCommand.php	14;"	v
+par	./frame_example/yii1/db/CDbCommand.php	63;"	v
+par	./frame_example/yii1/db/CDbCommand.php	66;"	v
+params	./frame_example/yii1/db/CDbCommand.php	56;"	v
+pass_option_n	./run-tests.php	488;"	v
+pass_option_n	./run-tests.php	626;"	v
+pass_options	./run-tests.php	489;"	v
+passed	./run-tests.php	1937;"	v
+passed	./run-tests.php	2086;"	v
+passed	./run-tests.php	2114;"	v
+passed	./run-tests.php	2141;"	v
+path	./run-tests.php	1020;"	v
+path	./run-tests.php	1027;"	v
+pattern_match	./run-tests.php	792;"	v
+pattern_match	./run-tests.php	794;"	v
+pdo_connect_pool_PDOStatement_ce	./connect_pool.c	186;"	v
+pdo_connect_pool_PDOStatement_class_entry_ptr	./connect_pool.c	187;"	v
+pdo_connect_pool_PDOStatement_methods	./connect_pool.c	89;"	v
+pdo_connect_pool_ce	./connect_pool.c	180;"	v
+pdo_connect_pool_class_entry_ptr	./connect_pool.c	181;"	v
+pdo_connect_pool_methods	./connect_pool.c	78;"	v
+pdo_dispatch	./connect_pool.c	680;"	f	file:
+pdo_object	./cpWorker.c	20;"	v
+pdo_object	cpWorker.c	/^zval *pdo_object = NULL;$/;"	v
+pdo_object_table	./connect_pool.c	28;"	v	file:
+pdo_proxy_connect	./connect_pool.c	439;"	f
+pdo_proxy_pdo	./connect_pool.c	528;"	f	file:
+pdo_proxy_stmt	./connect_pool.c	637;"	f	file:
+pdo_stmt	./connect_pool.c	30;"	v	file:
+percent_results	./run-tests.php	2443;"	v
+php	./run-tests.php	1385;"	v
+php	./run-tests.php	1388;"	v
+php	./run-tests.php	1392;"	v
+php	./run-tests.php	1395;"	v
+php	./run-tests.php	1398;"	v
+php	./run-tests.php	1417;"	v
+php	./run-tests.php	1420;"	v
+php	./run-tests.php	1424;"	v
+php	./run-tests.php	1427;"	v
+php	./run-tests.php	142;"	v
+php	./run-tests.php	1430;"	v
+php	./run-tests.php	147;"	v
+php	./run-tests.php	150;"	v
+php	./run-tests.php	1609;"	v
+php	./run-tests.php	2091;"	v
+php	./run-tests.php	2121;"	v
+php	./run-tests.php	2224;"	v
+php	./run-tests.php	635;"	v
+php	./run-tests.php	641;"	v
+php_cgi	./run-tests.php	1235;"	v
+php_cgi	./run-tests.php	143;"	v
+php_cgi	./run-tests.php	154;"	v
+php_cgi	./run-tests.php	159;"	v
+php_cgi	./run-tests.php	177;"	v
+php_cgi	./run-tests.php	180;"	v
+php_cgi_info	./run-tests.php	294;"	v
+php_cgi_info	./run-tests.php	296;"	v
+php_check_ms	./connect_pool_client.c	469;"	f	file:
+php_check_ms	connect_pool_client.c	/^static char* php_check_ms(char *cmd, zval *z_args, zval* object)$/;"	f	file:
+php_info	./run-tests.php	277;"	v
+php_info	./run-tests.php	288;"	v
+php_info_cgi	./run-tests.php	292;"	v
+php_info_sep	./run-tests.php	293;"	v
+php_info_sep	./run-tests.php	301;"	v
+php_msgpack_base_free	./mp/msgpack_class.c	173;"	f	file:
+php_msgpack_base_free	./mp7/msgpack_class.c	145;"	f	file:
+php_msgpack_base_free	./msgpack/msgpack_class.c	173;"	f	file:
+php_msgpack_base_free	./msgpack7/msgpack_class.c	145;"	f	file:
+php_msgpack_base_new	./mp/msgpack_class.c	187;"	f	file:
+php_msgpack_base_new	./mp7/msgpack_class.c	134;"	f
+php_msgpack_base_new	./msgpack/msgpack_class.c	187;"	f	file:
+php_msgpack_base_new	./msgpack7/msgpack_class.c	134;"	f
+php_msgpack_base_t	./mp/msgpack_class.c	13;"	t	typeref:struct:__anon3	file:
+php_msgpack_base_t	./mp7/msgpack_class.c	13;"	t	typeref:struct:__anon13	file:
+php_msgpack_base_t	./msgpack/msgpack_class.c	13;"	t	typeref:struct:__anon21	file:
+php_msgpack_base_t	./msgpack7/msgpack_class.c	13;"	t	typeref:struct:__anon31	file:
+php_msgpack_serialize	./mp7/msgpack.c	215;"	f
+php_msgpack_serialize	./msgpack7/msgpack.c	196;"	f
+php_msgpack_serialize	msgpack7/msgpack.c	/^PHP_MSGPACK_API void php_msgpack_serialize(instead_smart *buf, zval *val) \/* {{{ *\/$/;"	f
+php_msgpack_unpacker_free	./mp/msgpack_class.c	222;"	f	file:
+php_msgpack_unpacker_free	./mp7/msgpack_class.c	167;"	f	file:
+php_msgpack_unpacker_free	./msgpack/msgpack_class.c	222;"	f	file:
+php_msgpack_unpacker_free	./msgpack7/msgpack_class.c	167;"	f	file:
+php_msgpack_unpacker_new	./mp/msgpack_class.c	237;"	f	file:
+php_msgpack_unpacker_new	./mp7/msgpack_class.c	156;"	f
+php_msgpack_unpacker_new	./msgpack/msgpack_class.c	237;"	f	file:
+php_msgpack_unpacker_new	./msgpack7/msgpack_class.c	156;"	f
+php_msgpack_unpacker_t	./mp/msgpack_class.c	25;"	t	typeref:struct:__anon4	file:
+php_msgpack_unpacker_t	./mp7/msgpack_class.c	25;"	t	typeref:struct:__anon14	file:
+php_msgpack_unpacker_t	./msgpack/msgpack_class.c	25;"	t	typeref:struct:__anon22	file:
+php_msgpack_unpacker_t	./msgpack7/msgpack_class.c	25;"	t	typeref:struct:__anon32	file:
+php_msgpack_unserialize	./mp/msgpack.c	154;"	f
+php_msgpack_unserialize	./mp7/msgpack.c	227;"	f
+php_msgpack_unserialize	./msgpack/msgpack.c	154;"	f
+php_msgpack_unserialize	./msgpack7/msgpack.c	206;"	f
+php_msgpack_unserialize	msgpack7/msgpack.c	/^PHP_MSGPACK_API void php_msgpack_unserialize(zval *return_value, char *str, size_t str_len) \/* {{{ *\/$/;"	f
+php_only	./mp/msgpack_class.c	12;"	m	struct:__anon3	file:
+php_only	./mp/msgpack_class.c	22;"	m	struct:__anon4	file:
+php_only	./mp/php_msgpack.h	30;"	v
+php_only	./mp7/msgpack_class.c	11;"	m	struct:__anon13	file:
+php_only	./mp7/msgpack_class.c	21;"	m	struct:__anon14	file:
+php_only	./mp7/php_msgpack.h	32;"	v
+php_only	./msgpack/msgpack_class.c	12;"	m	struct:__anon21	file:
+php_only	./msgpack/msgpack_class.c	22;"	m	struct:__anon22	file:
+php_only	./msgpack/php_msgpack.h	30;"	v
+php_only	./msgpack7/msgpack_class.c	11;"	m	struct:__anon31	file:
+php_only	./msgpack7/msgpack_class.c	21;"	m	struct:__anon32	file:
+php_only	./msgpack7/php_msgpack.h	25;"	v
+php_version	./run-tests.php	1041;"	v
+phpdbg	./run-tests.php	1239;"	v
+phpdbg	./run-tests.php	144;"	v
+phpdbg	./run-tests.php	164;"	v
+phpdbg	./run-tests.php	169;"	v
+phpdbg	./run-tests.php	188;"	v
+phpdbg	./run-tests.php	191;"	v
+phpdbg_info	./run-tests.php	300;"	v
+phpdbg_info	./run-tests.php	302;"	v
+phpdbg_info	./run-tests.php	304;"	v
+phpext_connect_pool_ptr	./php_connect_pool.h	121;"	d
+phpext_msgpack_ptr	./mp/php_msgpack.h	14;"	d
+phpext_msgpack_ptr	./mp7/php_msgpack.h	16;"	d
+phpext_msgpack_ptr	./msgpack/php_msgpack.h	14;"	d
+phpext_msgpack_ptr	./msgpack7/php_msgpack.h	9;"	d
+phpincludedir	./Makefile	25;"	m
+phplibdir	./Makefile	24;"	m
+pid	./d1.php	2;"	v
+pid	./include/cpMemory.h	30;"	m	struct:_cpWorkerInfo
+pid	./include/cpServer.h	211;"	m	struct:_cpWorkerG
+pid	./include/cpWorker.h	19;"	m	struct:_cpWorker
+pid	d1.php	/^$pid = getmypid(); echo "$pid\\n";$/;"	v
+pid	include/cpServer.h	/^        int pid;$/;"	m	struct:_cpWorkerG
+pid_fn	./cpFunction.c	23;"	v
+pid_fn	cpFunction.c	/^FILE *pid_fn = NULL;$/;"	v
+pid_init	./cpFunction.c	40;"	f
+pid_init	cpFunction.c	/^int pid_init()$/;"	f
+ping_mem_addr	./include/cpServer.h	157;"	m	struct:_cpServerG
+ping_mem_addr	include/cpServer.h	/^        void *ping_mem_addr;$/;"	m	struct:_cpServerG
+ping_workers	./include/cpServer.h	190;"	m	struct:_cpServerGS
+ping_workers	include/cpServer.h	/^        cpWorker *ping_workers;$/;"	m	struct:_cpServerGS
+pipe_fd_read	./include/cpServer.h	214;"	m	struct:_cpWorkerG
+pipe_fd_read	include/cpServer.h	/^        int pipe_fd_read;$/;"	m	struct:_cpWorkerG
+pipe_fd_write	./include/cpServer.h	215;"	m	struct:_cpWorkerG
+pipe_fd_write	./include/cpWorker.h	20;"	m	struct:_cpWorker
+pipe_fd_write	include/cpServer.h	/^        int pipe_fd_write;$/;"	m	struct:_cpWorkerG
+pool_server_create	./php_connect_pool.h	216;"	v
+pool_server_reload	./php_connect_pool.h	218;"	v
+pool_server_shutdown	./php_connect_pool.h	217;"	v
+pool_server_version	./php_connect_pool.h	219;"	v
+port	./include/cpServer.h	116;"	m	struct:_cpConfig
+port	./run-tests.php	1025;"	v
+port	./run-tests.php	1029;"	v
+port	include/cpServer.h	/^        uint16_t port;$/;"	m	struct:_cpConfig
+post	./run-tests.php	1756;"	v
+post	./run-tests.php	1790;"	v
+post	./run-tests.php	1824;"	v
+post	./run-tests.php	1841;"	v
+post	./run-tests.php	1842;"	v
+post	./run-tests.php	1855;"	v
+post	./run-tests.php	1856;"	v
+prefix	./Makefile	20;"	m
+prefix	./Makefile	23;"	m
+proc	./run-tests.php	1114;"	v
+process_type	./include/cpServer.h	150;"	m	struct:_cpServerG
+process_type	include/cpServer.h	/^        uint8_t process_type;$/;"	m	struct:_cpServerG
+prototypes	./configure	3089;"	f
+proxy	./run-tests.php	1019;"	v
+pth_id	./include/cpServer.h	99;"	m	struct:_cpConnection
+pth_id	include/cpServer.h	/^        uint16_t pth_id;$/;"	m	struct:_cpConnection
+push_fixed_value	./mp/msgpack/unpack_template.h	125;"	d
+push_fixed_value	./mp/msgpack/unpack_template.h	405;"	d
+push_fixed_value	./mp/unpack_template.h	125;"	d
+push_fixed_value	./mp/unpack_template.h	405;"	d
+push_fixed_value	./mp7/msgpack/unpack_template.h	125;"	d
+push_fixed_value	./mp7/msgpack/unpack_template.h	424;"	d
+push_fixed_value	./msgpack/msgpack/unpack_template.h	125;"	d
+push_fixed_value	./msgpack/msgpack/unpack_template.h	405;"	d
+push_fixed_value	./msgpack/unpack_template.h	125;"	d
+push_fixed_value	./msgpack/unpack_template.h	405;"	d
+push_fixed_value	./msgpack7/msgpack/unpack_template.h	125;"	d
+push_fixed_value	./msgpack7/msgpack/unpack_template.h	424;"	d
+push_simple_value	./mp/msgpack/unpack_template.h	122;"	d
+push_simple_value	./mp/msgpack/unpack_template.h	404;"	d
+push_simple_value	./mp/unpack_template.h	122;"	d
+push_simple_value	./mp/unpack_template.h	404;"	d
+push_simple_value	./mp7/msgpack/unpack_template.h	122;"	d
+push_simple_value	./mp7/msgpack/unpack_template.h	423;"	d
+push_simple_value	./msgpack/msgpack/unpack_template.h	122;"	d
+push_simple_value	./msgpack/msgpack/unpack_template.h	404;"	d
+push_simple_value	./msgpack/unpack_template.h	122;"	d
+push_simple_value	./msgpack/unpack_template.h	404;"	d
+push_simple_value	./msgpack7/msgpack/unpack_template.h	122;"	d
+push_simple_value	./msgpack7/msgpack/unpack_template.h	423;"	d
+push_variable_value	./mp/msgpack/unpack_template.h	128;"	d
+push_variable_value	./mp/msgpack/unpack_template.h	406;"	d
+push_variable_value	./mp/unpack_template.h	128;"	d
+push_variable_value	./mp/unpack_template.h	406;"	d
+push_variable_value	./mp7/msgpack/unpack_template.h	128;"	d
+push_variable_value	./mp7/msgpack/unpack_template.h	425;"	d
+push_variable_value	./msgpack/msgpack/unpack_template.h	128;"	d
+push_variable_value	./msgpack/msgpack/unpack_template.h	406;"	d
+push_variable_value	./msgpack/unpack_template.h	128;"	d
+push_variable_value	./msgpack/unpack_template.h	406;"	d
+push_variable_value	./msgpack7/msgpack/unpack_template.h	128;"	d
+push_variable_value	./msgpack7/msgpack/unpack_template.h	425;"	d
+queryInternal	./frame_example/yii1/db/CDbCommand.php	54;"	f
+query_string	./run-tests.php	1730;"	v
+query_string	./run-tests.php	1732;"	v
+r	./run-tests.php	1134;"	v
+r	./run-tests.php	2020;"	v
+r	./run-tests.php	2356;"	v
+raw_lines	./run-tests.php	1757;"	v
+raw_lines	./run-tests.php	1791;"	v
+reactor_next_i	./include/cpServer.h	185;"	m	struct:_cpServerGS
+reactor_next_i	include/cpServer.h	/^        uint16_t reactor_next_i;$/;"	m	struct:_cpServerGS
+reactor_num	./include/cpServer.h	114;"	m	struct:_cpConfig
+reactor_num	include/cpServer.h	/^        uint16_t reactor_num;$/;"	m	struct:_cpConfig
+reactor_threads	./include/cpServer.h	192;"	m	struct:_cpServerGS
+reactor_threads	include/cpServer.h	/^        cpThread *reactor_threads;$/;"	m	struct:_cpServerGS
+read	./frame_example/yii1/db/CDbDataReader.php	22;"	f
+readAll	./frame_example/yii1/db/CDbDataReader.php	46;"	f
+readColumn	./frame_example/yii1/db/CDbDataReader.php	30;"	f
+readObject	./frame_example/yii1/db/CDbDataReader.php	38;"	f
+recycle_num	./include/cpServer.h	115;"	m	struct:_cpConfig
+recycle_num	include/cpServer.h	/^        uint16_t recycle_num;$/;"	m	struct:_cpConfig
+redir_tested	./run-tests.php	1170;"	v
+redir_tests	./run-tests.php	482;"	v
+redirenv	./run-tests.php	1672;"	v
+redis_connect_pool_ce	./connect_pool.c	183;"	v
+redis_connect_pool_class_entry_ptr	./connect_pool.c	184;"	v
+redis_connect_pool_methods	./connect_pool.c	165;"	v
+redis_dispatch	./connect_pool.c	840;"	f	file:
+redis_object_table	./connect_pool.c	29;"	v	file:
+redis_proxy_connect	./connect_pool.c	727;"	f
+release	./frame_example/yii1/db/CDbConnection.php	5;"	f
+release	./include/cpServer.h	98;"	m	struct:_cpConnection
+release	include/cpServer.h	/^        uint8_t release;$/;"	m	struct:_cpConnection
+release_worker	./connect_pool_client.c	143;"	f	file:
+release_worker	connect_pool_client.c	/^static void release_worker(zval *object)$/;"	f	file:
+remote_addr	./include/cpClientNet.h	20;"	m	struct:_cpClient	typeref:struct:_cpClient::sockaddr_in
+repeat	./run-tests.php	535;"	v
+repeat	./run-tests.php	564;"	v
+repeat	./run-tests.php	691;"	v
+replace_count	./run-tests.php	611;"	v
+request	./include/cpWorker.h	17;"	m	struct:_cpWorker
+request	./run-tests.php	1759;"	v
+request	./run-tests.php	1793;"	v
+result	./frame_example/yii1/db/CDbCommand.php	104;"	v
+result	./frame_example/yii1/db/CDbCommand.php	98;"	v
+result	./run-tests.php	1188;"	v
+result	./run-tests.php	1192;"	v
+result	./run-tests.php	2758;"	v
+ret	./msgpack7/test_normal.php	16;"	v
+ret_value	./php_connect_pool.h	142;"	m	struct:_cpRecvEvent
+retry	./msgpack7/benchmark.php	3;"	v
+retry	./msgpack7/benchmark.php	63;"	v
+retval	./mp/msgpack_class.c	18;"	m	struct:__anon4	file:
+retval	./mp/msgpack_unpack.h	22;"	m	struct:__anon7
+retval	./mp7/msgpack_class.c	17;"	m	struct:__anon14	file:
+retval	./mp7/msgpack_unpack.h	22;"	m	struct:__anon17
+retval	./msgpack/msgpack_class.c	18;"	m	struct:__anon22	file:
+retval	./msgpack/msgpack_unpack.h	22;"	m	struct:__anon25
+retval	./msgpack7/msgpack_class.c	17;"	m	struct:__anon32	file:
+retval	./msgpack7/msgpack_unpack.h	22;"	m	struct:__anon35
+rh	./run-tests.php	1955;"	v
+rollback	./frame_example/yii1/db/CDbTransaction.php	18;"	f
+rs	./d1.php	14;"	v
+rs	./d1.php	20;"	v
+rs	./d1.php	25;"	v
+rs	./d1.php	32;"	v
+rs	./d1.php	75;"	v
+rs	./d1.php	7;"	v
+rs	./d1.php	81;"	v
+rs	./d1.php	87;"	v
+rs	./demon.php	11;"	v
+rs	./demon.php	17;"	v
+rs	./demon.php	22;"	v
+rs	./demon.php	29;"	v
+rs	./demon.php	4;"	v
+rs	./demon.php	72;"	v
+rs	./demon.php	78;"	v
+rs	./demon.php	84;"	v
+rs	d1.php	/^$rs = $obj1->query("select * from test limit 2");$/;"	v
+run_all_tests	./run-tests.php	1170;"	f
+run_test	./run-tests.php	1221;"	f
+running	./include/cpServer.h	149;"	m	struct:_cpServerG
+running	./include/cpServer.h	194;"	m	struct:_cpServerGS
+running	include/cpServer.h	/^        int running;$/;"	m	struct:_cpServerGS
+running	include/cpServer.h	/^        uint8_t running;$/;"	m	struct:_cpServerG
+save_or_mail_results	./run-tests.php	349;"	f
+save_text	./run-tests.php	1061;"	f
+secdone	./run-tests.php	1277;"	v
+secdone	./run-tests.php	1298;"	v
+secdone	./run-tests.php	1309;"	v
+secfile	./run-tests.php	1276;"	v
+secfile	./run-tests.php	1297;"	v
+section	./run-tests.php	1202;"	v
+section	./run-tests.php	1209;"	v
+section	./run-tests.php	1275;"	v
+section	./run-tests.php	1288;"	v
+section_text	./run-tests.php	1252;"	v
+semid2attbuf	./connect_pool_client.c	29;"	v	file:
+semid2attbuf	connect_pool_client.c	/^static void **semid2attbuf = NULL;$/;"	v	file:
+send_oob2proxy	./connect_pool.c	289;"	f
+sep	./run-tests.php	395;"	v
+ser_fail_hits	./include/cpServer.h	119;"	m	struct:_cpConfig
+ser_fail_hits	include/cpServer.h	/^        uint16_t ser_fail_hits;$/;"	m	struct:_cpConfig
+serialize	./mp/php_msgpack.h	35;"	v	typeref:struct:__anon8
+serialize	./mp7/php_msgpack.h	38;"	v	typeref:struct:__anon18
+serialize	./msgpack/php_msgpack.h	35;"	v	typeref:struct:__anon26
+serialize	./msgpack7/php_msgpack.h	31;"	v	typeref:struct:__anon36
+serialize_pack	./msgpack7/benchmark.php	66;"	v
+serialize_size	./msgpack7/benchmark.php	68;"	v
+serialize_status	./msgpack7/benchmark.php	109;"	v
+serialize_status	./msgpack7/benchmark.php	69;"	v
+serialize_unpack	./msgpack7/benchmark.php	67;"	v
+serv_addr	./include/cpClientNet.h	19;"	m	struct:_cpClient	typeref:struct:_cpClient::sockaddr_in
+server_fd	./include/cpClientNet.h	23;"	m	struct:_cpClient
+server_fd	./include/cpMemory.h	25;"	m	struct:_cpMasterInfo
+set_pid	./cpFunction.c	56;"	f
+set_pid	cpFunction.c	/^int set_pid(int pid)$/;"	f
+setting	./run-tests.php	2373;"	v
+settings	./run-tests.php	2394;"	v
+settings2array	./run-tests.php	2368;"	f
+settings2params	./run-tests.php	2392;"	f
+sh_filename	./run-tests.php	1462;"	v
+shared_objects_connect_pool	./Makefile	14;"	m
+shortname	./run-tests.php	1362;"	v
+show_end	./run-tests.php	2595;"	f
+show_file_block	./run-tests.php	1202;"	f
+show_redirect_ends	./run-tests.php	2634;"	f
+show_redirect_start	./run-tests.php	2618;"	f
+show_result	./run-tests.php	2661;"	f
+show_start	./run-tests.php	2583;"	f
+show_summary	./run-tests.php	2607;"	f
+show_test	./run-tests.php	2650;"	f
+shtool_exit	./build/shtool	459;"	f
+size	./include/cpMemory.h	19;"	m	struct:_cpShareMemory
+size	./msgpack7/bench/bench.php	15;"	v
+size	./msgpack7/bench/bench.php	17;"	v
+skip_ext	./run-tests.php	917;"	v
+sm_obj	./include/cpWorker.h	29;"	m	struct:_cpWorker
+sock	./include/cpClientNet.h	16;"	m	struct:_cpClient
+sql	./d1.php	86;"	v
+sql	./demon.php	83;"	v
+srcdir	./Makefile	1;"	m
+st	./run-tests.php	2255;"	v
+st	./run-tests.php	2266;"	v
+stack	./mp/msgpack_unpack.h	25;"	m	struct:__anon7
+stack	./mp7/msgpack_unpack.h	25;"	m	struct:__anon17
+stack	./msgpack/msgpack_unpack.h	25;"	m	struct:__anon25
+stack	./msgpack7/msgpack_unpack.h	25;"	m	struct:__anon35
+start	./msgpack7/benchmark.php	120;"	v
+start	./msgpack7/benchmark.php	128;"	v
+start	./msgpack7/benchmark.php	151;"	v
+start	./msgpack7/benchmark.php	159;"	v
+start	./msgpack7/benchmark.php	178;"	v
+start	./msgpack7/benchmark.php	186;"	v
+start	./msgpack7/benchmark.php	89;"	v
+start	./msgpack7/benchmark.php	97;"	v
+start	./run-tests.php	2024;"	v
+start	./run-tests.php	2034;"	v
+start	./run-tests.php	2918;"	v
+startOffset	./run-tests.php	2021;"	v
+startOffset	./run-tests.php	2042;"	v
+start_container	./mp/msgpack/unpack_template.h	143;"	d
+start_container	./mp/msgpack/unpack_template.h	409;"	d
+start_container	./mp/unpack_template.h	143;"	d
+start_container	./mp/unpack_template.h	409;"	d
+start_container	./mp7/msgpack/unpack_template.h	143;"	d
+start_container	./mp7/msgpack/unpack_template.h	428;"	d
+start_container	./msgpack/msgpack/unpack_template.h	143;"	d
+start_container	./msgpack/msgpack/unpack_template.h	409;"	d
+start_container	./msgpack/unpack_template.h	143;"	d
+start_container	./msgpack/unpack_template.h	409;"	d
+start_container	./msgpack7/msgpack/unpack_template.h	143;"	d
+start_container	./msgpack7/msgpack/unpack_template.h	428;"	d
+start_time	./run-tests.php	832;"	v
+start_time	./run-tests.php	973;"	v
+started	./run-tests.php	1760;"	v
+started	./run-tests.php	1773;"	v
+started	./run-tests.php	1794;"	v
+started	./run-tests.php	1807;"	v
+stat	./run-tests.php	1157;"	v
+status	./run-tests.php	1014;"	v
+status	./run-tests.php	406;"	v
+status	./run-tests.php	408;"	v
+stmt_fetch_obj	./connect_pool_client.c	614;"	f	file:
+stmt_fetch_obj	connect_pool_client.c	/^int static stmt_fetch_obj(zval *args, zend_class_entry *ce, zval *return_value)$/;"	f	file:
+str	./msgpack7/msgpack.php	16;"	v
+str	./msgpack7/msgpack.php	18;"	v
+str	./msgpack7/test_normal.php	12;"	v
+str	./run-tests.php	2655;"	v
+suite	./run-tests.php	2756;"	v
+suite	./run-tests.php	2798;"	v
+suite	./run-tests.php	2870;"	v
+sum_results	./run-tests.php	2428;"	v
+summary	./run-tests.php	2466;"	v
+swClient_inet_addr	./cpClientNet.c	101;"	f	file:
+swClient_inet_addr	cpClientNet.c	/^static int swClient_inet_addr(struct sockaddr_in *sin, char *string)$/;"	f	file:
+swSingalNone	./cpFunction.c	276;"	f
+swSingalNone	cpFunction.c	/^void swSingalNone()$/;"	f
+sw_zend_call_method_with_2_params	./include/php7_wrapper.h	269;"	d
+switch	./run-tests.php	534;"	v
+switch	./run-tests.php	540;"	v
+switch	./run-tests.php	689;"	v
+sys_libtool	./run-tests.php	430;"	v
+sys_libtool_path	./run-tests.php	427;"	v
+system_with_timeout	./run-tests.php	1103;"	f
+ta	./run-tests.php	960;"	v
+tb	./run-tests.php	961;"	v
+temp	./run-tests.php	2019;"	v
+temp	./run-tests.php	2037;"	v
+temp	./run-tests.php	2040;"	v
+temp	./run-tests.php	2816;"	v
+temp_clean	./run-tests.php	1467;"	v
+temp_dir	./run-tests.php	1446;"	v
+temp_dir	./run-tests.php	1448;"	v
+temp_dir	./run-tests.php	1452;"	v
+temp_file	./run-tests.php	1463;"	v
+temp_filenames	./run-tests.php	1231;"	v
+temp_filenames	./run-tests.php	1486;"	v
+temp_skipif	./run-tests.php	1465;"	v
+temp_source	./run-tests.php	502;"	v
+temp_source	./run-tests.php	665;"	v
+temp_target	./run-tests.php	503;"	v
+temp_target	./run-tests.php	668;"	v
+temp_urlbase	./run-tests.php	504;"	v
+temp_urlbase	./run-tests.php	670;"	v
+temp_urlbase	./run-tests.php	674;"	v
+template_callback_array	./mp/msgpack_unpack.h	121;"	d
+template_callback_array	./mp7/msgpack_unpack.h	125;"	d
+template_callback_array	./msgpack/msgpack_unpack.h	121;"	d
+template_callback_array	./msgpack7/msgpack_unpack.h	125;"	d
+template_callback_array_item	./mp/msgpack_unpack.h	123;"	d
+template_callback_array_item	./mp7/msgpack_unpack.h	127;"	d
+template_callback_array_item	./msgpack/msgpack_unpack.h	123;"	d
+template_callback_array_item	./msgpack7/msgpack_unpack.h	127;"	d
+template_callback_bin	./mp7/msgpack_unpack.h	123;"	d
+template_callback_bin	./msgpack7/msgpack_unpack.h	123;"	d
+template_callback_double	./mp/msgpack_unpack.h	111;"	d
+template_callback_double	./mp7/msgpack_unpack.h	113;"	d
+template_callback_double	./msgpack/msgpack_unpack.h	111;"	d
+template_callback_double	./msgpack7/msgpack_unpack.h	113;"	d
+template_callback_false	./mp/msgpack_unpack.h	117;"	d
+template_callback_false	./mp7/msgpack_unpack.h	119;"	d
+template_callback_false	./msgpack/msgpack_unpack.h	117;"	d
+template_callback_false	./msgpack7/msgpack_unpack.h	119;"	d
+template_callback_float	./mp/msgpack_unpack.h	109;"	d
+template_callback_float	./mp7/msgpack_unpack.h	111;"	d
+template_callback_float	./msgpack/msgpack_unpack.h	109;"	d
+template_callback_float	./msgpack7/msgpack_unpack.h	111;"	d
+template_callback_int16	./mp/msgpack_unpack.h	103;"	d
+template_callback_int16	./mp7/msgpack_unpack.h	105;"	d
+template_callback_int16	./msgpack/msgpack_unpack.h	103;"	d
+template_callback_int16	./msgpack7/msgpack_unpack.h	105;"	d
+template_callback_int32	./mp/msgpack_unpack.h	105;"	d
+template_callback_int32	./mp7/msgpack_unpack.h	107;"	d
+template_callback_int32	./msgpack/msgpack_unpack.h	105;"	d
+template_callback_int32	./msgpack7/msgpack_unpack.h	107;"	d
+template_callback_int64	./mp/msgpack_unpack.h	107;"	d
+template_callback_int64	./mp7/msgpack_unpack.h	109;"	d
+template_callback_int64	./msgpack/msgpack_unpack.h	107;"	d
+template_callback_int64	./msgpack7/msgpack_unpack.h	109;"	d
+template_callback_int8	./mp/msgpack_unpack.h	101;"	d
+template_callback_int8	./mp7/msgpack_unpack.h	103;"	d
+template_callback_int8	./msgpack/msgpack_unpack.h	101;"	d
+template_callback_int8	./msgpack7/msgpack_unpack.h	103;"	d
+template_callback_map	./mp/msgpack_unpack.h	125;"	d
+template_callback_map	./mp7/msgpack_unpack.h	129;"	d
+template_callback_map	./msgpack/msgpack_unpack.h	125;"	d
+template_callback_map	./msgpack7/msgpack_unpack.h	129;"	d
+template_callback_map_item	./mp/msgpack_unpack.h	127;"	d
+template_callback_map_item	./mp7/msgpack_unpack.h	131;"	d
+template_callback_map_item	./msgpack/msgpack_unpack.h	127;"	d
+template_callback_map_item	./msgpack7/msgpack_unpack.h	131;"	d
+template_callback_nil	./mp/msgpack_unpack.h	113;"	d
+template_callback_nil	./mp7/msgpack_unpack.h	115;"	d
+template_callback_nil	./msgpack/msgpack_unpack.h	113;"	d
+template_callback_nil	./msgpack7/msgpack_unpack.h	115;"	d
+template_callback_raw	./mp/msgpack_unpack.h	119;"	d
+template_callback_raw	./mp7/msgpack_unpack.h	121;"	d
+template_callback_raw	./msgpack/msgpack_unpack.h	119;"	d
+template_callback_raw	./msgpack7/msgpack_unpack.h	121;"	d
+template_callback_root	./mp/msgpack_unpack.h	87;"	f
+template_callback_root	./mp7/msgpack_unpack.h	89;"	f
+template_callback_root	./msgpack/msgpack_unpack.h	87;"	f
+template_callback_root	./msgpack7/msgpack_unpack.h	89;"	f
+template_callback_true	./mp/msgpack_unpack.h	115;"	d
+template_callback_true	./mp7/msgpack_unpack.h	117;"	d
+template_callback_true	./msgpack/msgpack_unpack.h	115;"	d
+template_callback_true	./msgpack7/msgpack_unpack.h	117;"	d
+template_callback_uint16	./mp/msgpack_unpack.h	95;"	d
+template_callback_uint16	./mp7/msgpack_unpack.h	97;"	d
+template_callback_uint16	./msgpack/msgpack_unpack.h	95;"	d
+template_callback_uint16	./msgpack7/msgpack_unpack.h	97;"	d
+template_callback_uint32	./mp/msgpack_unpack.h	97;"	d
+template_callback_uint32	./mp7/msgpack_unpack.h	99;"	d
+template_callback_uint32	./msgpack/msgpack_unpack.h	97;"	d
+template_callback_uint32	./msgpack7/msgpack_unpack.h	99;"	d
+template_callback_uint64	./mp/msgpack_unpack.h	99;"	d
+template_callback_uint64	./mp7/msgpack_unpack.h	101;"	d
+template_callback_uint64	./msgpack/msgpack_unpack.h	99;"	d
+template_callback_uint64	./msgpack7/msgpack_unpack.h	101;"	d
+template_callback_uint8	./mp/msgpack_unpack.h	93;"	d
+template_callback_uint8	./mp7/msgpack_unpack.h	95;"	d
+template_callback_uint8	./msgpack/msgpack_unpack.h	93;"	d
+template_callback_uint8	./msgpack7/msgpack_unpack.h	95;"	d
+test_clean	./run-tests.php	1468;"	v
+test_cnt	./run-tests.php	825;"	v
+test_cnt	./run-tests.php	976;"	v
+test_dirs	./run-tests.php	886;"	v
+test_file	./run-tests.php	1464;"	v
+test_file	./run-tests.php	1726;"	v
+test_files	./run-tests.php	1647;"	v
+test_files	./run-tests.php	481;"	v
+test_files	./run-tests.php	800;"	v
+test_files	./run-tests.php	821;"	v
+test_files	./run-tests.php	822;"	v
+test_files	./run-tests.php	881;"	v
+test_files	./run-tests.php	970;"	v
+test_idx	./run-tests.php	840;"	v
+test_idx	./run-tests.php	977;"	v
+test_list	./run-tests.php	569;"	v
+test_name	./run-tests.php	944;"	f
+test_results	./run-tests.php	483;"	v
+test_skipif	./run-tests.php	1466;"	v
+test_sort	./run-tests.php	953;"	f
+tested	./run-tests.php	1379;"	v
+tested	./run-tests.php	1500;"	v
+tested	./run-tests.php	2676;"	v
+tested_file	./run-tests.php	1363;"	v
+tested_file	./run-tests.php	1501;"	v
+testfile	./run-tests.php	787;"	v
+testfile	./run-tests.php	935;"	v
+testname	./run-tests.php	1088;"	v
+thread_id	./include/cpServer.h	144;"	m	struct:_cpThread
+thread_id	include/cpServer.h	/^        pthread_t thread_id;$/;"	m	struct:_cpThread
+time	./run-tests.php	2794;"	v
+time	./run-tests.php	2802;"	v
+timeout	./include/cpClientNet.h	17;"	m	struct:_cpClient
+timeout	./run-tests.php	1130;"	v
+timeout_sec	./include/cpServer.h	132;"	m	struct:_cpConfig
+timeout_sec	include/cpServer.h	/^        int timeout_sec;$/;"	m	struct:_cpConfig
+timeout_usec	./include/cpServer.h	133;"	m	struct:_cpConfig
+timeout_usec	include/cpServer.h	/^        int timeout_usec;$/;"	m	struct:_cpConfig
+tmp_post	./run-tests.php	1469;"	v
+tmp_relative_file	./run-tests.php	1470;"	v
+top_builddir	./Makefile	4;"	m
+top_srcdir	./Makefile	3;"	m
+transaction	./frame_example/yii1/db/CDbConnection.php	8;"	v
+tryLock	./include/cpServer.h	176;"	m	struct:_cpGroup
+tryLock	include/cpServer.h	/^        int (*tryLock)(struct _cpGroup *);$/;"	m	struct:_cpGroup
+type	./include/cpMemory.h	31;"	m	struct:_cpWorkerInfo
+type	./include/cpMemory.h	35;"	m	struct:_cpTcpEvent
+type	./mp/msgpack_unpack.h	26;"	m	struct:__anon7
+type	./mp7/msgpack_unpack.h	26;"	m	struct:__anon17
+type	./msgpack/msgpack_unpack.h	26;"	m	struct:__anon25
+type	./msgpack7/msgpack_unpack.h	26;"	m	struct:__anon35
+type	./php_connect_pool.h	143;"	m	struct:_cpRecvEvent
+type	./run-tests.php	2817;"	v
+types	./msgpack7/benchmark.php	6;"	v
+uint16_t	./mp/msgpack/sysdep.h	27;"	t
+uint16_t	./mp/sysdep.h	27;"	t
+uint16_t	./mp7/msgpack/sysdep.h	27;"	t
+uint16_t	./msgpack/msgpack/sysdep.h	27;"	t
+uint16_t	./msgpack/sysdep.h	27;"	t
+uint16_t	./msgpack7/msgpack/sysdep.h	27;"	t
+uint32_t	./mp/msgpack/sysdep.h	29;"	t
+uint32_t	./mp/sysdep.h	29;"	t
+uint32_t	./mp7/msgpack/sysdep.h	29;"	t
+uint32_t	./msgpack/msgpack/sysdep.h	29;"	t
+uint32_t	./msgpack/sysdep.h	29;"	t
+uint32_t	./msgpack7/msgpack/sysdep.h	29;"	t
+uint64_t	./mp/msgpack/sysdep.h	31;"	t
+uint64_t	./mp/sysdep.h	31;"	t
+uint64_t	./mp7/msgpack/sysdep.h	31;"	t
+uint64_t	./msgpack/msgpack/sysdep.h	31;"	t
+uint64_t	./msgpack/sysdep.h	31;"	t
+uint64_t	./msgpack7/msgpack/sysdep.h	31;"	t
+uint8_t	./mp/msgpack/sysdep.h	25;"	t
+uint8_t	./mp/sysdep.h	25;"	t
+uint8_t	./mp7/msgpack/sysdep.h	25;"	t
+uint8_t	./msgpack/msgpack/sysdep.h	25;"	t
+uint8_t	./msgpack/sysdep.h	25;"	t
+uint8_t	./msgpack7/msgpack/sysdep.h	25;"	t
+unLock	./include/cpClientNet.h	26;"	m	struct:_cpClient
+unLock	./include/cpServer.h	175;"	m	struct:_cpGroup
+unLock	include/cpServer.h	/^        int (*unLock)(struct _cpGroup *);$/;"	m	struct:_cpGroup
+unpack	./msgpack7/benchmark.php	100;"	v
+unpack	./msgpack7/benchmark.php	107;"	v
+unpack	./msgpack7/benchmark.php	114;"	v
+unpack	./msgpack7/benchmark.php	131;"	v
+unpack	./msgpack7/benchmark.php	138;"	v
+unpack	./msgpack7/benchmark.php	150;"	v
+unpack	./msgpack7/benchmark.php	162;"	v
+unpack	./msgpack7/benchmark.php	169;"	v
+unpack	./msgpack7/benchmark.php	177;"	v
+unpack	./msgpack7/benchmark.php	189;"	v
+unpack	./msgpack7/benchmark.php	196;"	v
+unpack	./msgpack7/benchmark.php	87;"	v
+unpack_user	./mp/msgpack_unpack.h	76;"	d
+unpack_user	./mp7/msgpack_unpack.h	78;"	d
+unpack_user	./msgpack/msgpack_unpack.h	76;"	d
+unpack_user	./msgpack7/msgpack_unpack.h	78;"	d
+unpacker	./msgpack7/test_streaming.php	7;"	v
+url	./run-tests.php	2675;"	v
+url	./run-tests.php	2685;"	v
+url	./run-tests.php	2693;"	v
+url	./run-tests.php	2700;"	v
+url_bits	./run-tests.php	1016;"	v
+use_str8_serialization	./mp7/php_msgpack.h	34;"	v
+use_str8_serialization	./msgpack7/php_msgpack.h	27;"	v
+use_wait_queue	./include/cpServer.h	125;"	m	struct:_cpConfig
+use_wait_queue	include/cpServer.h	/^        uint8_t use_wait_queue;$/;"	m	struct:_cpConfig
+used_slots	./mp/msgpack_unpack.c	23;"	m	struct:__anon5	file:
+used_slots	./mp7/msgpack_unpack.c	15;"	m	struct:__anon15	file:
+used_slots	./msgpack/msgpack_unpack.c	23;"	m	struct:__anon23	file:
+used_slots	./msgpack7/msgpack_unpack.c	14;"	m	struct:__anon33	file:
+used_slots	msgpack7/msgpack_unpack.c	/^    int32_t used_slots;$/;"	m	struct:__anon1	file:
+user_email	./run-tests.php	386;"	v
+user_email	./run-tests.php	390;"	v
+user_email	./run-tests.php	391;"	v
+user_input	./run-tests.php	368;"	v
+user_input	./run-tests.php	381;"	v
+user_tests	./run-tests.php	234;"	v
+user_tests	./run-tests.php	236;"	v
+util_lower	./build/shtool	449;"	f
+util_upper	./build/shtool	454;"	f
+val	./run-tests.php	2400;"	v
+valgrind_cmd	./run-tests.php	609;"	v
+valgrind_header	./run-tests.php	109;"	v
+valgrind_header	./run-tests.php	610;"	v
+valgrind_header	./run-tests.php	619;"	v
+valgrind_version	./run-tests.php	108;"	v
+valgrind_version	./run-tests.php	615;"	v
+value	./msgpack7/benchmark.php	21;"	v
+value	./msgpack7/benchmark.php	25;"	v
+value	./msgpack7/benchmark.php	29;"	v
+value	./msgpack7/benchmark.php	33;"	v
+value	./msgpack7/benchmark.php	41;"	v
+value	./msgpack7/benchmark.php	49;"	v
+value	./msgpack7/benchmark.php	58;"	v
+value	./run-tests.php	2375;"	v
+value	./run-tests.php	2412;"	v
+value	./run-tests.php	2845;"	v
+value_display	./msgpack7/benchmark.php	4;"	v
+var_entries	./mp/msgpack_unpack.c	25;"	t	typeref:struct:__anon5	file:
+var_entries	./mp7/msgpack_unpack.c	17;"	t	typeref:struct:__anon15	file:
+var_entries	./msgpack/msgpack_unpack.c	25;"	t	typeref:struct:__anon23	file:
+var_entries	./msgpack7/msgpack_unpack.c	16;"	t	typeref:struct:__anon33	file:
+var_entries	msgpack7/msgpack_unpack.c	/^} var_entries;$/;"	t	typeref:struct:__anon1	file:
+var_hash	./mp/msgpack_class.c	21;"	m	struct:__anon4	file:
+var_hash	./mp/msgpack_unpack.h	24;"	m	struct:__anon7
+var_hash	./mp/php_msgpack.h	33;"	m	struct:__anon8
+var_hash	./mp7/msgpack_class.c	20;"	m	struct:__anon14	file:
+var_hash	./mp7/msgpack_unpack.h	24;"	m	struct:__anon17
+var_hash	./mp7/php_msgpack.h	36;"	m	struct:__anon18
+var_hash	./msgpack/msgpack_class.c	21;"	m	struct:__anon22	file:
+var_hash	./msgpack/msgpack_unpack.h	24;"	m	struct:__anon25
+var_hash	./msgpack/php_msgpack.h	33;"	m	struct:__anon26
+var_hash	./msgpack7/msgpack_class.c	20;"	m	struct:__anon32	file:
+var_hash	./msgpack7/msgpack_unpack.h	24;"	m	struct:__anon35
+var_hash	./msgpack7/php_msgpack.h	29;"	m	struct:__anon36
+verify_config	./run-tests.php	198;"	f
+volatile_int8	./include/cpServer.h	81;"	t
+volatile_int8	include/cpServer.h	/^    typedef volatile int8_t volatile_int8;$/;"	t
+w	./run-tests.php	1135;"	v
+w	./run-tests.php	2354;"	v
+wait_fpm_pid	./include/cpServer.h	101;"	m	struct:_cpConnection
+wait_fpm_pid	include/cpServer.h	/^        int wait_fpm_pid; \/\/等待的fpm pid$/;"	m	struct:_cpConnection
+wait_in_num	./include/cpServer.h	152;"	m	struct:_cpServerG
+wait_in_num	include/cpServer.h	/^        uint64_t wait_in_num;$/;"	m	struct:_cpServerG
+wait_out_num	./include/cpServer.h	153;"	m	struct:_cpServerG
+wait_out_num	include/cpServer.h	/^        uint64_t wait_out_num;$/;"	m	struct:_cpServerG
+want	./run-tests.php	1969;"	v
+wanted	./run-tests.php	2008;"	v
+wanted	./run-tests.php	2010;"	v
+wanted	./run-tests.php	2108;"	v
+wanted	./run-tests.php	2109;"	v
+wanted	./run-tests.php	2142;"	v
+wanted_headers	./run-tests.php	1970;"	v
+wanted_headers	./run-tests.php	1998;"	v
+wanted_re	./run-tests.php	2014;"	v
+wanted_re	./run-tests.php	2044;"	v
+wanted_re	./run-tests.php	2046;"	v
+wanted_re	./run-tests.php	2051;"	v
+wanted_re	./run-tests.php	2056;"	v
+wanted_re	./run-tests.php	2061;"	v
+wanted_re	./run-tests.php	2067;"	v
+wanted_re	./run-tests.php	2068;"	v
+wanted_re	./run-tests.php	2069;"	v
+wanted_re	./run-tests.php	2070;"	v
+wanted_re	./run-tests.php	2071;"	v
+wanted_re	./run-tests.php	2072;"	v
+wanted_re	./run-tests.php	2073;"	v
+wanted_re	./run-tests.php	2074;"	v
+wanted_re	./run-tests.php	2075;"	v
+wanted_re	./run-tests.php	2076;"	v
+wanted_re	./run-tests.php	2077;"	v
+wanted_re	./run-tests.php	2136;"	v
+wanted_re	./run-tests.php	2146;"	v
+warn	./run-tests.php	1572;"	v
+warn	./run-tests.php	1629;"	v
+warn	./run-tests.php	2096;"	v
+warn	./run-tests.php	2126;"	v
+worker_id	./include/cpServer.h	109;"	m	struct:_cpIdelList
+worker_id	./include/cpServer.h	95;"	m	struct:_cpConnection
+worker_id	include/cpServer.h	/^        int worker_id;$/;"	m	struct:_cpIdelList
+worker_id	include/cpServer.h	/^        uint16_t worker_id; \/\/1001 1002 2001$/;"	m	struct:_cpConnection
+worker_index	./include/cpServer.h	96;"	m	struct:_cpConnection
+worker_index	include/cpServer.h	/^        uint16_t worker_index; \/\/ 0 1 2 3$/;"	m	struct:_cpConnection
+worker_max	./include/cpServer.h	164;"	m	struct:_cpGroup
+worker_max	include/cpServer.h	/^        uint32_t worker_max;$/;"	m	struct:_cpGroup
+worker_min	./include/cpServer.h	163;"	m	struct:_cpGroup
+worker_min	include/cpServer.h	/^        uint32_t worker_min;$/;"	m	struct:_cpGroup
+worker_num	./include/cpServer.h	162;"	m	struct:_cpGroup
+worker_num	include/cpServer.h	/^        uint32_t worker_num;$/;"	m	struct:_cpGroup
+worker_onReceive	./connect_pool.c	901;"	f
+workerid2readfd	./connect_pool_client.c	28;"	v	file:
+workerid2readfd	connect_pool_client.c	/^static int *workerid2readfd = NULL;$/;"	v	file:
+workerid2writefd	./connect_pool_client.c	27;"	v	file:
+workerid2writefd	connect_pool_client.c	/^static int *workerid2writefd = NULL;$/;"	v	file:
+workers	./include/cpServer.h	165;"	m	struct:_cpGroup
+workers	include/cpServer.h	/^        cpWorker workers[CP_GROUP_LEN];$/;"	m	struct:_cpGroup
+workers_status	./include/cpServer.h	166;"	m	struct:_cpGroup
+workers_status	include/cpServer.h	/^        volatile_int8 workers_status[CP_GROUP_LEN];$/;"	m	struct:_cpGroup
+working	./include/cpServer.h	212;"	m	struct:_cpWorkerG
+working	include/cpServer.h	/^        int working;$/;"	m	struct:_cpWorkerG
+write_information	./run-tests.php	270;"	f
+x_failed	./run-tests.php	2458;"	v
+x_leaked	./run-tests.php	2460;"	v
+x_passed	./run-tests.php	2461;"	v
+x_total	./run-tests.php	2454;"	v
+x_warned	./run-tests.php	2457;"	v
+x_warned	./run-tests.php	2463;"	v
+x_xfailed	./run-tests.php	2459;"	v
+xml	./run-tests.php	2746;"	v
+zend_resource	./include/php7_wrapper.h	6;"	t
+zend_size_t	./include/php7_wrapper.h	180;"	t
+zend_size_t	./include/php7_wrapper.h	80;"	t

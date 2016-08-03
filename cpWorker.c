@@ -63,6 +63,8 @@ static int cpWorker_loop(int worker_id, int group_id)
     cpSignalSet(SIGALRM, cpWorker_do_ping, 1, 0);
     cpSignalSet(SIGTERM, cpWorker_do_stop, 1, 0);
     alarm(CP_PING_SLEEP);
+    //    zval *ret_value;
+    //    CP_ALLOC_INIT_ZVAL(ret_value);
     while (CPGS->running)
     {
         zval *ret_value;
@@ -109,12 +111,20 @@ int cpFork_one_worker(int worker_id, int group_id)
 static void cpManagerRecycle(int sig)
 {
     int i, recycle_num, j;
+<<<<<<< HEAD
     //cpLog("monitor:start___________________");
+=======
+    //    cpLog("monitor:start___________________");
+>>>>>>> swoole/master
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
         recycle_num = 0;
+<<<<<<< HEAD
      //   cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
+=======
+        //        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
+>>>>>>> swoole/master
         if (G->lock(G) == 0)
         {
             //                                    for (i = G->worker_num - 1; i >= 0; i--)
@@ -157,7 +167,11 @@ static void cpManagerRecycle(int sig)
             G->unLock(G);
         }
     }
+<<<<<<< HEAD
     //cpLog("monitor:end___________________\n");
+=======
+    //    cpLog("monitor:end___________________\n");
+>>>>>>> swoole/master
     alarm(CPGC.idel_time);
 }
 
@@ -169,7 +183,7 @@ static void cpManagerAdd(int sig)
     {
         cpGroup *G = &CPGS->G[j];
         for (i = G->worker_num - 1; i >= 0; i--)//for not set source in pool.ini
-        //for (i = G->worker_num - 1; i >= G->worker_min; i--)
+            //for (i = G->worker_num - 1; i >= G->worker_min; i--)
         {
             if (G->workers[i].pid == 0)
             {//只创建刚分配并且pid为0的
@@ -329,6 +343,11 @@ int cpWorker_manager_loop()
 
     while (CPGS->running == 1)
     {
+        if (CPGS->group_num == 0)
+        {//for default max,min 
+            sleep(1);
+            continue;
+        }
         pid = wait(&worker_exit_code);
         sigprocmask(SIG_BLOCK, &block_alarm, NULL);
         if (CPGS->running == 1 && pid > 0)

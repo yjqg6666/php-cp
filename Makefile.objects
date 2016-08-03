@@ -1,0 +1,44 @@
+connect_pool.lo: /Users/Ben/self/git/leipool/connect_pool.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/connect_pool.c -o connect_pool.lo 
+cpServer.lo: /Users/Ben/self/git/leipool/cpServer.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpServer.c -o cpServer.lo 
+cpWorker.lo: /Users/Ben/self/git/leipool/cpWorker.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpWorker.c -o cpWorker.lo 
+connect_pool_client.lo: /Users/Ben/self/git/leipool/connect_pool_client.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/connect_pool_client.c -o connect_pool_client.lo 
+cpFunction.lo: /Users/Ben/self/git/leipool/cpFunction.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpFunction.c -o cpFunction.lo 
+cpMemory.lo: /Users/Ben/self/git/leipool/cpMemory.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpMemory.c -o cpMemory.lo 
+cpKqueue.lo: /Users/Ben/self/git/leipool/cpKqueue.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpKqueue.c -o cpKqueue.lo 
+cpNetWork.lo: /Users/Ben/self/git/leipool/cpNetWork.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpNetWork.c -o cpNetWork.lo 
+cpReactorBase.lo: /Users/Ben/self/git/leipool/cpReactorBase.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpReactorBase.c -o cpReactorBase.lo 
+cpClientNet.lo: /Users/Ben/self/git/leipool/cpClientNet.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpClientNet.c -o cpClientNet.lo 
+cpPingWorker.lo: /Users/Ben/self/git/leipool/cpPingWorker.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/cpPingWorker.c -o cpPingWorker.lo 
+msgpack/msgpack.lo: /Users/Ben/self/git/leipool/msgpack/msgpack.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/msgpack/msgpack.c -o msgpack/msgpack.lo 
+msgpack/msgpack_pack.lo: /Users/Ben/self/git/leipool/msgpack/msgpack_pack.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/msgpack/msgpack_pack.c -o msgpack/msgpack_pack.lo 
+msgpack/msgpack_unpack.lo: /Users/Ben/self/git/leipool/msgpack/msgpack_unpack.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/msgpack/msgpack_unpack.c -o msgpack/msgpack_unpack.lo 
+msgpack/msgpack_convert.lo: /Users/Ben/self/git/leipool/msgpack/msgpack_convert.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/msgpack/msgpack_convert.c -o msgpack/msgpack_convert.lo 
+msgpack7/msgpack.lo: /Users/Ben/self/git/leipool/msgpack7/msgpack.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/msgpack7/msgpack.c -o msgpack7/msgpack.lo 
+msgpack7/msgpack_pack.lo: /Users/Ben/self/git/leipool/msgpack7/msgpack_pack.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/msgpack7/msgpack_pack.c -o msgpack7/msgpack_pack.lo 
+msgpack7/msgpack_unpack.lo: /Users/Ben/self/git/leipool/msgpack7/msgpack_unpack.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/msgpack7/msgpack_unpack.c -o msgpack7/msgpack_unpack.lo 
+msgpack7/msgpack_convert.lo: /Users/Ben/self/git/leipool/msgpack7/msgpack_convert.c
+	$(LIBTOOL) --mode=compile $(CC)  -I. -I/Users/Ben/self/git/leipool $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS)  -c /Users/Ben/self/git/leipool/msgpack7/msgpack_convert.c -o msgpack7/msgpack_convert.lo 
+$(phplibdir)/connect_pool.la: ./connect_pool.la
+	$(LIBTOOL) --mode=install cp ./connect_pool.la $(phplibdir)
+
+./connect_pool.la: $(shared_objects_connect_pool) $(CONNECT_POOL_SHARED_DEPENDENCIES)
+	$(LIBTOOL) --mode=link $(CC) $(COMMON_FLAGS) $(CFLAGS_CLEAN) $(EXTRA_CFLAGS) $(LDFLAGS) -o $@ -export-dynamic -avoid-version -prefer-pic -module -rpath $(phplibdir) $(EXTRA_LDFLAGS) $(shared_objects_connect_pool) $(CONNECT_POOL_SHARED_LIBADD)
+

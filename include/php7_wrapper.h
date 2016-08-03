@@ -34,7 +34,7 @@ static CPINLINE int cp_zend_hash_index_find(HashTable *ht, zend_ulong h, void **
     }
 }
 
-#define CP_INTERNAL_SEND_ROW(send_data,type)\
+#define CP_INTERNAL_SEND_RAW(send_data,type)\
                                 zval send_zval;\
                                 CP_ZVAL_STRING(&send_zval,send_data,0);\
                                 CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,type);
@@ -176,6 +176,8 @@ static CPINLINE int cp_zend_hash_find_ptr(HashTable *ht, zval *k, void **ret) {
 #else
 //------------下面是php7版本------------------------------------
 #include <ext/standard/php_smart_string.h>
+#include "zend_smart_str.h"
+
 #define cp_php_var_serialize                php_var_serialize
 typedef size_t zend_size_t;
 #define CP_RETVAL_STRINGL(s, l,dup)         RETVAL_STRINGL(s,l)
@@ -392,7 +394,7 @@ static CPINLINE int cp_internal_call_user_function(zval *object, zval *fun, zval
     }
 }
 
-#define CP_INTERNAL_SEND_ROW(send_data,type)\
+#define CP_INTERNAL_SEND_RAW(send_data,type)\
                                 zval send_zval;\
                                 CP_ZVAL_STRING(&send_zval,send_data,0);\
                                 CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval,type);\

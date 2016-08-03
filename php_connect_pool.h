@@ -155,6 +155,7 @@ typedef struct _cpRecvEvent
 
 #define CP_RES_SERVER_NAME          "ConPoolServer"
 #define CP_RES_CLIENT_NAME          "ConPoolClient"
+#define CP_ASYNC_PRE                "async"
 #define CP_PROCESS_MASTER      1
 #define CP_PROCESS_WORKER      2
 #define CP_PROCESS_MANAGER     3
@@ -227,8 +228,14 @@ PHP_METHOD(pdo_connect_pool, __call);
 PHP_METHOD(pdo_connect_pool, release);
 PHP_METHOD(pdo_connect_pool, msConfig);
 PHP_METHOD(pdo_connect_pool, forceMaster);
+PHP_METHOD(pdo_connect_pool, close);
+PHP_METHOD(pdo_connect_pool, setAsync);
+PHP_METHOD(pdo_connect_pool, done);
 
 PHP_METHOD(pdo_connect_pool_PDOStatement, __call);
+PHP_METHOD(pdo_connect_pool_PDOStatement, setAsync);
+PHP_METHOD(pdo_connect_pool_PDOStatement, release);
+PHP_METHOD(pdo_connect_pool_PDOStatement, done);
 PHP_METHOD(pdo_connect_pool_PDOStatement, rewind);
 PHP_METHOD(pdo_connect_pool_PDOStatement, next);
 PHP_METHOD(pdo_connect_pool_PDOStatement, current);
@@ -241,6 +248,9 @@ PHP_METHOD(redis_connect_pool, __call);
 PHP_METHOD(redis_connect_pool, release);
 PHP_METHOD(redis_connect_pool, select);
 PHP_METHOD(redis_connect_pool, connect);
+PHP_METHOD(redis_connect_pool, done);
+PHP_METHOD(redis_connect_pool, close);
+PHP_METHOD(redis_connect_pool, setAsync);
 
 
 void send_oob2proxy(zend_resource *rsrc TSRMLS_DC);
