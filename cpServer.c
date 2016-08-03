@@ -93,7 +93,7 @@ void cpKillClient()
 static void cpServer_init_lock()
 {
     int i = 0;
-    for (; i < CP_GROUP_NUM; i++)
+    for (; i < CP_GROUP_NUM - 1; i++)
     {
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
@@ -323,7 +323,6 @@ static int cpServer_master_onAccept(int fd)
     {
         //accept得到连接套接字
         conn_fd = accept(fd, (struct sockaddr *) &client_addr, &client_addrlen);
-        cpLog("client_fd is [%d] fd [%d] \n", conn_fd, fd);
 
         if (conn_fd < 0)
         {
@@ -338,6 +337,7 @@ static int cpServer_master_onAccept(int fd)
                     return SUCCESS;
             }
         }
+
         //连接过多
         if (CPGS->connect_count >= CPGC.max_conn)
         {
@@ -349,7 +349,6 @@ static int cpServer_master_onAccept(int fd)
         int flag = 1;
         setsockopt(conn_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof (flag));
 #if (defined SO_KEEPALIVE) && (defined TCP_KEEPIDLE)  
-        cpLog("===== if 一堆option set\n");
         int keepalive = 1;
         int keep_idle = CP_TCP_KEEPCOUNT;
         int keep_interval = CP_TCP_KEEPIDLE;
@@ -380,11 +379,9 @@ static int cpServer_master_onAccept(int fd)
         cpConnection *conn = &(CPGS->conlist[conn_fd]);
         if (conn)
         {//不能在add后做,线程安全,防止添加到reactor后马上就读到数据,这时候下面new_connect还没执行。
-            cpLog("===== if conn\n");
             conn->release = CP_FD_RELEASED;
         }
-        cpLog("before add conn_fd [%d] \n", conn_fd);
-        //if (cpReactor_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, CP_EVENT_READ | CP_EVENT_WRITE) < 0)
+
         if (cpReactor_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, CP_EVENT_READ) < 0)
         {
             cpLog("[Master]add event fail Errno=%d|FD=%d", errno, conn_fd);
@@ -514,12 +511,10 @@ static int cpReactor_client_receive(int fd)
     cpLog("thread id:[%d]   server before cpNetRead fd:[%d] data:[%s] length:[%d] \n", tid, fd, data, event_size);
     */
     n = cpNetRead(fd, data, event_size);
-    cpLog("server after cpNetRead n:[%d] \n", n);
 
     if (n > 0)
     {
         cpTcpEvent *event = (cpTcpEvent*) data;
-        //cpLog("event type:[%d] \n", event->type);
         switch (event->type)
         {
             case CP_TCPEVENT_ADD:
@@ -581,12 +576,10 @@ int static cpReactor_thread_loop(int *id)
 
     // 读写线程的 fd   accept到客户端fd后 add 客户端fd
     int epfd = cpReactor_create();
-    cpLog("read/write fd is %d  id %d \n", epfd, *id);
     CPGS->reactor_threads[*id].epfd = epfd;
 
     epoll_wait_handle handles[CP_MAX_EVENT];
     handles[CP_EVENT_READ] = cpReactor_client_receive;
-//    handles[EPOLLPRI] = cpReactor_client_release;
     handles[CP_EVENT_CLOSE] = cpReactor_client_close;
 
     cpReactor_wait(handles, &timeo, epfd);
