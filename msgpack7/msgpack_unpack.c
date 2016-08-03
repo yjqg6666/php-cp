@@ -285,6 +285,7 @@ void msgpack_unserialize_var_destroy(msgpack_unserialize_data_t *var_hashx, zend
     void *next;
     var_entries *var_hash = var_hashx->first;
 
+	// msg7
     while (var_hash) {
 		if (err) {
 			for (i = var_hash->used_slots; i > 0; i--) {
