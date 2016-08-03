@@ -231,6 +231,7 @@ PHP_MSGPACK_API void php_msgpack_unserialize(zval *return_value, char *str, size
     size_t off = 0;
     msgpack_unpack_t mp;
     msgpack_unserialize_data_t var_hash;
+	//msg7
 
     if (str_len <= 0)
     {
