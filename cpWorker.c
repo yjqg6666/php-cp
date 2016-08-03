@@ -45,6 +45,7 @@ static void cpWorker_init(int worker_id, int group_id)
 
     char fifo_name[CP_FIFO_NAME_LEN] = {0};
     sprintf(fifo_name, "%s_%d", CP_FIFO_NAME_PRE, group_id * CP_GROUP_LEN + worker_id); //client 2 worker
+
     CPWG.pipe_fd_read = cpCreateFifo(fifo_name);
 
     sprintf(fifo_name, "%s_%d_1", CP_FIFO_NAME_PRE, group_id * CP_GROUP_LEN + worker_id); //worker 2 client
