@@ -1,5 +1,5 @@
 <?php
-$pid = getmypid(); echo "$pid\n";
+//$pid = getmypid(); echo "$pid\n";
 $obj1 = new pdoProxy('mysql:host=192.168.1.19;dbname=mz_gay_group2;charset=utf8', "public_user", "1qa2ws3ed");
 // sleep(50);
 $rs = $obj1->query("select * from test limit 2");
