@@ -111,20 +111,10 @@ int cpFork_one_worker(int worker_id, int group_id)
 static void cpManagerRecycle(int sig)
 {
     int i, recycle_num, j;
-<<<<<<< HEAD
-    //cpLog("monitor:start___________________");
-=======
-    //    cpLog("monitor:start___________________");
->>>>>>> swoole/master
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
         recycle_num = 0;
-<<<<<<< HEAD
-     //   cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
-=======
-        //        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
->>>>>>> swoole/master
         if (G->lock(G) == 0)
         {
             //                                    for (i = G->worker_num - 1; i >= 0; i--)
@@ -167,11 +157,6 @@ static void cpManagerRecycle(int sig)
             G->unLock(G);
         }
     }
-<<<<<<< HEAD
-    //cpLog("monitor:end___________________\n");
-=======
-    //    cpLog("monitor:end___________________\n");
->>>>>>> swoole/master
     alarm(CPGC.idel_time);
 }
 
