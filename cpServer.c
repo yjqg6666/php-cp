@@ -354,7 +354,7 @@ static int cpServer_master_onAccept(int fd)
         //连接过多
         if (CPGS->connect_count >= CPGC.max_conn)
         {
-            cpLog("too many connection");
+            cpLog("too many connection,please reduce you worker num");
             close(conn_fd);
             return SUCCESS;
         }

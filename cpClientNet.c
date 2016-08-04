@@ -219,14 +219,14 @@ void log_end(cpClient* cli)
                 cpLog_init(CPGS->log_file);
             }
             smart_str_appendl(&cli->slow_log_tmp, MAX_HOLD_END_STR, sizeof (MAX_HOLD_END_STR) - 1);
-smart_str_0(&cli->slow_log_tmp);
+            smart_str_0(&cli->slow_log_tmp);
 #if PHP_MAJOR_VERSION < 7
             cpLog("%s\n\n", cli->slow_log_tmp.c);
 #else
             cpLog("%s\n\n", ZSTR_VAL(cli->slow_log_tmp.s));
 #endif
-            smart_str_free(&cli->slow_log_tmp);
         }
+        smart_str_free(&cli->slow_log_tmp);
     }
     if (CPGS->max_data_size_to_log && CPGS->max_data_size_to_log <= cli->current_len)
     {
@@ -236,14 +236,18 @@ smart_str_0(&cli->slow_log_tmp);
             cpLog_init(CPGS->log_file);
         }
         smart_str_appendl(&cli->big_data_tmp, MAX_DATA_END_STR, sizeof (MAX_DATA_END_STR) - 1);
-smart_str_0(&cli->big_data_tmp);
+        smart_str_0(&cli->big_data_tmp);
 #if PHP_MAJOR_VERSION < 7
         cpLog("%s\n\n", cli->big_data_tmp.c);
 #else
         cpLog("%s\n\n", ZSTR_VAL(cli->big_data_tmp.s));
 #endif
+    }
+    if (CPGS->max_data_size_to_log)
+    {
         smart_str_free(&cli->big_data_tmp);
     }
+
 }
 
 void log_increase_size(int size, cpClient* cli)

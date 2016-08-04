@@ -19,7 +19,7 @@ extern "C" {
 #define CP_PORT_REDIS            6253
 #define CP_REACTOR_TIMEO_SEC     3
 #define CP_REACTOR_TIMEO_USEC    0
-#define CP_MAX_FDS               (1024*10) //最大fd值,暂不支持扩容
+#define CP_MAX_FDS               (1024*50) //最大fd值,暂不支持扩容
     //#define CP_MAX_REQUEST           20000
 #define CP_MAX_REQUEST           0
 #define CP_MAX_WORKER            100
