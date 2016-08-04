@@ -1,5 +1,0 @@
-#/bin/bash
-/usr/local/php709/bin/phpize
-./configure --with-php-config=/usr/local/php709/bin/php-config
-make
-make install
