@@ -677,6 +677,10 @@ static void pdo_proxy_stmt(zval * args)
             cp_zval_ptr_dtor(&str);
             cp_zval_ptr_dtor(&pdo_stmt);
             pdo_stmt = NULL;
+            if (!ret_value)
+            {
+                return;
+            }
         }
         if (!ret_value)
         {
