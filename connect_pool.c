@@ -677,10 +677,7 @@ static void pdo_proxy_stmt(zval * args)
             cp_zval_ptr_dtor(&str);
             cp_zval_ptr_dtor(&pdo_stmt);
             pdo_stmt = NULL;
-            if (!ret_value)
-            {
-                return;
-            }
+            return;//when the exception,the ret_value dont need dtor
         }
         if (!ret_value)
         {
