@@ -551,18 +551,6 @@ static void pdo_proxy_pdo(zval * args)
             }
 #if PHP_MAJOR_VERSION ==7
             ret_value = (zval *) emalloc(sizeof (zval));
-            if (pdo_stmt)
-            {
-                zval_dtor(pdo_stmt);
-                efree(pdo_stmt);
-                pdo_stmt = NULL;
-            }
-#else
-            if (pdo_stmt)
-            {
-                zval_ptr_dtor(&pdo_stmt);
-                pdo_stmt = NULL;
-            }
 #endif
             if (cp_internal_call_user_function(object, method, &ret_value, args) == FAILURE)
             {
@@ -606,6 +594,11 @@ static void pdo_proxy_pdo(zval * args)
                         zend_get_object_classname(ret_value, (const char **) &name, &name_len TSRMLS_CC);
                         if (strcmp(name, "PDOStatement") == 0)
                         {
+                            if (pdo_stmt)
+                            {
+                                zval_ptr_dtor(&pdo_stmt);
+                                pdo_stmt = NULL;
+                            }
                             pdo_stmt = ret_value;
                             zval send_zval;
                             ZVAL_STRING(&send_zval, "PDOStatement!", 0);
@@ -616,6 +609,12 @@ static void pdo_proxy_pdo(zval * args)
                         zend_string *name = Z_OBJ_HANDLER_P(ret_value, get_class_name)(Z_OBJ_P(ret_value));
                         if (strcmp(name->val, "PDOStatement") == 0)
                         {
+                            if (pdo_stmt)
+                            {
+                                zval_dtor(pdo_stmt);
+                                efree(pdo_stmt);
+                                pdo_stmt = NULL;
+                            }
                             pdo_stmt = ret_value;
                             zval send_zval;
                             CP_ZVAL_STRING(&send_zval, "PDOStatement!", 0);
@@ -677,7 +676,7 @@ static void pdo_proxy_stmt(zval * args)
             cp_zval_ptr_dtor(&str);
             cp_zval_ptr_dtor(&pdo_stmt);
             pdo_stmt = NULL;
-            return;//when the exception,the ret_value dont need dtor
+            return; //when the exception,the ret_value dont need dtor
         }
         if (!ret_value)
         {
