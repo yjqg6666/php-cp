@@ -94,7 +94,7 @@ static ZEND_MINIT_FUNCTION(msgpack) /* {{{ */
     php_session_register_serializer("msgpack", PS_SERIALIZER_ENCODE_NAME(msgpack), PS_SERIALIZER_DECODE_NAME(msgpack));
 #endif
 
-    msgpack_init_class();
+//    msgpack_init_class();
 
     REGISTER_LONG_CONSTANT("MESSAGEPACK_OPT_PHPONLY",
             MSGPACK_CLASS_OPT_PHPONLY, CONST_CS | CONST_PERSISTENT);
