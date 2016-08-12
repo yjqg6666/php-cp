@@ -30,6 +30,8 @@ phpize=>./configure=>make install=>echo "extension=xx/connect_pool.so">php.ini
 
 ## 提示
 - 请求结束（rshutdown/mshutdown阶段）会调用自动调用release，不要依赖于这个release，否则连接利用率会很低
+- 关于异常：
+pdoProxy和原生Pdo不一样的一点是 默认pdo是静默模式 不抛异常  pdoProxy是抛异常的（且是用Exception类抛出的 不是PDOException）
 - pool_server 必须以root用户启动
 - redis不支持pub/sub方法
 - 当你用完一个连接后（例如：fetchAll调用结束），请调用release来马上释放连接到池子里面(如果事务需要在事务commit或者rollback后release)，如果不想改业务代码可以在框架层每次fetch（或者get/set）用完之后调用release方法。
