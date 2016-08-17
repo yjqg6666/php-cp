@@ -38,7 +38,7 @@
 #ifdef HAVE_KQUEUE
 #include <sys/event.h>
 #ifndef SIGRTMIN
-#define SIGRTMIN 33
+#define SIGRTMIN SIGUSR2 
 #endif
 #endif
 #endif
