@@ -386,8 +386,8 @@ static cpGroup * cpGet_worker(cpClient *cli, zval *data_source)
                 cpTcpEvent event = {0};
                 event.type = CP_TCPEVENT_ADD;
                 event.data = 0;
+                CPGS->group_num++;
                 cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
-                CPGS->group_num++; // add after for thread safe
             }
             pthread_mutex_unlock(&CPGS->mutex_lock);
         }
