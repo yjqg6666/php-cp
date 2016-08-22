@@ -436,11 +436,12 @@ static int cpReactor_client_release(int fd)
             if (G->first_wait_id && conn->worker_index <= G->worker_max)
             {//wait is not null&&use queue&&use reload to reduce max maybe trigger this
                 int wait_pid = cpPopWaitQueue(G, conn);
-                G->unLock(G);
                 if (kill(wait_pid, SIGRTMIN) < 0)
                 {
+                    CPGS->G[conn->group_id].workers_status[conn->worker_index] = CP_WORKER_IDLE;
                     cpLog("send sig 2 %d error. Error: %s [%d]", wait_pid, strerror(errno), errno);
                 }
+                G->unLock(G);
             }
             else
             {

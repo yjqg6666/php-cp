@@ -15,17 +15,9 @@ extern "C" {
     
     typedef struct _cpWorker {
         int request; //worker request NUM
-        int last_from_id;
         pid_t pid;
         int pipe_fd_write;
-//        int pre_len;
-//        pid_t pre_pid;
-        
-        int fd;//当前worker服务于哪个fd
         int CPid;//当前worker服务于哪个pid
-//        int Gid;//当前worker属于哪个group
-        
-//        uint8_t  run;
         cpShareMemory sm_obj;
     } cpWorker;
 
