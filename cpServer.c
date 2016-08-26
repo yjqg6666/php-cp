@@ -120,28 +120,16 @@ static void cpServer_init_lock()
     }
 }
 
-void cpServer_init(zval *conf, char *ini_file)
+int cpServer_init(zval *conf, char *ini_file)
 {
+    int sock = 0;
     size_t group_num = 0;
     cpShareMemory shm = {0};
-    shm.size = sizeof (cpServerGS);
-    strncpy(shm.mmap_name, CP_SERVER_MMAP_FILE, strlen(CP_SERVER_MMAP_FILE));
-    if (cp_create_mmap_file(&shm) == 0)
-    {
-        CPGS = (cpServerGS*) cp_mmap_calloc_with_file(&shm);
-        cpKillClient();
-        bzero(CPGS, shm.size);
-        if (CPGS == NULL)
-        {
-            php_printf("calloc[1] fail\n");
-            return;
-        }
-    }
-    else
-    {
-        php_printf("calloc[1] fail\n");
-        return;
-    }
+    zval *config;
+    char *name;
+    uint32_t klen;
+    int ktype;
+    HashTable *_ht = Z_ARRVAL_P(conf);
 
     bzero(&CPGL, sizeof (cpServerG));
     CPGC.backlog = CP_BACKLOG;
@@ -160,14 +148,31 @@ void cpServer_init(zval *conf, char *ini_file)
     CPGC.max_data_size_to_log = 0;
     CPGC.max_hold_time_to_log = 0;
 
+    if ((sock = cpListen()) < 0)
+    {
+        printf("listen[1] fail\n");
+        return FAILURE;
+    }
+
+    shm.size = sizeof (cpServerGS);
+    strncpy(shm.mmap_name, CP_SERVER_MMAP_FILE, strlen(CP_SERVER_MMAP_FILE));
+    if (cp_create_mmap_file(&shm) == 0)
+    {
+        CPGS = (cpServerGS*) cp_mmap_calloc_with_file(&shm);
+        cpKillClient();
+        bzero(CPGS, shm.size);
+        if (CPGS == NULL)
+        {
+            php_printf("calloc[1] fail\n");
+            return FAILURE;
+        }
+    }
+    else
+    {
+        php_printf("calloc[1] fail\n");
+        return FAILURE;
+    }
     strcpy(CPGC.ini_file, ini_file);
-    //    MAKE_STD_ZVAL(CPGS->group);
-    //    array_init(CPGS->group);
-    zval *config;
-    char *name;
-    uint32_t klen;
-    int ktype;
-    HashTable *_ht = Z_ARRVAL_P(conf);
 
     CP_HASHTABLE_FOREACH_START2(_ht, name, klen, ktype, config)
     {
@@ -202,7 +207,7 @@ void cpServer_init(zval *conf, char *ini_file)
     if (pthread_mutex_init(&CPGS->mutex_lock, &attr) < 0)
     {
         cpLog("pthread_mutex_init error!. Error: %s [%d]", strerror(errno), errno);
-        return;
+        return FAILURE;
     }
 
     CPGS->default_min = CP_DEF_MIN_NUM;
@@ -213,6 +218,7 @@ void cpServer_init(zval *conf, char *ini_file)
     strcpy(CPGS->log_file, CPGC.log_file);
 
     cpServer_init_lock();
+    return sock;
 
 }
 
@@ -250,20 +256,15 @@ int cpServer_create()
     return SUCCESS;
 }
 
-int cpServer_start()
+int cpServer_start(int sock)
 {
-    int w, pid, ret, sock, g;
+    int w, pid, ret, g;
     if (CPGC.daemonize > 0)
     {
         if (daemon(0, 0) < 0)
         {
             return FAILURE;
         }
-    }
-    if ((sock = cpListen()) < 0)
-    {
-        cpLog("listen[1] fail");
-        return FAILURE;
     }
 
     CPGS->master_pid = getpid();
@@ -639,7 +640,7 @@ int static cpListen()
     sock = socket(PF_INET, SOCK_STREAM, 0);
     if (sock < 0)
     {
-        cpLog("swSocket_listen: Create socket fail.Errno=%d", errno);
+        printf("swSocket_listen: Create socket fail.Errno=%d\n", errno);
         return FAILURE;
     }
     option = 1;
@@ -653,14 +654,14 @@ int static cpListen()
 
     if (ret < 0)
     {
-        cpLog("Bind fail.port=%d. Error: %s [%d]", CPGC.port, strerror(errno), errno);
+        printf("Bind fail.port=%d. Error: %s [%d]\n", CPGC.port, strerror(errno), errno);
         return FAILURE;
     }
     //开始监听套接字
     ret = listen(sock, CPGC.backlog);
     if (ret < 0)
     {
-        cpLog("Listen fail.port=%d. Error: %s [%d]", CPGC.port, strerror(errno), errno);
+        printf("Listen fail.port=%d. Error: %s [%d]\n", CPGC.port, strerror(errno), errno);
         return FAILURE;
     }
     cpSetIsBlock(sock, 0);
@@ -695,11 +696,11 @@ static void cpSignalHanlde(int sig)
                     }
                 }
             }
-            ret = kill(CPGS->ping_workers->pid, SIGKILL);
-            if (ret == -1)
-            {
-                cpLog("kill ping worker failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
-            }
+            //            ret = kill(CPGS->ping_workers->pid, SIGKILL);
+            //            if (ret == -1)
+            //            {
+            //                cpLog("kill ping worker failed, id=%d. Error: %s [%d]", i, strerror(errno), errno);
+            //            }
             exit(1);
             break;
         case SIGUSR1:

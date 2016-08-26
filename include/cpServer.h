@@ -225,7 +225,7 @@ extern "C" {
         cpWorkerInfo event;
     } cpWorkerG;
 
-    void cpServer_init(zval *conf, char *ini_file);
+    int cpServer_init(zval *conf, char *ini_file);
     int cpServer_create();
     int cpServer_start();
     int cpMutexLock(cpGroup *);

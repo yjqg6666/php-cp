@@ -352,7 +352,11 @@ PHP_FUNCTION(pool_server_create)
         RETURN_FALSE;
     }
     conf = cpGetConfig(config_file);
-    cpServer_init(conf, config_file);
+    int sock = cpServer_init(conf, config_file);
+    if (sock <= 0)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
+    }
 
     int ret = cpServer_create();
     if (ret < 0)
@@ -360,7 +364,7 @@ PHP_FUNCTION(pool_server_create)
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: create server fail. Error: %s [%d]", strerror(errno), errno);
     }
 
-    ret = cpServer_start();
+    ret = cpServer_start(sock);
     if (ret < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "pool_server: start server fail. Error: %s [%d]", strerror(errno), errno);
