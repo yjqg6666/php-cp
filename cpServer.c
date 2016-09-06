@@ -154,6 +154,12 @@ int cpServer_init(zval *conf, char *ini_file)
         return FAILURE;
     }
 
+    if ((cp_create_mmap_dir()) < 0)
+    {
+        php_printf("mkdir[1] fail\n");
+        return FAILURE;
+    }
+
     shm.size = sizeof (cpServerGS);
     strncpy(shm.mmap_name, CP_SERVER_MMAP_FILE, strlen(CP_SERVER_MMAP_FILE));
     if (cp_create_mmap_file(&shm) == 0)

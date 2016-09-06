@@ -31,7 +31,8 @@ extern "C" {
 #define CP_SOURCE_LEN            200
 #define CP_DEF_MAX_NUM           20
 #define CP_DEF_MIN_NUM           1
-#define CP_SERVER_MMAP_FILE      "/tmp/cp_server_mmap_file"
+#define CP_FILE_DIR              "/var/run/cp/"
+#define CP_SERVER_MMAP_FILE      "/var/run/cp/cp_server_mmap_file"
 
 #define CP_GROUP_LEN     1000 //
 #define CP_GROUP_NUM     100 //the max group num of proxy process . todo  check it

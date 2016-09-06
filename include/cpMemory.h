@@ -39,6 +39,7 @@ extern "C" {
     void *cp_mmap_calloc(int size);
     void* cp_mmap_calloc_with_file(cpShareMemory *object);
     int cp_create_mmap_file(cpShareMemory *object);
+    int cp_create_mmap_dir();
 
 
 #ifdef	__cplusplus

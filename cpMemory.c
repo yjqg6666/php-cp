@@ -55,13 +55,36 @@ void *cp_mmap_calloc(int size)
     }
 }
 
+int cp_create_mmap_dir()
+{
+    umask(0);
+    if (access(CP_FILE_DIR, F_OK) == -1)
+    {
+        int ret = mkdir(CP_FILE_DIR, 0777);
+        if (ret == -1)
+        {
+            php_printf("mkdir fail. Error: %s[%d]", strerror(errno), errno);
+            return -1;
+
+        }
+    }
+    else
+    {
+        php_printf("存在\n");
+    }
+
+    return 0;
+};
+
 int cp_create_mmap_file(cpShareMemory *object)
 {
     umask(0);
+    char tmp[100] = {0};
+    strncpy(tmp, CP_SERVER_MMAP_FILE, strlen(CP_SERVER_MMAP_FILE));
     int fd = open(object->mmap_name, O_RDWR | O_CREAT, 0777);
     if (fd == -1)
     {
-        php_printf("open fail. Error: %s[%d],%s", strerror(errno), errno,object->mmap_name);
+        php_printf("open fail. Error: %s[%d],%s", strerror(errno), errno, object->mmap_name);
         return -1;
 
     }
