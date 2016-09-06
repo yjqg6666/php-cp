@@ -68,10 +68,6 @@ int cp_create_mmap_dir()
 
         }
     }
-    else
-    {
-        php_printf("存在\n");
-    }
 
     return 0;
 };
