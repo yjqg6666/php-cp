@@ -683,11 +683,11 @@ static void cpSignalHanlde(int sig)
         case SIGTERM:
             cpLog("stop pool server");
             CPGS->running = 0;
-            int i = 0, j = 0, ret;
+            int i, j = 0, ret;
             for (; j < CPGS->group_num; j++)
             {
                 cpGroup *G = &CPGS->G[j];
-                for (; i < G->worker_num; i++)
+                for (i = 0; i < G->worker_num; i++)
                 {
                     ret = kill(G->workers[i].pid, SIGKILL);
                     if (ret == -1)
