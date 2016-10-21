@@ -43,7 +43,7 @@ static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
-#define CP_VERSION "1.4.7"
+#define CP_VERSION "1.4.8"
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
@@ -231,7 +231,7 @@ PHP_MINIT_FUNCTION(connect_pool)
 
     INIT_CLASS_ENTRY(redis_connect_pool_ce, "redisProxy", redis_connect_pool_methods);
     redis_connect_pool_class_entry_ptr = zend_register_internal_class(&redis_connect_pool_ce TSRMLS_CC);
-    zend_register_class_alias("redis_connect_pool", pdo_connect_pool_class_entry_ptr);
+    zend_register_class_alias("redis_connect_pool", redis_connect_pool_class_entry_ptr);
 
     INIT_CLASS_ENTRY(pdo_connect_pool_PDOStatement_ce, "pdo_connect_pool_PDOStatement", pdo_connect_pool_PDOStatement_methods);
 
