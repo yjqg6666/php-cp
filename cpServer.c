@@ -653,7 +653,7 @@ int static cpListen()
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &option, sizeof (int));
 
     bzero(&addr_in4, sizeof (addr_in4));
-    inet_pton(AF_INET, "127.0.0.1", &(addr_in4.sin_addr));
+    inet_pton(AF_INET, "0.0.0.0", &(addr_in4.sin_addr));
     addr_in4.sin_port = htons(CPGC.port);
     addr_in4.sin_family = AF_INET;
     ret = bind(sock, (struct sockaddr *) &addr_in4, sizeof (addr_in4));

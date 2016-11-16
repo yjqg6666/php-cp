@@ -58,12 +58,16 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
 {
     zend_resource sock_le;
     int ret;
+	char *pool_server;
     cpClient* cli = (cpClient*) pecalloc(sizeof (cpClient), 1, 1);
     if (cpClient_create(cli) < 0)
     {
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "pdo_connect_pool: create sock fail. Error: %s [%d]", strerror(errno), errno);
     }
-    ret = cpClient_connect(cli, "127.0.0.1", 6253, (float) 100); //所有的操作100s超时
+	if(!(pool_server=getenv("POOL_SERVER"))){
+		 pool_server="127.0.0.1";
+	}
+    ret = cpClient_connect(cli, pool_server, 6253, (float) 100); //所有的操作100s超时
     if (ret < 0)
     {
         pefree(cli, 1);
