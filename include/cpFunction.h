@@ -12,18 +12,6 @@
 extern "C" {
 #endif
 
-#define CP_FIFO_NAME_LEN   200
-#define CP_FIFO_NAME_PRE   "/var/run/cp/con_pool_c2w_pipe"
-#define CP_MMAP_NAME_PRE   "/var/run/cp/con_pool_mmap"
-#define SW_LOG_BUFFER_SIZE 1024
-#define SW_PID_BUFFER_SIZE 100
-#define SW_LOG_DATE_STRLEN  64
-#define CP_LOG_FORMAT "[%s]\t%s\t\n"
-#define FAILUREOR_MSG_SIZE 1024
-#define MAX_TITLE_LENGTH   127
-#define MAX_INI_LENGTH   1024
-
-#define PID_FILE_PATH "/var/run/con_pool_"
 #define cpLog(str,...)     \
                         do \
                             { \

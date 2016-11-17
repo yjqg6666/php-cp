@@ -43,7 +43,7 @@ static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
-#define CP_VERSION "1.4.8"
+#define CP_VERSION "1.5.0"
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
@@ -425,7 +425,47 @@ int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
     dest.addr = sm_obj->mem;
     dest.max = CPGC.max_read_len;
     dest.exceed = 0;
-    php_msgpack_serialize(&dest, ret_value);
+
+    switch (Z_TYPE_P(ret_value))
+    {
+
+        case IS_ARRAY:
+        {
+            // printf("arr\n");   
+            break;
+        }
+
+        case IS_DOUBLE:
+        case IS_LONG:
+        case IS_TRUE:
+        case IS_FALSE:
+        {
+
+            //printf("mul\n");   
+            break;
+        }
+        case IS_STRING:
+        {
+
+            memcpy(dest.addr, Z_STRVAL_P(ret_value), Z_STRLEN_P(ret_value));
+            dest.len = Z_STRLEN_P(ret_value);
+            __type = IS_STRING;
+            // printf("str\n");   
+            break;
+        }
+
+        default:
+        {
+            //                printf("deaf %d\n",Z_TYPE_P(ret_value));   
+
+            break;
+        }
+
+    }
+
+
+    //php_var_dump(ret_value,1); 
+    //    php_msgpack_serialize(&dest, ret_value);
     if (dest.exceed == 1)
     {
         CP_INTERNAL_ERROR_SEND("data is exceed,increase max_read_len");
@@ -440,7 +480,7 @@ int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type)
         //            cpLog("sigqueue error %d", errno);
         //            return FAILURE;
         //        }
-        cpWorkerInfo worker_event;
+        cpWorkerInfo worker_event = {0};
         worker_event.len = dest.len;
         worker_event.type = __type;
         worker_event.pid = CPWG.event.pid;
@@ -751,17 +791,18 @@ static int cp_redis_select(zval *new_obj, zval **db)
     return CP_TRUE;
 }
 
-int redis_proxy_connect(zval *data_source, zval *args, int flag)
+int redis_proxy_connect(zval *args, int flag)
 {
-    zval *ex_arr, zdelim, *ip, *port, *db, *timeout, * ret_redis_obj = NULL, *new_obj, **tmp_pass[3];
+    zval *ex_arr, redis_name, *data_source, zdelim, *ip, *port, *db, *timeout, * ret_redis_obj = NULL, *new_obj, **tmp_pass[3];
     CP_MAKE_STD_ZVAL(ex_arr);
+    CP_MAKE_STD_ZVAL(data_source);
     array_init(ex_arr);
     CP_ZVAL_STRINGL(&zdelim, ":", 1, 0);
+    ZVAL_STRING(data_source, CPWG.event.data_source);
     cp_explode(&zdelim, data_source, ex_arr, LONG_MAX);
     CP_MAKE_STD_ZVAL(new_obj);
     zend_class_entry *redis_ce = NULL;
 
-    zval redis_name;
     CP_ZVAL_STRING(&redis_name, "redis", 0);
     if (cp_zend_hash_find_ptr(EG(class_table), &redis_name, (void **) &redis_ce) == FAILURE)
     {
@@ -790,6 +831,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
         if (Z_BVAL_P(ret_redis_obj) == FALSE)
         {
             cp_zval_ptr_dtor(&ex_arr);
+            cp_zval_ptr_dtor(&data_source);
             cp_zval_ptr_dtor(&ret_redis_obj);
             //            CP_TEST_RETURN_FALSE(flag);
             //            cp_add_fail_into_mem(args, data_source);
@@ -804,6 +846,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
     {
         cp_zval_ptr_dtor(&new_obj);
         cp_zval_ptr_dtor(&ex_arr);
+        cp_zval_ptr_dtor(&data_source);
         //        CP_TEST_RETURN_FALSE(flag);
         //        cp_add_fail_into_mem(args, data_source);
         CP_SEND_EXCEPTION_RETURN;
@@ -812,6 +855,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
     {
         cp_zval_ptr_dtor(&new_obj);
         cp_zval_ptr_dtor(&ex_arr);
+        cp_zval_ptr_dtor(&data_source);
         return CP_TRUE;
     }
 
@@ -820,6 +864,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
         if (!cp_redis_select(new_obj, &db))
         {
             cp_zval_ptr_dtor(&ex_arr);
+            cp_zval_ptr_dtor(&data_source);
             return CP_FALSE;
         }
     }
@@ -829,19 +874,16 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
     {
         CP_INTERNAL_ERROR_SEND_RETURN("redis obj add table fail!");
     }
-    zval *method;
-    if (cp_zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method"), (void **) &method) == FAILURE)
-    {
-        CP_INTERNAL_ERROR_SEND_RETURN("redis no method!");
-    }
-    if (strcmp(Z_STRVAL_P(method), "select") == 0)
+    zval method;
+    ZVAL_STRING(&method, CPWG.event.method);
+    if (strcmp(Z_STRVAL(method), "select") == 0)
     {
         CP_INTERNAL_NORMAL_SEND_RETURN("CON_SUCCESS!");
     }
     else
     {
         zval * ret_value = NULL;
-        if (cp_internal_call_user_function(new_obj, method, &ret_value, args) == SUCCESS)
+        if (cp_internal_call_user_function(new_obj, &method, &ret_value, args) == SUCCESS)
         {
             if (!EG(exception))
             {
@@ -860,88 +902,75 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
         }
         if (ret_value)
             cp_zval_ptr_dtor(&ret_value);
+        cp_zval_ptr_dtor(&data_source);
         return CP_TRUE; //no use
     }
 }
 
 static void redis_dispatch(zval * args)
 {
-    zval *data_source;
-    zval *object;
-    if (cp_zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("data_source"), (void **) &data_source) == SUCCESS)
+    zval *object, method;
+
+    if (cp_zend_hash_find(&redis_object_table, CPWG.event.data_source, strlen(CPWG.event.data_source), (void **) &object) == SUCCESS)
     {
-        if (cp_zend_hash_find(&redis_object_table, Z_STRVAL_P(data_source), Z_STRLEN_P(data_source), (void **) &object) == SUCCESS)
+        if (strcmp(CPWG.event.method, "select") == 0)
         {
-            zval *method;
-            if (cp_zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method"), (void **) &method) == FAILURE)
-            {
-                CP_INTERNAL_ERROR_SEND("redis no method error!");
-                return;
-            }
-            else if (strcmp(Z_STRVAL_P(method), "select") == 0)
-            {
-                zval select_return;
-                ZVAL_BOOL(&select_return, 1);
-                CP_INTERNAL_SERIALIZE_SEND_MEM(&select_return, CP_SIGEVENT_TURE);
-                return;
-            }
-            zval * ret_value = NULL;
-            if (cp_internal_call_user_function(object, method, &ret_value, args) == FAILURE)
-            {
-                CP_INTERNAL_ERROR_SEND("call redis method error!");
-            }
-            else
-            {
-                if (EG(exception))
-                {
-                    zval *str;
-                    CP_SEND_EXCEPTION_ARGS(&str);
-                    //                    char *p = strstr(Z_STRVAL_P(str), "server went away");
-                    //                    char *p2 = strstr(Z_STRVAL_P(str), "Connection lost");
-                    //                    char *p3 = strstr(Z_STRVAL_P(str), "read error on connection");
-                    //                    char *p4 = strstr(Z_STRVAL_P(str), "Connection closed");
-                    //                    if (p || p2 || p3 || p4)
-                    //                    {
-                    cp_zend_hash_del(&redis_object_table, Z_STRVAL_P(data_source), Z_STRLEN_P(data_source));
-                    // }
-                    cp_zval_ptr_dtor(&str);
-                }
-                else
-                {
-                    CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
-                }
-            }
-            if (ret_value)
-                cp_zval_ptr_dtor(&ret_value);
+            zval select_return;
+            ZVAL_BOOL(&select_return, 1);
+            CP_INTERNAL_SERIALIZE_SEND_MEM(&select_return, CP_SIGEVENT_TURE);
+            return;
+        }
+        zval * ret_value = NULL;
+        ZVAL_STRING(&method, CPWG.event.method);
+        if (cp_internal_call_user_function(object, &method, &ret_value, args) == FAILURE)
+        {
+            CP_INTERNAL_ERROR_SEND("call redis method error!");
         }
         else
         {
-            redis_proxy_connect(data_source, args, CP_CONNECT_NORMAL);
+            zval_ptr_dtor(&method);
+            if (EG(exception))
+            {
+                zval *str;
+                CP_SEND_EXCEPTION_ARGS(&str);
+                //                    char *p = strstr(Z_STRVAL_P(str), "server went away");
+                //                    char *p2 = strstr(Z_STRVAL_P(str), "Connection lost");
+                //                    char *p3 = strstr(Z_STRVAL_P(str), "read error on connection");
+                //                    char *p4 = strstr(Z_STRVAL_P(str), "Connection closed");
+                //                    if (p || p2 || p3 || p4)
+                //                    {
+                cp_zend_hash_del(&redis_object_table, ZEND_STRS(CPWG.event.data_source));
+                // }
+                cp_zval_ptr_dtor(&str);
+            }
+            else
+            {
+                CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
+            }
         }
+        if (ret_value)
+            cp_zval_ptr_dtor(&ret_value);
     }
     else
     {
-        CP_INTERNAL_ERROR_SEND("redis no datasource!");
+        redis_proxy_connect(args, CP_CONNECT_NORMAL);
     }
 }
 
 int worker_onReceive(zval * unser_value)
 {
-    zval *type;
-    if (cp_zend_hash_find(Z_ARRVAL_P(unser_value), ZEND_STRS("type"), (void **) &type) == SUCCESS)
+
+    if (CPWG.event.type == CP_TYPE_REDIS)
     {
-        if (strcmp(Z_STRVAL_P(type), "pdo") == 0)
-        {
-            pdo_dispatch(unser_value);
-        }
-        else if (strcmp(Z_STRVAL_P(type), "redis") == 0)
-        {
-            redis_dispatch(unser_value);
-        }
+        redis_dispatch(unser_value);
+    }
+    else if (CPWG.event.type == CP_TYPE_PDO)
+    {
+        pdo_dispatch(unser_value);
     }
     else
     {
-        cpLog("args error no type!");
+        cpLog("error no type!");
     }
     cp_zval_ptr_dtor(&unser_value);
     return CP_TRUE;

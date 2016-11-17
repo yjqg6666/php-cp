@@ -25,9 +25,11 @@ extern "C" {
     } cpMasterInfo;
 
     typedef struct _cpWorkerInfo {
-        int len;
+        int len;//share mm len
         int pid;
-        int type;
+        uint16_t type;
+        char method[CP_METHOD_LEN];
+        char data_source[CP_SOURCE_MAX];
     } cpWorkerInfo;
 
     typedef struct _cpTcpEvent {

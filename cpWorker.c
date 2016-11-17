@@ -52,6 +52,108 @@ static void cpWorker_init(int worker_id, int group_id)
     CPWG.pipe_fd_write = pipe_fd_write;
 }
 
+static void* cpUnSerializeArr(void *buffer, zval *zvalue)
+{
+    //Initialize zend array
+    int len = 0;
+    ZVAL_NEW_ARR(zvalue);
+    memcpy(Z_ARR_P(zvalue), buffer, sizeof (zend_array));
+    buffer += sizeof (zend_array);
+
+    //Initialize buckets
+    zend_array *ht = Z_ARR_P(zvalue);
+    len = HT_SIZE(ht);
+    void *arData = emalloc(len);
+    memcpy(arData, buffer, len);
+    HT_SET_DATA_ADDR(ht, arData);
+    buffer += len;
+    ht->pDestructor = ZVAL_PTR_DTOR;
+
+
+    int idx;
+    Bucket *p;
+    for (idx = 0; idx < ht->nNumUsed; idx++)
+    {
+        p = ht->arData + idx;
+        if (Z_TYPE(p->val) == IS_UNDEF) continue;
+
+        /* Initialize key */
+        if (p->key)
+        {
+            zend_string *str = (zend_string*) buffer;
+            p->key = zend_string_dup(str, 0);
+            len = ZEND_MM_ALIGNED_SIZE(_STR_HEADER_SIZE + str->len + 1);
+            buffer += len;
+        }
+        if (Z_TYPE(p->val) == IS_STRING)
+        {
+            zend_string *str = (zend_string*) buffer;
+            p->val.value.str = zend_string_dup(str, 0);
+            len = ZEND_MM_ALIGNED_SIZE(_STR_HEADER_SIZE + str->len + 1);
+            buffer += len;
+        }
+        else if (Z_TYPE(p->val) == IS_ARRAY)
+        {
+            buffer = cpUnSerializeArr(buffer, &p->val);
+        }
+    }
+    return buffer;
+
+}
+//#define ZVAL_NEW_ARR(z) do {									\
+//		zval *__z = (z);										\
+//		zend_array *_arr = emalloc(sizeof(zend_array));			\
+//		Z_ARR_P(__z) = _arr;									\
+//		Z_TYPE_INFO_P(__z) = IS_ARRAY_EX;						\
+//	} while (0)
+
+static void* cpUnSerialize(void *buffer, zval *zvalue)
+{
+    //Initialize zend array
+    int len = 0;
+    ZVAL_NEW_ARR(zvalue);
+    memcpy(Z_ARR_P(zvalue), buffer, sizeof (zend_array));
+    buffer += sizeof (zend_array);
+
+    //Initialize buckets
+    zend_array *ht = Z_ARR_P(zvalue);
+    len = HT_SIZE(ht);
+    void *arData = emalloc(len);
+    memcpy(arData, buffer, len);
+    HT_SET_DATA_ADDR(ht, arData);
+    buffer += len;
+    ht->pDestructor = ZVAL_PTR_DTOR;
+
+
+    int idx;
+    Bucket *p;
+    for (idx = 0; idx < ht->nNumUsed; idx++)
+    {
+        p = ht->arData + idx;
+        if (Z_TYPE(p->val) == IS_UNDEF) continue;
+
+        /* Initialize key */
+        if (p->key)
+        {
+            zend_string *str = (zend_string*) buffer;
+            p->key = zend_string_dup(str, 0);
+            buffer += (sizeof (zend_string) + str->len);
+        }
+        if (Z_TYPE(p->val) == IS_STRING)
+        {
+            zend_string *str = (zend_string*) buffer;
+            p->val.value.str = zend_string_dup(str, 0);
+            buffer += (sizeof (zend_string) + str->len);
+        }
+        else if (Z_TYPE(p->val) == IS_ARRAY)
+        {
+            buffer = cpUnSerialize(buffer, &p->val);
+        }
+    }
+    return buffer;
+
+}
+
 static int cpWorker_loop(int worker_id, int group_id)
 {
     cpWorker_init(worker_id, group_id);
@@ -80,7 +182,18 @@ static int cpWorker_loop(int worker_id, int group_id)
             continue;
         }
         CPWG.working = 1;
-        php_msgpack_unserialize(ret_value, sm_obj->mem, CPWG.event.len);
+
+                cpUnSerializeArr(sm_obj->mem, ret_value);
+//         array_init(ret_value);
+//        zval z_args;
+//        array_init(&z_args);
+//        cp_add_index_string(&z_args, 0, "test", 1);
+//        add_assoc_zval(ret_value, "args", &z_args);
+//        php_var_dump(ret_value,1);
+
+        //        cpLog("refcount %d\n",ret_value->value.arr->gc.refcount);
+
+        //  php_msgpack_unserialize(ret_value, sm_obj->mem, CPWG.event.len);
         worker_onReceive(ret_value);
         CPWG.working = 0;
     }
@@ -110,12 +223,12 @@ int cpFork_one_worker(int worker_id, int group_id)
 static void cpManagerRecycle(int sig)
 {
     int i, recycle_num, j;
-//    cpLog("monitor:start___________________");
+    //    cpLog("monitor:start___________________");
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
         recycle_num = 0;
-//        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
+        //        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
         if (G->lock(G) == 0)
         {
             //                                    for (i = G->worker_num - 1; i >= 0; i--)
@@ -158,7 +271,7 @@ static void cpManagerRecycle(int sig)
             G->unLock(G);
         }
     }
-//    cpLog("monitor:end___________________\n");
+    //    cpLog("monitor:end___________________\n");
     alarm(CPGC.idel_time);
 }
 

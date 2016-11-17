@@ -646,7 +646,7 @@ int static cpListen()
     sock = socket(PF_INET, SOCK_STREAM, 0);
     if (sock < 0)
     {
-        printf("swSocket_listen: Create socket fail.Errno=%d\n", errno);
+        printf("Socket_listen: Create socket fail.Errno=%d\n", errno);
         return FAILURE;
     }
     option = 1;
