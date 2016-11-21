@@ -11,6 +11,23 @@
 #ifdef	__cplusplus
 extern "C" {
 #endif
+#define CP_REACTOR_MAXEVENTS       4096
+#define CP_MAX_EVENT               1024
+#define CP_BUFFER_SIZE         (1024*1024)
+#define CP_MAX_UINT            4294967295
+
+#define EPOLL_CLOSE            10
+
+#define CP_CLIENT_EOF_STR          "\r\n^CON^eof\r\n"
+#define CP_TOO_MANY_CON            "not enough con"
+#define CP_TOO_MANY_CON_ERR        "ERROR!not enough con"
+#define CP_MULTI_PROCESS_ERR        "ERROR!the connection object create in parent process and use in multi process,please create in every process"
+#define CP_CLIENT_EOF_LEN          strlen(CP_CLIENT_EOF_STR)
+#define CP_HEADER_CON_SUCCESS      "CON_SUCCESS!"
+#define CP_HEADER_ERROR            "ERROR!"
+#define CP_PDO_HEADER_STATE        "PDOStatement!"
+#define CP_RELEASE_HEADER          "r"
+#define CP_RELEASE_HEADER_LEN      1
 
 
     typedef int (*epoll_wait_handle)(int fd);

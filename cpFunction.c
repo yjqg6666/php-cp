@@ -156,9 +156,7 @@ void cpSettitle(char *title_name)
     char title[MAX_TITLE_LENGTH + 5] = {0};
     strcat(title, "pool_");
     strcat(title, title_name);
-
-#if PHP_MAJOR_VERSION > 5 && PHP_MINOR_VERSION > 4 ||PHP_MAJOR_VERSION==7
-
+#if (PHP_MAJOR_VERSION >= 5 && PHP_MINOR_VERSION >= 4 )||(PHP_MAJOR_VERSION==7)
     zval *name_ptr, name;
     name_ptr = &name;
     CP_ZVAL_STRING(name_ptr, title, 1);
@@ -170,7 +168,6 @@ void cpSettitle(char *title_name)
     zval *function;
     CP_MAKE_STD_ZVAL(function);
     CP_ZVAL_STRING(function, "cli_set_process_title", 1);
-
     if (cp_call_user_function_ex(EG(function_table), NULL, function, &retval, 1, args, 0, NULL TSRMLS_CC) == FAILURE)
     {
         return;

@@ -7,7 +7,10 @@
 
 #ifndef CP_CLIENTNET_H
 #define	CP_CLIENTNET_H
-
+#define MAX_HOLD_START_STR "\n-------------------max hold time start-------------------------"
+#define MAX_HOLD_END_STR   "\n-------------------max hold time end-------------------------"
+#define MAX_DATA_START_STR "\n-------------------big data size start-------------------------"
+#define MAX_DATA_END_STR   "\n-------------------big data size end-------------------------"
 
 #ifdef	__cplusplus
 extern "C" {

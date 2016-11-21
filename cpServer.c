@@ -646,14 +646,14 @@ int static cpListen()
     sock = socket(PF_INET, SOCK_STREAM, 0);
     if (sock < 0)
     {
-        printf("Socket_listen: Create socket fail.Errno=%d\n", errno);
+        printf("swSocket_listen: Create socket fail.Errno=%d\n", errno);
         return FAILURE;
     }
     option = 1;
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &option, sizeof (int));
 
     bzero(&addr_in4, sizeof (addr_in4));
-    inet_pton(AF_INET, "0.0.0.0", &(addr_in4.sin_addr));
+    inet_pton(AF_INET, "127.0.0.1", &(addr_in4.sin_addr));
     addr_in4.sin_port = htons(CPGC.port);
     addr_in4.sin_family = AF_INET;
     ret = bind(sock, (struct sockaddr *) &addr_in4, sizeof (addr_in4));

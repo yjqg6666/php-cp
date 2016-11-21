@@ -176,7 +176,3 @@ $obj1->release();
 - http://weibo.com/u/2661945152
 - 83212019@qq.com
 - qq群号 538716391
-
-## License
-
-Apache License Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0.html

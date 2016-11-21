@@ -74,7 +74,6 @@
 #include <netinet/tcp.h>
 #include <pthread.h>
 
-#include "cpConfig.h"
 #include <ext/standard/php_string.h>
 #include "include/php7_wrapper.h"
 #include "cpMemory.h"
@@ -122,11 +121,41 @@ extern zend_module_entry connect_pool_module_entry;
 #define PHP_CONNECT_POOL_API
 #endif
 
-typedef struct _cpRecvEvent {
+#define CP_CHECK_RETURN(s)  if(s<0){RETURN_FALSE;}else{RETURN_TRUE;}return
+#define CP_SIG_EVENT       (SIGRTMIN+1)
+
+#define CP_TCPEVENT_GET         1
+#define CP_TCPEVENT_RELEASE     2
+#define CP_TCPEVENT_ADD         3
+#define CP_TCPEVENT_GETFD       4
+#define CP_GET_PID if(cpPid==0)cpPid=getpid()
+
+typedef struct _cpRecvEvent
+{
     zval *ret_value;
     uint8_t type;
 } cpRecvEvent;
 
+#define CP_SIGEVENT_TURE         1//01
+#define CP_SIGEVENT_EXCEPTION    2//10
+#define CP_SIGEVENT_PDO          3//11
+#define CP_SIGEVENT_STMT_OBJ     4//11
+#define CP_EVENTLEN_ADD_TYPE(len,__type) \
+                                         len  = len <<2;\
+                                         len = len | __type;
+#define CP_EVENTLEN_GET_TYPE(len,type)  type = len&3;
+#define CP_EVENTLEN_GET_LEN(len)        len = len>>2;
+
+#define CP_RES_SERVER_NAME          "ConPoolServer"
+#define CP_RES_CLIENT_NAME          "ConPoolClient"
+#define CP_ASYNC_PRE                "async"
+#define CP_PROCESS_MASTER      1
+#define CP_PROCESS_WORKER      2
+#define CP_PROCESS_MANAGER     3
+#define CP_PROCESS_PING        4
+
+#define CP_PIPE_MOD O_RDWR
+#define CP_TYPE_SIZE sizeof(uint8_t)
 
 //#define CP_GROUP_LEN 1000 //
 //#define CP_GROUP_NUM 100 //the max group num of proxy process . todo  check it
@@ -185,12 +214,12 @@ PHP_METHOD(redis_connect_pool, setAsync);
 void send_oob2proxy(zend_resource *rsrc TSRMLS_DC);
 extern void cp_serialize(smart_str *ser_data, zval *array);
 extern zval * cp_unserialize(char *data, int len);
-extern int redis_proxy_connect(zval *args, int flag);
+extern int redis_proxy_connect(zval *data_source, zval *args, int flag);
 extern int pdo_proxy_connect(zval *args, int flag);
 
 int worker_onReceive(zval *data);
 int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *ret_value, uint8_t __type);
-int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, cpClient *, cpWorkerInfo*);
+int CP_CLIENT_SERIALIZE_SEND_MEM(zval *ret_value, cpClient *);
 extern cpServerG ConProxyG;
 extern cpServerGS *ConProxyGS;
 extern cpWorkerG ConProxyWG;
