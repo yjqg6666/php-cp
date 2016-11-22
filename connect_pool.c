@@ -561,7 +561,7 @@ static void pdo_proxy_pdo(zval * args)
             if (cp_internal_call_user_function(object, method, &ret_value, args) == FAILURE)
             {
                 cp_zend_hash_del(&pdo_object_table, Z_STRVAL_P(data_source), Z_STRLEN_P(data_source));
-                cpLog("call pdo method error!");
+                cpLog("call pdo method( %s ) error!",Z_STRVAL_P(method));
                 CP_INTERNAL_ERROR_SEND("call pdo method error!");
             }
             else
