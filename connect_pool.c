@@ -558,11 +558,13 @@ static void pdo_proxy_pdo(zval * args)
 #if PHP_MAJOR_VERSION ==7
             ret_value = (zval *) emalloc(sizeof (zval));
 #endif
+
             if (cp_internal_call_user_function(object, method, &ret_value, args) == FAILURE)
             {
                 cp_zend_hash_del(&pdo_object_table, Z_STRVAL_P(data_source), Z_STRLEN_P(data_source));
-                cpLog("call pdo method( %s ) error!",Z_STRVAL_P(method));
-                CP_INTERNAL_ERROR_SEND("call pdo method error!");
+                char cp_error_str[FAILUREOR_MSG_SIZE] = {0};
+                snprintf(cp_error_str, FAILUREOR_MSG_SIZE, "call pdo method( %s ) error!", Z_STRVAL_P(method));
+                CP_INTERNAL_ERROR_SEND(cp_error_str);
             }
             else
             {
@@ -651,6 +653,7 @@ static void pdo_proxy_pdo(zval * args)
     }
     else
     {
+
         CP_INTERNAL_ERROR_SEND("PDO no datasource!");
     }
 }
@@ -664,7 +667,9 @@ static void pdo_proxy_stmt(zval * args)
     }
     if (cp_internal_call_user_function(pdo_stmt, method, &ret_value, args) == FAILURE)
     {
-        CP_INTERNAL_ERROR_SEND("call pdo stmt method error!");
+        char cp_error_str[FAILUREOR_MSG_SIZE] = {0};
+        snprintf(cp_error_str, FAILUREOR_MSG_SIZE, "call pdo stmt method (%s) error!", Z_STRVAL_P(method));
+        CP_INTERNAL_ERROR_SEND(cp_error_str);
     }
     else
     {
@@ -700,6 +705,7 @@ static void pdo_proxy_stmt(zval * args)
     }
     if (ret_value)
     {
+
         cp_zval_ptr_dtor(&ret_value);
     }
 }
@@ -724,6 +730,7 @@ static void pdo_dispatch(zval * args)
     }
     else
     {//操作pdo
+
         CP_INTERNAL_ERROR_SEND("PDO  method_type is none!");
     }
 }
@@ -744,6 +751,7 @@ static int cp_redis_select(zval *new_obj, zval **db)
 
         if (EG(exception))
         {
+
             cp_zval_ptr_dtor(&new_obj);
             CP_SEND_EXCEPTION_RETURN;
         }
@@ -860,6 +868,7 @@ int redis_proxy_connect(zval *data_source, zval *args, int flag)
         }
         if (ret_value)
             cp_zval_ptr_dtor(&ret_value);
+
         return CP_TRUE; //no use
     }
 }
@@ -921,6 +930,7 @@ static void redis_dispatch(zval * args)
     }
     else
     {
+
         CP_INTERNAL_ERROR_SEND("redis no datasource!");
     }
 }
@@ -944,6 +954,7 @@ int worker_onReceive(zval * unser_value)
         cpLog("args error no type!");
     }
     cp_zval_ptr_dtor(&unser_value);
+
     return CP_TRUE;
 }
 
