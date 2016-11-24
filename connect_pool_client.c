@@ -1045,7 +1045,6 @@ PHP_METHOD(redis_connect_pool, __destruct)
 
 PHP_METHOD(redis_connect_pool, __construct)
 {
-
     CP_GET_PID;
 }
 

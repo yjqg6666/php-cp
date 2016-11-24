@@ -35,7 +35,7 @@ extern "C" {
 #define CP_SERVER_MMAP_FILE      "/var/run/cp/cp_server_mmap_file"
 
 #define CP_GROUP_LEN     1000 //
-#define CP_GROUP_NUM     100 //the max group num of proxy process . todo  check it
+#define CP_GROUP_NUM     200 //the max group num of proxy process . todo  check it
 #define CP_MAX_ASYNC_NUM 100 //the max under async to protect db
 #define CP_SOURCE_MAX    100
 
@@ -95,7 +95,7 @@ extern "C" {
         int fd;
 
         uint16_t group_id; //0 1 2 3 
-        uint16_t worker_id; //1001 1002 2001
+        uint32_t worker_id; //1001 1002 2001
         uint16_t worker_index; // 0 1 2 3
 
         uint8_t release;
