@@ -110,12 +110,12 @@ int cpFork_one_worker(int worker_id, int group_id)
 static void cpManagerRecycle(int sig)
 {
     int i, recycle_num, j;
-//    cpLog("monitor:start___________________");
+    //    cpLog("monitor:start___________________");
     for (j = 0; j < CPGS->group_num; j++)
     {
         cpGroup *G = &CPGS->G[j];
         recycle_num = 0;
-//        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
+        //        cpLog("monitor:the  '%s' have used %d,the max conn num is %d, the min num is %d", G->name, G->worker_num, G->worker_max, G->worker_min);
         if (G->lock(G) == 0)
         {
             //                                    for (i = G->worker_num - 1; i >= 0; i--)
@@ -158,7 +158,7 @@ static void cpManagerRecycle(int sig)
             G->unLock(G);
         }
     }
-//    cpLog("monitor:end___________________\n");
+    //    cpLog("monitor:end___________________\n");
     alarm(CPGC.idel_time);
 }
 
@@ -267,6 +267,11 @@ static void cpManagerReload(int sig)
                 {
                     convert_to_long(v);
                     CPGC.idel_time = (int) Z_LVAL_P(v);
+                }
+                if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("ping_time"), (void **) &v) == SUCCESS)
+                {
+                    convert_to_long(v);
+                    CPGC.ping_time = (int) Z_LVAL_P(v);
                 }
             }
         }

@@ -63,6 +63,12 @@ void cpServer_init_common(zval *conf)
         CPGC.idel_time = (int) Z_LVAL_P(v);
     }
 
+    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("ping_time"), (void **) &v) == SUCCESS)
+    {
+        convert_to_long(v);
+        CPGC.ping_time = (int) Z_LVAL_P(v);
+    }
+
     if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ser_fail_hits"), (void **) &v) == SUCCESS)
     {
         convert_to_long(v);
@@ -140,6 +146,7 @@ int cpServer_init(zval *conf, char *ini_file)
     CPGC.max_conn = CP_MAX_FDS;
     CPGC.max_request = CP_MAX_REQUEST;
     CPGC.idel_time = CP_IDEL_TIME;
+    CPGC.ping_time = CP_PING_SLEEP;
     CPGC.recycle_num = CP_RECYCLE_NUM;
     CPGC.max_read_len = CP_DEF_MAX_READ_LEN;
     CPGC.ser_fail_hits = 1;

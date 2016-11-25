@@ -25,6 +25,7 @@ extern "C" {
 #define CP_MAX_WORKER            100
 #define CP_MIN_WORKER            2
 #define CP_IDEL_TIME             2
+#define CP_PING_SLEEP            30
 #define CP_RECYCLE_NUM           2
 #define CP_DEF_MAX_READ_LEN      (1024*1024*5)
 #define CP_MAX_READ_LEN          (1024*1024*20)
@@ -79,7 +80,6 @@ extern "C" {
 #define CP_FALSE                 0
 
 #define CP_START_SLEEP           usleep(50000);
-#define CP_PING_SLEEP            60
 
     typedef volatile int8_t volatile_int8;
 
@@ -125,6 +125,7 @@ extern "C" {
         uint16_t max_fail_num;
 
         uint8_t idel_time;
+        uint8_t ping_time;
         uint8_t use_wait_queue;
         uint8_t daemonize;
 
