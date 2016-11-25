@@ -63,7 +63,7 @@ void cpServer_init_common(zval *conf)
         CPGC.idel_time = (int) Z_LVAL_P(v);
     }
 
-    if (cp_zend_hash_find(Z_ARRVAL_P(config), ZEND_STRS("ping_time"), (void **) &v) == SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(conf), ZEND_STRS("ping_time"), (void **) &v) == SUCCESS)
     {
         convert_to_long(v);
         CPGC.ping_time = (int) Z_LVAL_P(v);
