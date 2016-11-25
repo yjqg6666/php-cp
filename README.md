@@ -41,6 +41,7 @@ pdoProxy和原生Pdo不一样的一点是 默认pdo是静默模式 不抛异常 
 - redis请参考项目中的frame_example
 - ci 请参考此项目 https://github.com/ethenoscar2011/codeigniter-phpcp
 - thinkphp 请参考 http://git.oschina.net/xavier007/THINKPHP_phpcp_driver
+- discuz 请参考 https://github.com/xluohome/php-cp-for-discuz
 
 ## 使用
 step 1 将项目中的pool.ini文件mv到/etc/pool.ini,并根据需求修改配置文件
