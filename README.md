@@ -11,10 +11,18 @@
 
 ## 安装
 
-phpize=>./configure=>make install=>echo "extension=xx/connect_pool.so">php.ini
++ `phpize && ./configure && make install`
++ `echo "extension=xx/connect_pool.so" > php.ini`
+
+## 使用Docker安装
+
+可以使用Docker编译，需要在项目的根目录下运行:
+
+1. 根据自己的配置，复制 `php.ini.example` 文件为 `php.ini` 文件，修改 `pool.ini` 文件
+2. `docker build -t php-cp .`
 
 
-##技术特性:
+## 技术特性:
 
 - 提供了release方法，在每次fetch数据后(redis的get set) 调用，将连接放回到池子里面，避免其他耗时操作导致的db层连接数过高问题。
 - 提供最大最小连接数配置支持。
@@ -47,12 +55,13 @@ pdoProxy和原生Pdo不一样的一点是 默认pdo是静默模式 不抛异常 
 step 1 将项目中的pool.ini文件mv到/etc/pool.ini,并根据需求修改配置文件
 
 step 2 启动代理进程：
-```php pool_server start
-```support "start" "stop" "restart"
+```
+php pool_server start // support "start" "stop" "restart"
+```
 
 step 3 适当修改你的php脚本:
 
-```
+``` php
 <?php
 /* * ****************don't use pool(不用连接池 最原始的方式)************************ */
 $obj = new Redis();
@@ -172,6 +181,7 @@ $obj1->release();
 $sql = "insert into `test` (tid) values (5)";
 $rs = $obj1->exec($sql); //走主库
 $obj1->release();
+```
 
 ## contact us
 - http://weibo.com/u/2661945152
