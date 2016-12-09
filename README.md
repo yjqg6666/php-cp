@@ -183,6 +183,18 @@ $rs = $obj1->exec($sql); //走主库
 $obj1->release();
 ```
 
+## 测试
+
+运行命令
+
+`php tests/RunTest.php --host 172.17.0.2 --class RedisTest --test test_set_get`
+
+ 执行测试，该命令接受三个参数：
+
++ --host 设置主机地址，可选，默认值为"127.0.0.1"
++ --class 设置要运行的测试类名称，可选，默认值为"RedisTest"
++ --test 设置要运行的测试函数名称，可选，如果不设置则执行所有测试
+
 ## contact us
 - http://weibo.com/u/2661945152
 - 83212019@qq.com

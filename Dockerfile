@@ -15,6 +15,6 @@ COPY . /usr/src/php/ext/php-cp
 RUN docker-php-ext-install php-cp
 COPY ./pool.ini /etc/pool.ini
 
-# Workdir
+# workdir
 COPY . /usr/src/php-cp
 WORKDIR /usr/src/php-cp
