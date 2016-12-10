@@ -77,7 +77,7 @@ ZEND_END_ARG_INFO()
 
 const zend_function_entry pdo_connect_pool_methods[] = {
     PHP_ME(pdo_connect_pool, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
-    PHP_ME(pdo_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+    PHP_ME(pdo_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
     PHP_ME(pdo_connect_pool, __call, __call_args, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool, release, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(pdo_connect_pool, close, NULL, ZEND_ACC_PUBLIC)
@@ -171,7 +171,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, valid)
 }
 const zend_function_entry redis_connect_pool_methods[] = {
     PHP_ME(redis_connect_pool, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
-    PHP_ME(redis_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+    PHP_ME(redis_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
     PHP_ME(redis_connect_pool, __call, __call_args, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, release, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(redis_connect_pool, select, NULL, ZEND_ACC_PUBLIC)
