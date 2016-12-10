@@ -1095,9 +1095,23 @@ static cpClient * cpRedis_conn_pool_server(zval *obj, char *source_char, int asy
     return cli;
 }
 
+PHP_METHOD(redis_connect_pool, auth)
+{
+    char *auth;
+    zend_size_t auth_len;
+    zval *object;
+    if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os!", &object, redis_connect_pool_class_entry_ptr, &auth, &auth_len) == FAILURE)
+    {
+        RETURN_FALSE;
+    }
+
+    zend_update_property_string(redis_connect_pool_class_entry_ptr, object, ZEND_STRL("auth"), auth TSRMLS_CC);
+
+}
+
 PHP_METHOD(redis_connect_pool, select)
 {
-    zval *ip, *port, *z_args, *pass_data, *object;
+    zval *ip, *port, *z_args, *pass_data, *object, *auth;
     char source_char[CP_SOURCE_MAX] = {0};
     char *db;
     zend_size_t db_len;
@@ -1141,6 +1155,10 @@ PHP_METHOD(redis_connect_pool, select)
     cp_add_assoc_string(pass_data, "type", "redis", 1);
     cp_add_assoc_string(pass_data, "method", "select", 1);
     cp_add_assoc_string(pass_data, "data_source", source_char, 1);
+    if (cp_zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("auth"), (void **) &auth) == SUCCESS)
+    {
+        cp_add_assoc_string(pass_data, "auth", Z_STRVAL_P(auth), 1);
+    }
 
     CP_MAKE_STD_ZVAL(z_args);
     array_init(z_args);
@@ -1230,7 +1248,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, done)
 
 PHP_METHOD(redis_connect_pool, __call)
 {
-    zval *z_args, *object, *zres, *source_zval, *pass_data, *async_zval;
+    zval *z_args, *object, *zres, *source_zval, *pass_data, *async_zval,*auth;
     char source_char[CP_SOURCE_MAX] = {0};
     char *cmd;
     zend_size_t cmd_len;
@@ -1250,6 +1268,10 @@ PHP_METHOD(redis_connect_pool, __call)
     array_init(pass_data);
     cp_add_assoc_string(pass_data, "method", cmd, 1);
     cp_add_assoc_string(pass_data, "type", "redis", 1);
+    if (cp_zend_hash_find(Z_OBJPROP_P(object), ZEND_STRS("auth"), (void **) &auth) == SUCCESS)
+    {
+        cp_add_assoc_string(pass_data, "auth", Z_STRVAL_P(auth), 1);
+    }
     add_assoc_zval(pass_data, "args", z_args);
     if (cp_zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("data_source"), (void **) &source_zval) == SUCCESS)
     {
