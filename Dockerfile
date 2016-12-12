@@ -15,6 +15,14 @@ COPY . /usr/src/php/ext/php-cp
 RUN docker-php-ext-install php-cp
 COPY ./pool.ini /etc/pool.ini
 
+# Alias for dev
+RUN echo "alias start='php pool_server start'" >> "/root/.bashrc" \
+    && echo "alias stop='php pool_server stop'" >> "/root/.bashrc" \
+    && echo "alias mi='make && make install'" >> "/root/.bashrc" \
+    && echo "alias clean='make clean'" >> "/root/.bashrc"
+
 # workdir
 COPY . /usr/src/php-cp
 WORKDIR /usr/src/php-cp
+
+CMD ['/bin/bash']
