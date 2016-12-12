@@ -68,7 +68,7 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
     {
         pool_server = "127.0.0.1";
     }
-    ret = cpClient_connect(cli, pool_server, 6253, (float) 100); //所有的操作100s超时
+    ret = cpClient_connect(cli, pool_server, CP_PORT, (float) 100); //所有的操作100s超时
     if (ret < 0)
     {
         pefree(cli, 1);
@@ -594,7 +594,7 @@ int cp_system_random(int min, int max)
 
 static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, char* cur_type, zval **ret_data_source)
 {
-    zval *data_source, *username, *pwd, *options, *pass_data, *zval_conf, *real_data_srouce_arr;
+    zval *data_source, *username, *pwd, *options, *pass_data, *zval_conf, *real_data_source_arr;
     zval_conf = cp_zend_read_property(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("config"), 0 TSRMLS_DC);
 
     zval *slave;
@@ -613,7 +613,7 @@ static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, ch
             int index;
             index = cp_system_random(0, (slave_cnt - 1));
 
-            if (cp_zend_hash_index_find(Z_ARRVAL_P(slave), index, (void **) &real_data_srouce_arr) != SUCCESS)
+            if (cp_zend_hash_index_find(Z_ARRVAL_P(slave), index, (void **) &real_data_source_arr) != SUCCESS)
             {
                 php_error_docref(NULL TSRMLS_CC, E_ERROR, "not find slave ,check config");
             }
@@ -621,15 +621,15 @@ static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, ch
     }
     else
     {
-        if (cp_zend_hash_find(Z_ARRVAL_P(zval_conf), ZEND_STRS("master"), (void **) &real_data_srouce_arr) != SUCCESS)
+        if (cp_zend_hash_find(Z_ARRVAL_P(zval_conf), ZEND_STRS("master"), (void **) &real_data_source_arr) != SUCCESS)
         {
             php_error_docref(NULL TSRMLS_CC, E_ERROR, "not find master ,check config");
         }
     }
     // find args
-    cp_zend_hash_find(Z_ARRVAL_P(real_data_srouce_arr), ZEND_STRS("data_source"), (void **) &data_source);
-    cp_zend_hash_find(Z_ARRVAL_P(real_data_srouce_arr), ZEND_STRS("username"), (void **) &username);
-    cp_zend_hash_find(Z_ARRVAL_P(real_data_srouce_arr), ZEND_STRS("pwd"), (void **) &pwd);
+    cp_zend_hash_find(Z_ARRVAL_P(real_data_source_arr), ZEND_STRS("data_source"), (void **) &data_source);
+    cp_zend_hash_find(Z_ARRVAL_P(real_data_source_arr), ZEND_STRS("username"), (void **) &username);
+    cp_zend_hash_find(Z_ARRVAL_P(real_data_source_arr), ZEND_STRS("pwd"), (void **) &pwd);
 
     CP_MAKE_STD_ZVAL(pass_data);
     array_init(pass_data);
@@ -642,7 +642,7 @@ static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, ch
     cp_add_assoc_string(pass_data, "password", Z_STRVAL_P(pwd), 1);
     cp_zval_add_ref(&z_args);
     add_assoc_zval(pass_data, "args", z_args);
-    if (cp_zend_hash_find(Z_ARRVAL_P(real_data_srouce_arr), ZEND_STRS("options"), (void **) &options) != SUCCESS)
+    if (cp_zend_hash_find(Z_ARRVAL_P(real_data_source_arr), ZEND_STRS("options"), (void **) &options) != SUCCESS)
     {
         zval *new_option = NULL;
         CP_MAKE_STD_ZVAL(new_option);
