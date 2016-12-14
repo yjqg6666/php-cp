@@ -44,10 +44,10 @@ static void cpWorker_init(int worker_id, int group_id)
     CPWG.pid = getpid();
 
     char fifo_name[CP_FIFO_NAME_LEN] = {0};
-    sprintf(fifo_name, "%s_%d", CP_FIFO_NAME_PRE, group_id * CP_GROUP_LEN + worker_id); //client 2 worker
+    sprintf(fifo_name, "%s_%d", CP_FIFO_NAME_PRE, CP_WORKER_ID(group_id, worker_id)); //client 2 worker
     CPWG.pipe_fd_read = cpCreateFifo(fifo_name);
 
-    sprintf(fifo_name, "%s_%d_1", CP_FIFO_NAME_PRE, group_id * CP_GROUP_LEN + worker_id); //worker 2 client
+    sprintf(fifo_name, "%s_%d_1", CP_FIFO_NAME_PRE, CP_WORKER_ID(group_id, worker_id)); //worker 2 client
     int pipe_fd_write = cpCreateFifo(fifo_name);
     CPWG.pipe_fd_write = pipe_fd_write;
 }
@@ -368,7 +368,7 @@ int cpWorker_manager_loop()
 CPINLINE int cpCreate_worker_mem(int worker_id, int group_id)
 {
     cpShareMemory *sm_obj = &(CPGS->G[group_id].workers[worker_id].sm_obj);
-    sprintf(sm_obj->mmap_name, "%s_%d", CP_MMAP_NAME_PRE, group_id * CP_GROUP_LEN + worker_id);
+    sprintf(sm_obj->mmap_name, "%s_%d", CP_MMAP_NAME_PRE, CP_WORKER_ID(group_id, worker_id));
     sm_obj->size = CPGS->max_buffer_len;
     if (cp_create_mmap_file(sm_obj) < 0)
     {
