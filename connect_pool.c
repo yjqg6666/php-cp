@@ -984,7 +984,9 @@ static void ret_status(zval *args) {
 
     char buf1[CP_BUFFER_SIZE] = {0};
     char buf2[CP_BUFFER_SIZE] = {0};
-    for (int i = 0; i < CPGS->group_num; i++) {
+    int i = 0;
+    int j = 0;
+    for (i = 0; i < CPGS->group_num; i++) {
         G = &(CPGS->G[i]);
 
         zval *group_ptr;
@@ -993,7 +995,7 @@ static void ret_status(zval *args) {
 
         cp_add_assoc_string(group_ptr, "group_name", G->name, 1);
 
-        for (int j = 0; j < G->worker_num; j++) {
+        for (j = 0; j < G->worker_num; j++) {
             W = &(G->workers[j]);
             sprintf(buf1, "[%d] pid: %d, Cpid: %d, request_number: %d\n", j, W->pid, W->CPid, W->request);
             strcat(buf2, buf1);
