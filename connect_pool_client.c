@@ -323,7 +323,7 @@ static cpGroup * cpGetWorker(cpClient *cli, zval *data_source)
                         G->workers_status[worker_index] = CP_WORKER_BUSY;
                         G->workers[worker_index].CPid = cpPid; //worker for this pid
                         conn->release = CP_FD_NRELEASED;
-                        conn->worker_id = group_id * CP_GROUP_LEN + worker_index;
+                        conn->worker_id = CP_WORKER_ID(group_id, worker_index);
                         conn->group_id = group_id;
                         conn->worker_index = worker_index;
                         break;
@@ -335,7 +335,7 @@ static cpGroup * cpGetWorker(cpClient *cli, zval *data_source)
                     {//add
                         conn->worker_index = G->worker_num;
                         conn->release = CP_FD_NRELEASED;
-                        conn->worker_id = group_id * CP_GROUP_LEN + conn->worker_index;
+                        conn->worker_id = CP_WORKER_ID(group_id, conn->worker_index);
                         conn->group_id = group_id;
                         G->workers_status[conn->worker_index] = CP_WORKER_BUSY;
                         G->workers[conn->worker_index].CPid = cpPid; //worker for this pid

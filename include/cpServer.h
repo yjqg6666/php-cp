@@ -60,11 +60,12 @@ extern "C" {
 #define CP_UNSOCK_BUFSIZE        (4*1024*1024)
 
 #define CP_WORKER_STARTING       5
-#define CP_WORKER_RESTART        4    
+#define CP_WORKER_RESTART        4
 #define CP_WORKER_DELING         3
 #define CP_WORKER_BUSY           2
 #define CP_WORKER_IDLE           1
 #define CP_WORKER_DEL            0
+#define CP_WORKER_ID(g_id, w_id) g_id * CP_GROUP_LEN + w_id
 
 #define CP_ACCEPT_AGAIN          1     //是否循环accept，可以一次性处理完全部的listen队列，用于大量并发连接的场景
 #define CP_ACCEPT_MAX_COUNT      64    //一次循环的最大accept次数
