@@ -112,12 +112,12 @@ int cpFifoRead(int pipe_fd_read, void *buf, int len)
         }
         else if (errno == EAGAIN)
         {//for async "If no process has the pipe open for writing, read() will return 0 to indicate end-of-file"
-            //            printf("worker fifo recive error %d,len %d\n", errno, n);
+//                        printf("worker fifo recive error %d,len %d\n", errno, n);
             usleep(1);
         }
         else
         {
-            //            printf("worker fifo recive error %d,len %d\n", errno, n);
+//                        printf("worker fifo recive error2 %d,len %d\n", errno, n);
         }
     } while ((n < 0 && errno == EINTR) || n > 0);
     return total;
