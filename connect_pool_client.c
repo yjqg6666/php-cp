@@ -439,7 +439,6 @@ static CPINLINE int cli_real_recv(cpClient *cli, int async)
 {
     cpWorkerInfo event;
     int ret = 0;
-    int i = 0;
     zval *ret_value;
     CP_ALLOC_INIT_ZVAL(ret_value);
     int pipe_fd_read = get_readfd(CONN(cli)->worker_id);
@@ -804,6 +803,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, __call)
     cli_real_recv(cli, async);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
+        release_worker(getThis());
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
@@ -906,6 +906,7 @@ PHP_METHOD(pdo_connect_pool, __call)
     }
     else if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
+        release_worker(getThis());
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
@@ -1171,6 +1172,7 @@ PHP_METHOD(redis_connect_pool, select)
     cli_real_recv(cli, 0);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
+        release_worker(getThis());
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
@@ -1187,6 +1189,7 @@ PHP_METHOD(redis_connect_pool, done)
     async_done(getThis(), redis_connect_pool_class_entry_ptr);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
+        release_worker(getThis());
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
@@ -1211,6 +1214,7 @@ PHP_METHOD(pdo_connect_pool, done)
     }
     else if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
+        release_worker(getThis());
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
@@ -1225,6 +1229,7 @@ PHP_METHOD(pdo_connect_pool_PDOStatement, done)
     async_done(getThis(), pdo_connect_pool_PDOStatement_class_entry_ptr);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
+        release_worker(getThis());
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
@@ -1324,6 +1329,7 @@ PHP_METHOD(redis_connect_pool, __call)
     cli_real_recv(cli, async);
     if (RecvData.type == CP_SIGEVENT_EXCEPTION)
     {
+        release_worker(getThis());
         zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
         RETVAL_BOOL(0);
     }
@@ -1380,25 +1386,46 @@ PHP_FUNCTION(pool_server_status)
         }
         else
         {
-            //            zval *group_number, *group_arr_ptr;
-            //            if (cp_zend_hash_find(Z_ARR_P(RecvData.ret_value), ZEND_STRS("group_number"), (void **) &group_number) == SUCCESS) {
-            //                php_printf("\ngroup number: %d\n", Z_LVAL(*group_number));
-            //            }
-            //            if (cp_zend_hash_find(Z_ARR_P(RecvData.ret_value), ZEND_STRS("groups"), (void **) &group_arr_ptr) == SUCCESS) {
-            //                int j;
-            //                zval *group_item;
-            //
-            //                ZEND_HASH_FOREACH_NUM_KEY_VAL(CP_Z_ARRVAL_P(group_arr_ptr), j, group_item) { //FIXME: just for php7, and { without } is nesty
-            //                    zval *group_name, *workers_info;
-            //                    if (cp_zend_hash_find(Z_ARR_P(group_item), ZEND_STRS("group_name"), (void **) &group_name) == SUCCESS)
-            //                        php_printf("\ngroup %d: %s\n", j, Z_STRVAL_P(group_name));
-            //                    if (cp_zend_hash_find(Z_ARR_P(group_item), ZEND_STRS("workers_info"), (void **) &workers_info) == SUCCESS)
-            //                        php_printf("workers:\n%s\n", Z_STRVAL_P(workers_info));
-            //                CP_HASHTABLE_FOREACH_END();
-            //            }
+            zval *group_number, *group_arr_ptr;
+            if (cp_zend_hash_find(CP_Z_ARRVAL_P(RecvData.ret_value), ZEND_STRS("group_number"), (void **) &group_number) == SUCCESS)
+            {
+                php_printf("\ngroup number: %d\n", Z_LVAL(*group_number));
+            }
+            if (cp_zend_hash_find(CP_Z_ARRVAL_P(RecvData.ret_value), ZEND_STRS("groups"), (void **) &group_arr_ptr) == SUCCESS)
+            {
+                int j;
+                zval *group_item;
+
+                char *name;
+                uint klen;
+                int ktype;
+
+                CP_HASHTABLE_FOREACH_START2(CP_Z_ARRVAL_P(group_arr_ptr), name, klen, ktype, group_item)
+                {
+                    j = atoi(name);
+                    zval *group_name, *workers_info;
+                    if (cp_zend_hash_find(CP_Z_ARRVAL_P(group_item), ZEND_STRS("group_name"), (void **) &group_name) == SUCCESS)
+                        php_printf("\ngroup %d: %s\n", j, Z_STRVAL_P(group_name));
+                    if (cp_zend_hash_find(CP_Z_ARRVAL_P(group_item), ZEND_STRS("workers_info"), (void **) &workers_info) == SUCCESS)
+                        php_printf("workers:\n%s\n", Z_STRVAL_P(workers_info));
+                }
+                CP_HASHTABLE_FOREACH_END();
+
+                zend_resource *p_sock_le;
+#if PHP_MAJOR_VERSION < 7
+                if (zend_hash_find(&EG(persistent_list), Z_STRVAL(data_source), Z_STRLEN(data_source), (void **) &p_sock_le) == SUCCESS)
+#else
+                if (cp_zend_hash_find_ptr(&EG(persistent_list), &data_source, (void **) &p_sock_le) == SUCCESS)
+#endif
+                {
+                    send_oob2proxy(p_sock_le);
+                }
+
+            }
+
+            return;
         }
 
-        return;
     }
 }
 
