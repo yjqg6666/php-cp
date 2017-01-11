@@ -963,56 +963,6 @@ static void redis_dispatch(zval * args)
     }
 }
 
-static void ret_status(zval *args)
-{
-    zval status_collection, *status_collection_ptr, group_arr, *group_arr_ptr, worker_arr, *worker_arr_ptr;
-
-    status_collection_ptr = &status_collection;
-    group_arr_ptr = &group_arr;
-    worker_arr_ptr = &worker_arr;
-
-    CP_MAKE_STD_ZVAL(status_collection_ptr);
-    CP_MAKE_STD_ZVAL(group_arr_ptr);
-    CP_MAKE_STD_ZVAL(worker_arr_ptr);
-
-    array_init(status_collection_ptr);
-    array_init(group_arr_ptr);
-    array_init(worker_arr_ptr);
-
-    add_assoc_long(status_collection_ptr, "group_number", CPGS->group_num);
-    cpGroup *G;
-    cpWorker *W;
-
-    char buf1[CP_BUFFER_SIZE] = {0};
-    char buf2[CP_BUFFER_SIZE] = {0};
-    int i = 0;
-    int j = 0;
-    for (i = 0; i < CPGS->group_num; i++)
-    {
-        G = &(CPGS->G[i]);
-
-        zval *group_ptr;
-        CP_MAKE_STD_ZVAL(group_ptr);
-        array_init(group_ptr);
-
-        cp_add_assoc_string(group_ptr, "group_name", G->name, 1);
-
-        for (j = 0; j < G->worker_num; j++)
-        {
-            W = &(G->workers[j]);
-            sprintf(buf1, "[%d] pid: %d, Cpid: %d, request_number: %d\n", j, W->pid, W->CPid, W->request);
-            strcat(buf2, buf1);
-        }
-        cp_add_assoc_string(group_ptr, "workers_info", buf2, 1);
-        add_index_zval(group_arr_ptr, i, group_ptr);
-        bzero(buf1, sizeof (buf1));
-        bzero(buf2, sizeof (buf2));
-    }
-    add_assoc_zval(status_collection_ptr, "groups", group_arr_ptr);
-
-    int ret = CP_INTERNAL_SERIALIZE_SEND_MEM(status_collection_ptr, CP_SIGEVENT_STATUS);
-}
-
 int worker_onReceive(zval * user_value)
 {
     zval *type;
@@ -1026,9 +976,9 @@ int worker_onReceive(zval * user_value)
         {
             redis_dispatch(user_value);
         }
-        else if (strcmp(Z_STRVAL_P(type), "status") == 0)
+        else
         {
-            ret_status(user_value); //user_value is not useful right now, but can used for options
+            cpLog("wrong type");
         }
     }
     else

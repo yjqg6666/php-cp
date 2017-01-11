@@ -56,6 +56,7 @@ static void cpClient_attach_mem()
 
 static void* connect_pool_perisent(zval* zres, zval* data_source)
 {
+//    cpLog_init("/tmp/fpmlog");
     zend_resource sock_le;
     int ret;
     char *pool_server;
@@ -379,21 +380,28 @@ static cpGroup * cpGetWorker(cpClient *cli, zval *data_source)
     {
         if (pthread_mutex_lock(&CPGS->mutex_lock) == 0)
         {
-            int group_num = CPGS->group_num;
-            if (CPGS->G[group_num].worker_max == 0)
+            int group_num = CPGS->group_num, group_id;
+            for (group_id = 0; group_id < group_num; group_id++)
             {
-                strcpy(CPGS->G[group_num].name, Z_STRVAL_P(data_source));
-                CPGS->G[group_num].worker_max = CPGS->default_max;
-                CPGS->G[group_num].worker_min = CPGS->default_min;
-                CPGS->G[group_num].worker_num = CPGS->default_min;
-                CPGS->G[group_num].workers_status[CPGS->G[group_num].worker_num - 1] = CP_WORKER_IDLE; //foreach to CPGS->default_min to set status???
-                cpCreate_worker_mem(CPGS->G[group_num].worker_num - 1, group_num); //foreach to CPGS->default_min to create mem???
-                cpTcpEvent event = {0};
-                event.type = CP_TCPEVENT_ADD;
-                event.data = 0;
-                CPGS->group_num++;
-                cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
+                if (strcmp(Z_STRVAL_P(data_source), CPGS->G[group_id].name) == 0)
+                {
+                    pthread_mutex_unlock(&CPGS->mutex_lock);
+                    return cpGetWorker(cli, data_source);
+                }
             }
+            
+            strcpy(CPGS->G[group_num].name, Z_STRVAL_P(data_source));
+            CPGS->G[group_num].worker_max = CPGS->default_max;
+            CPGS->G[group_num].worker_min = CPGS->default_min;
+            CPGS->G[group_num].worker_num = CPGS->default_min;
+            CPGS->G[group_num].workers_status[CPGS->G[group_num].worker_num - 1] = CP_WORKER_IDLE; //foreach to CPGS->default_min to set status???
+            cpCreate_worker_mem(CPGS->G[group_num].worker_num - 1, group_num); //foreach to CPGS->default_min to create mem???
+            cpTcpEvent event = {0};
+            event.type = CP_TCPEVENT_ADD;
+            event.data = 0;
+            CPGS->group_num++;
+            cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
+            
             pthread_mutex_unlock(&CPGS->mutex_lock);
         }
         return cpGetWorker(cli, data_source);
@@ -460,10 +468,8 @@ static CPINLINE int cli_real_recv(cpClient *cli, int async)
 
         if (event.type == CP_SIGEVENT_DIE)
         {
-            RecvData.type = CP_SIGEVENT_EXCEPTION;
-            CP_ZVAL_STRING(ret_value, "you send the request to pool worker ,but the worker is died", 0);
-            RecvData.ret_value = ret_value;
-            return SUCCESS;
+            php_error_docref(NULL TSRMLS_CC, E_ERROR, "you send the request to pool worker ,but the worker is died");
+            exit(0);
         }
 
     } while (event.pid != cpPid); //有可能有脏数据  读出来
@@ -1357,75 +1363,32 @@ PHP_FUNCTION(pool_server_status)
     }
     else
     {
+        cpClient_attach_mem();
         php_printf("\nserver with pid %d is running well. \n", pid);
 
-        zval *zres, *pass_data, data_source;
-        cpClient *cli;
-
-        CP_MAKE_STD_ZVAL(pass_data);
-        array_init(pass_data);
-        cp_add_assoc_string(pass_data, "method", "all", 1);
-        cp_add_assoc_string(pass_data, "type", "status", 1);
-        cp_add_assoc_string(pass_data, "data_source", "status", 1);
-
-        CP_ZVAL_STRING(&data_source, "status", 0);
-        zres = cpConnect_pool_server(&data_source, 0); //sync
-        CP_ZEND_FETCH_RESOURCE_NO_RETURN(cli, cpClient*, &zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-
-        int ret = cli_real_send(&cli, pass_data);
-        if (ret < 0)
+        cpGroup *G = NULL;
+        int group_id, queue_num;
+        php_printf("\ngroup number: %d\n", CPGS->group_num);
+        for (group_id = 0; group_id < CPGS->group_num; group_id++)
         {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
-        }
+            queue_num = 0;
+            G = &CPGS->G[group_id];
+            php_printf("\ngroup %d: %s\n", group_id, G->name);
 
-        cli_real_recv(cli, 0);
-        if (RecvData.type == CP_SIGEVENT_EXCEPTION)
-        {
-            zend_throw_exception(NULL, Z_STRVAL_P(RecvData.ret_value), 0 TSRMLS_CC);
-            RETVAL_BOOL(0);
-        }
-        else
-        {
-            zval *group_number, *group_arr_ptr;
-            if (cp_zend_hash_find(CP_Z_ARRVAL_P(RecvData.ret_value), ZEND_STRS("group_number"), (void **) &group_number) == SUCCESS)
+            int current_fd = G->first_wait_id;
+            while (current_fd)
             {
-                php_printf("\ngroup number: %d\n", Z_LVAL(*group_number));
-            }
-            if (cp_zend_hash_find(CP_Z_ARRVAL_P(RecvData.ret_value), ZEND_STRS("groups"), (void **) &group_arr_ptr) == SUCCESS)
-            {
-                int j;
-                zval *group_item;
-
-                char *name;
-                uint klen;
-                int ktype;
-
-                CP_HASHTABLE_FOREACH_START2(CP_Z_ARRVAL_P(group_arr_ptr), name, klen, ktype, group_item)
-                {
-                    j = atoi(name);
-                    zval *group_name, *workers_info;
-                    if (cp_zend_hash_find(CP_Z_ARRVAL_P(group_item), ZEND_STRS("group_name"), (void **) &group_name) == SUCCESS)
-                        php_printf("\ngroup %d: %s\n", j, Z_STRVAL_P(group_name));
-                    if (cp_zend_hash_find(CP_Z_ARRVAL_P(group_item), ZEND_STRS("workers_info"), (void **) &workers_info) == SUCCESS)
-                        php_printf("workers:\n%s\n", Z_STRVAL_P(workers_info));
-                }
-                CP_HASHTABLE_FOREACH_END();
-
-                zend_resource *p_sock_le;
-#if PHP_MAJOR_VERSION < 7
-                if (zend_hash_find(&EG(persistent_list), Z_STRVAL(data_source), Z_STRLEN(data_source), (void **) &p_sock_le) == SUCCESS)
-#else
-                if (cp_zend_hash_find_ptr(&EG(persistent_list), &data_source, (void **) &p_sock_le) == SUCCESS)
-#endif
-                {
-                    send_oob2proxy(p_sock_le);
-                }
-
+                cpConnection* conn = &(CPGS->conlist[current_fd]);
+                current_fd = conn->next_wait_id;
+                queue_num++;
             }
 
-            return;
+            php_printf("have used %d,the max conn num is %d, the min num is %d,the queue len is %d\n", G->worker_num, G->worker_max, G->worker_min, queue_num);
+
         }
 
     }
+
+
 }
 
