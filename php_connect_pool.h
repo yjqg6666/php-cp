@@ -130,8 +130,7 @@ extern zend_module_entry connect_pool_module_entry;
 #define CP_TCPEVENT_GETFD       4
 #define CP_GET_PID if(cpPid==0)cpPid=getpid()
 
-typedef struct _cpRecvEvent
-{
+typedef struct _cpRecvEvent {
     zval *ret_value;
     uint8_t type;
 } cpRecvEvent;
@@ -218,7 +217,7 @@ PHP_METHOD(redis_connect_pool, setAsync);
 void send_oob2proxy(zend_resource *rsrc TSRMLS_DC);
 extern void cp_serialize(smart_str *ser_data, zval *array);
 extern zval * cp_unserialize(char *data, int len);
-extern int redis_proxy_connect(zval *data_source, zval *args, int flag);
+extern int redis_proxy_connect(zval *args, int flag);
 extern int pdo_proxy_connect(zval *args, int flag);
 
 int worker_onReceive(zval *data);

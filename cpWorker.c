@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 zval *pdo_object = NULL;
+zval *redis_object = NULL;
 
 static void cpWorker_do_stop()
 {
@@ -422,6 +423,13 @@ void cpWorker_do_ping()
 #else
     efree(sql);
 #endif
+    if (EG(exception))
+    {
+        cpLog("the connection is broken,we will del it and reconnect at next request,%p",pdo_object);
+        cp_zval_ptr_dtor(&pdo_object);
+        pdo_object = NULL;
+        EG(exception) = NULL;
+    }
     alarm(CPGC.ping_time);
 }
 
