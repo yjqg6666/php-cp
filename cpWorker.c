@@ -406,7 +406,7 @@ CPINLINE int cpWorker_attach_mem(int worker_id, int group_id)
 void cpWorker_do_ping()
 {
     zval * stmt_value = NULL;
-    zval method, **args[1], *sql;
+    zval method, **args[1], *sql = NULL;
     CP_ZVAL_STRING(&method, "query", 0);
     CP_MAKE_STD_ZVAL(sql);
     CP_ZVAL_STRING(sql, "select 1", 0);

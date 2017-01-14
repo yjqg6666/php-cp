@@ -56,7 +56,7 @@ static void cpClient_attach_mem()
 
 static void* connect_pool_perisent(zval* zres, zval* data_source)
 {
-//    cpLog_init("/tmp/fpmlog");
+    //    cpLog_init("/tmp/fpmlog");
     zend_resource sock_le;
     int ret;
     char *pool_server;
@@ -389,7 +389,7 @@ static cpGroup * cpGetWorker(cpClient *cli, zval *data_source)
                     return cpGetWorker(cli, data_source);
                 }
             }
-            
+
             strcpy(CPGS->G[group_num].name, Z_STRVAL_P(data_source));
             CPGS->G[group_num].worker_max = CPGS->default_max;
             CPGS->G[group_num].worker_min = CPGS->default_min;
@@ -401,7 +401,7 @@ static cpGroup * cpGetWorker(cpClient *cli, zval *data_source)
             event.data = 0;
             CPGS->group_num++;
             cpClient_send(cli->sock, (char *) &event, sizeof (event), 0);
-            
+
             pthread_mutex_unlock(&CPGS->mutex_lock);
         }
         return cpGetWorker(cli, data_source);
@@ -475,8 +475,11 @@ static CPINLINE int cli_real_recv(cpClient *cli, int async)
     } while (event.pid != cpPid); //有可能有脏数据  读出来
 
     log_increase_size(event.len, cli);
-    void * buf = get_attach_buf(CONN(cli)->worker_id, CPGS->max_buffer_len, CPGS->G[CONN(cli)->group_id].workers[CONN(cli)->worker_index].sm_obj.mmap_name);
-    php_msgpack_unserialize(ret_value, buf, event.len);
+    if (event.type != CP_SIGEVENT_PDO)
+    {
+        void * buf = get_attach_buf(CONN(cli)->worker_id, CPGS->max_buffer_len, CPGS->G[CONN(cli)->group_id].workers[CONN(cli)->worker_index].sm_obj.mmap_name);
+        php_msgpack_unserialize(ret_value, buf, event.len);
+    }
     RecvData.type = event.type;
     RecvData.ret_value = ret_value;
     return SUCCESS;

@@ -586,7 +586,7 @@ static void pdo_proxy_pdo(zval * args)
                             pdo_stmt = NULL;
                         }
                         pdo_stmt = ret_value;
-                        zval send_zval;
+                        zval send_zval = {0};
                         ZVAL_STRING(&send_zval, "PDOStatement!", 0);
                         CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval, CP_SIGEVENT_PDO);
                     }
@@ -602,7 +602,7 @@ static void pdo_proxy_pdo(zval * args)
                             pdo_stmt = NULL;
                         }
                         pdo_stmt = ret_value;
-                        zval send_zval;
+                        zval send_zval = {0};
                         CP_ZVAL_STRING(&send_zval, "PDOStatement!", 0);
                         CP_INTERNAL_SERIALIZE_SEND_MEM(&send_zval, CP_SIGEVENT_PDO);
                         zval_ptr_dtor(&send_zval);
@@ -885,7 +885,7 @@ static void redis_dispatch(zval * args)
         }
         else if (strcmp(Z_STRVAL_P(method), "select") == 0)
         {
-            zval select_return;
+            zval select_return = {0};
             ZVAL_BOOL(&select_return, 1);
             CP_INTERNAL_SERIALIZE_SEND_MEM(&select_return, CP_SIGEVENT_TURE);
             return;
