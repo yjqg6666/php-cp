@@ -407,11 +407,15 @@ void cpWorker_do_ping()
 {
     zval * stmt_value = NULL;
     zval method, **args[1], *sql = NULL;
+    if(CPWG.working==1)
+    {
+      return;
+    }
     CP_ZVAL_STRING(&method, "query", 0);
     CP_MAKE_STD_ZVAL(sql);
     CP_ZVAL_STRING(sql, "select 1", 0);
     args[0] = &sql;
-    if (pdo_object != NULL && CPWG.working == 0)
+    if (pdo_object != NULL)
     {
         cp_call_user_function_ex(NULL, &pdo_object, &method, &stmt_value, 1, args, 0, NULL TSRMLS_CC);
         if (stmt_value)
