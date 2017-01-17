@@ -464,7 +464,11 @@ int pdo_proxy_connect(zval *args, int flag)
         pdo_proxy_pdo(args);
         return 1;
     }
+#if PHP_MAJOR_VERSION < 7
     CP_MAKE_STD_ZVAL(new_obj);
+#else
+    new_obj = ecalloc(sizeof (zval), 1);
+#endif
     CP_ZVAL_STRING(&pdo_name, "pdo", 0);
     if (cp_zend_hash_find_ptr(EG(class_table), &pdo_name, (void **) &pdo_ce) == FAILURE)
     {
@@ -766,7 +770,12 @@ int redis_proxy_connect(zval *args, int flag)
     array_init(ex_arr);
     CP_ZVAL_STRINGL(&zdelim, ":", 1, 0);
     cp_explode(&zdelim, data_source, ex_arr, LONG_MAX);
+
+#if PHP_MAJOR_VERSION < 7
     CP_MAKE_STD_ZVAL(new_obj);
+#else
+    new_obj = ecalloc(sizeof (zval), 1);
+#endif
     zend_class_entry *redis_ce = NULL;
 
     zval redis_name;
