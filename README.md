@@ -12,7 +12,7 @@
 ## 安装
 
 + `phpize && ./configure && make install`
-+ `echo "extension=xx/connect_pool.so" > php.ini`
++ `echo "extension=xx/connect_pool.so" >> php.ini`
 
 ## 使用Docker安装
 
