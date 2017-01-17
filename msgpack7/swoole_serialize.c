@@ -17,7 +17,6 @@
  */
 
 /* $Id$ */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -25,7 +24,10 @@
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
+#if PHP_MAJOR_VERSION ==7
 #include "php_swoole_serialize.h"
+
+
 
 static int le_swoole_serialize;
 static void swoole_serialize_object(seriaString *buffer, zval *zvalue, size_t start);
@@ -1072,14 +1074,14 @@ zend_module_entry swoole_serialize_module_entry = {
     STANDARD_MODULE_PROPERTIES
 };
 /* }}} */
-
+#endif
 #ifdef COMPILE_DL_SWOOLE_SERIALIZE
 #ifdef ZTS
 ZEND_TSRMLS_CACHE_DEFINE()
 #endif
 ZEND_GET_MODULE(swoole_serialize)
 #endif
-
+//#endif
 /*
  * Local variables:
  * tab-width: 4
