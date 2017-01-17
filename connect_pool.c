@@ -416,38 +416,42 @@ PHP_FUNCTION(pool_server_shutdown)
 int CP_INTERNAL_SERIALIZE_SEND_MEM(zval *send_data, uint8_t __type)
 {
     cpShareMemory *sm_obj = &(CPGS->G[CPWG.gid].workers[CPWG.id].sm_obj);
+    int real_len = 0;
+#if PHP_MAJOR_VERSION < 7
     instead_smart dest;
     dest.len = 0;
     dest.addr = sm_obj->mem;
     dest.max = CPGC.max_read_len;
     dest.exceed = 0;
     php_msgpack_serialize(&dest, send_data);
+    real_len = dest.len;
     if (dest.exceed == 1)
     {
         CP_INTERNAL_ERROR_SEND("data is exceed,increase max_read_len");
         return SUCCESS;
     }
-    else
+#else
+    zend_string * zstr = php_swoole_serialize(send_data);
+    if (zstr->len >= CPGS->max_buffer_len)
     {
-        //        union sigval sigvalPara;
-        //        CP_EVENTLEN_ADD_TYPE(dest.len,__type);//todo 2字节int 长度检查
-        //        sigvalPara.sival_int = dest.len;
-        //        if (sigqueue(pid, CP_SIG_EVENT, sigvalPara) == -1) {
-        //            cpLog("sigqueue error %d", errno);
-        //            return FAILURE;
-        //        }
-        cpWorkerInfo worker_event;
-        worker_event.len = dest.len;
-        worker_event.type = __type;
-        worker_event.pid = CPWG.event.pid;
-        int ret = write(CPWG.pipe_fd_write, &worker_event, sizeof (worker_event));
-        if (ret == -1)
-        {
-            php_error_docref(NULL TSRMLS_CC, E_ERROR, "write error Error: %s [%d]", strerror(errno), errno);
-        }
-
+        CP_INTERNAL_ERROR_SEND("data is exceed,increase max_read_len");
         return SUCCESS;
     }
+    real_len = zstr->len;
+    memcpy(sm_obj->mem, zstr->val, zstr->len);
+    zend_string_release(zstr);
+#endif
+    cpWorkerInfo worker_event;
+    worker_event.len = real_len;
+    worker_event.type = __type;
+    worker_event.pid = CPWG.event.pid;
+    int ret = write(CPWG.pipe_fd_write, &worker_event, sizeof (worker_event));
+    if (ret == -1)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "write error Error: %s [%d]", strerror(errno), errno);
+    }
+
+    return SUCCESS;
 }
 
 int pdo_proxy_connect(zval *args, int flag)
