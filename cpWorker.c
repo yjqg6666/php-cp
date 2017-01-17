@@ -434,8 +434,7 @@ void cpWorker_do_ping()
     if (EG(exception))
     {
         cpLog("the connection is broken,we will del it and reconnect at next request,%p", pdo_object);
-        cp_zval_ptr_dtor(&pdo_object);
-        pdo_object = NULL;
+        CP_DEL_OBJ(pdo_object);
         EG(exception) = NULL;
     }
     alarm(CPGC.ping_time);

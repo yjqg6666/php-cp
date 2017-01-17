@@ -59,7 +59,6 @@ static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 #define CP_TEST_RETURN_TRUE(flag) ({if(flag==CP_CONNECT_PING)return CP_TRUE;})
 
 
-
 const zend_function_entry cp_functions[] = {
     PHP_FE(pool_server_create, NULL)
     PHP_FE(pool_server_status, NULL)
@@ -509,17 +508,11 @@ int pdo_proxy_connect(zval *args, int flag)
         cp_zval_ptr_dtor(&ret_pdo_obj);
     if (EG(exception))
     {
-        cp_zval_ptr_dtor(&new_obj);
-        //CP_TEST_RETURN_FALSE(flag);
-        //cp_add_fail_into_mem(args, data_source);
+        CP_DEL_OBJ(new_obj);
         CP_SEND_EXCEPTION_RETURN;
     }
     else
     {
-        if (flag == CP_CONNECT_PING)
-            cp_zval_ptr_dtor(&new_obj);
-        CP_TEST_RETURN_TRUE(flag);
-
         pdo_object = new_obj;
         if (flag == CP_CONNECT_NORMAL)
         {
@@ -545,8 +538,7 @@ static void pdo_proxy_pdo(zval * args)
 
         if (cp_internal_call_user_function(pdo_object, method, &ret_value, args) == FAILURE)
         {
-            cp_zval_ptr_dtor(&pdo_object);
-            pdo_object = NULL;
+            CP_DEL_OBJ(pdo_object);
             char cp_error_str[FAILUREOR_MSG_SIZE] = {0};
             snprintf(cp_error_str, FAILUREOR_MSG_SIZE, "call pdo method( %s ) error!", Z_STRVAL_P(method));
             CP_INTERNAL_ERROR_SEND(cp_error_str);
@@ -561,8 +553,7 @@ static void pdo_proxy_pdo(zval * args)
                 if (p || p2)
                 {//del reconnect and retry
                     cpLog("del and retry %s,%s", p, p2);
-                    cp_zval_ptr_dtor(&pdo_object);
-                    pdo_object = NULL;
+                    CP_DEL_OBJ(pdo_object);
                     pdo_proxy_connect(args, CP_CONNECT_NORMAL);
                 }
                 else
@@ -661,8 +652,7 @@ static void pdo_proxy_stmt(zval * args)
             char *p2 = strcasestr(Z_STRVAL_P(str), "There is already an active transaction");
             if (p || p2)
             {
-                cp_zval_ptr_dtor(&pdo_object);
-                pdo_object = NULL;
+                CP_DEL_OBJ(pdo_object);
             }
             cp_zval_ptr_dtor(&str);
             cp_zval_ptr_dtor(&pdo_stmt);
@@ -808,8 +798,6 @@ int redis_proxy_connect(zval *args, int flag)
         {
             cp_zval_ptr_dtor(&ex_arr);
             cp_zval_ptr_dtor(&ret_redis_obj);
-            //            CP_TEST_RETURN_FALSE(flag);
-            //            cp_add_fail_into_mem(args, data_source);
             CP_INTERNAL_ERROR_SEND_RETURN("connect redis error!");
         }
         else
@@ -819,17 +807,9 @@ int redis_proxy_connect(zval *args, int flag)
     }
     if (EG(exception))
     {
-        cp_zval_ptr_dtor(&new_obj);
+        CP_DEL_OBJ(new_obj);
         cp_zval_ptr_dtor(&ex_arr);
-        //        CP_TEST_RETURN_FALSE(flag);
-        //        cp_add_fail_into_mem(args, data_source);
         CP_SEND_EXCEPTION_RETURN;
-    }
-    if (flag == CP_CONNECT_PING)
-    {
-        cp_zval_ptr_dtor(&new_obj);
-        cp_zval_ptr_dtor(&ex_arr);
-        return CP_TRUE;
     }
 
     if (!cp_redis_auth(new_obj, args))
@@ -869,8 +849,7 @@ int redis_proxy_connect(zval *args, int flag)
             }
             else
             {
-                cp_zval_ptr_dtor(&redis_object);
-                redis_object = NULL;
+                CP_DEL_OBJ(redis_object);
                 CP_SEND_EXCEPTION;
             }
         }
@@ -920,8 +899,7 @@ static void redis_dispatch(zval * args)
                 //                    char *p4 = strstr(Z_STRVAL_P(str), "Connection closed");
                 //                    if (p || p2 || p3 || p4)
                 //                    {
-                cp_zval_ptr_dtor(&redis_object);
-                redis_object = NULL;
+                CP_DEL_OBJ(redis_object);
                 // }
                 cp_zval_ptr_dtor(&str);
             }
