@@ -59,13 +59,16 @@ $ chmod +x ./pool_server //pool_server为php脚本 可自行修改
 $ mv pool_server /usr/local/bin/
 ```
 
-* 日常使用：
+* 日常运维使用
 ```
 $ pool_server start //启动服务 如果配置文件的daemonize开启则后台运行 否则为前台运行 Ctrl+c结束服务
 $ pool_server stop //停止服务
 $ pool_server restart //重启服务
 $ pool_server status //查看服务状态
 ```
+
+* 日常开发使用  
+  将该项目源码加入IDE的外部库中， 即可有代码提示, 切记不要加入php配置的include path中
 
 ``` php
 <?php
