@@ -31,7 +31,7 @@ extern "C" {
 #define CP_DEF_MAX_READ_LEN      (1024*1024*5)
 #define CP_MAX_READ_LEN          (1024*1024*20)
 #define CP_SOURCE_LEN            200
-#define CP_DEF_MAX_NUM           20
+#define CP_DEF_MAX_NUM           15
 #define CP_DEF_MIN_NUM           1
 #define CP_FILE_DIR              "/var/run/cp/"
 #define CP_SERVER_MMAP_FILE      "/var/run/cp/cp_server_mmap_file"
