@@ -4,7 +4,7 @@ ini_set("memory_limit", '2048M');
 ini_set("display_errors", "1");
 ini_set("display_startup_errors", "1");
 
-$pid_file = "/var/run/php_connection_pool.pid";
+define("PID_FILE", "/var/run/php_connection_pool.pid"); //pid文件路径 不能修改
 $config_file = "/etc/pool.ini"; //pool_server的配置文件
 
 $usage = "Usage: pool_server {start|status|stop|restart}" . PHP_EOL;
@@ -29,11 +29,11 @@ if (parse_ini_file($config_file, true) === false) { //for stop && reload && test
 
 $pid = false;
 if ($cmd !== "start") {
-    if (file_exists($pid_file) === false) {
-        echo "Pid file do NOT exist {$pid_file}, Pls. check service is running" . PHP_EOL;
+    if (file_exists(PID_FILE) === false) {
+        echo sprintf("The pid file %s does NOT exist, Pls. check service is running" . PHP_EOL, PID_FILE);
         exit($exit_code_invoke);
     } else {
-        $pid = intval(file_get_contents($pid_file));
+        $pid = intval(file_get_contents(PID_FILE));
         if ($pid <= 0) {
             echo "Malformed pid file" . PHP_EOL;
             exit($exit_code_invoke);
@@ -55,7 +55,7 @@ switch ($cmd) {
         break;
     case "stop":
         pool_server_shutdown($pid);
-        file_put_contents($pid_file, "");
+        file_put_contents(PID_FILE, "");
         break;
     case "restart":
         @pool_server_shutdown($pid);
