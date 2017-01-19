@@ -5,7 +5,7 @@ ini_set("display_errors", "1");
 ini_set("display_startup_errors", "1");
 
 define("PID_FILE", "/var/run/php_connection_pool.pid"); //pid文件路径 不能修改
-$config_file = "/etc/php-connection-pool/config.ini"; //pool_server的配置文件
+$config_file = "/etc/pool.ini"; //pool_server的配置文件
 
 $usage = "Usage: pool_server {start|status|stop|restart}" . PHP_EOL;
 

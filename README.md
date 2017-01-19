@@ -14,7 +14,7 @@
 
 可以使用Docker编译，需要在项目的根目录下运行:
 
-1. 根据自己的配置，复制 `config.ini.example` 文件为 `config.ini` 文件，修改 `config.ini` 文件
+1. 根据自己的配置，复制 `pool.ini.example` 文件为 `pool.ini` 文件，修改 `pool.ini` 文件
 2. `docker build -t php-cp .`
 
 
@@ -59,11 +59,11 @@ $ echo "extension=connect_pool.so" > /etc/php.d/20-connection_pool.ini
 
 * 初始化配置(一次性)
 ```
-$ mkdir /etc/php-connection-pool && cp ./config.ini.example /etc/php-connection-pool/config.ini //根据需求修改配置内容
+$ cp ./pool.ini.example /etc/pool.ini //根据需求修改配置内容
 $ mkdir -m 755 /var/log/php-connection-pool //创建日志目录 目录文件夹不存在或没权限会导致日志写不起
 $ chmod +x ./pool_server ./initd-php-connection-pool  //x权限git已经设置 为稳妥再设置一次 pool_server为php脚本 可自行修改
 $ cp ./pool_server /usr/local/bin/pool_server
-$ cp ./initd-php-connection-pool /etc/init.d/php-connection-pool
+$ cp ./initd-php-connection-pool /etc/init.d/pool-server
 ```
 
 * 日常运维使用
@@ -73,7 +73,7 @@ $ pool_server stop //停止服务
 $ pool_server restart //重启服务
 $ pool_server status //查看服务状态
 //或者使用
-$ /etc/init.d/php-connection-pool {start|stop|restart|status}
+$ /etc/init.d/pool-server {start|stop|restart|status}
 ```
 
 * 日常开发使用  
