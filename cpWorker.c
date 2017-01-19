@@ -413,6 +413,7 @@ void cpWorker_do_ping()
     zval method, **args[1], *sql = NULL;
     if (CPWG.working == 1)
     {
+        alarm(CPGC.ping_time);
         return;
     }
     CP_ZVAL_STRING(&method, "query", 0);
