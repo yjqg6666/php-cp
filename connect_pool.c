@@ -182,6 +182,14 @@ const zend_function_entry redis_connect_pool_methods[] = {
     PHP_FE_END
 };
 
+const zend_function_entry memcached_connect_pool_methods[] = {
+    PHP_ME(memcached_connect_pool, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+    PHP_ME(memcached_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+    PHP_ME(memcached_connect_pool, __call, __call_args, ZEND_ACC_PUBLIC)
+    PHP_ME(memcached_connect_pool, addServer, NULL, ZEND_ACC_PUBLIC)
+    PHP_FE_END
+};
+
 int le_cp_server;
 int le_cli_connect_pool;
 
@@ -193,6 +201,9 @@ zend_class_entry *redis_connect_pool_class_entry_ptr;
 
 zend_class_entry pdo_connect_pool_PDOStatement_ce;
 zend_class_entry *pdo_connect_pool_PDOStatement_class_entry_ptr;
+
+zend_class_entry memcached_connect_pool_ce;
+zend_class_entry *memcached_connect_pool_class_entry_ptr;
 
 zend_module_entry connect_pool_module_entry = {
 #if ZEND_MODULE_API_NO >= 20050922
@@ -231,6 +242,10 @@ PHP_MINIT_FUNCTION(connect_pool)
     zend_register_class_alias("redis_connect_pool", pdo_connect_pool_class_entry_ptr);
 
     INIT_CLASS_ENTRY(pdo_connect_pool_PDOStatement_ce, "pdo_connect_pool_PDOStatement", pdo_connect_pool_PDOStatement_methods);
+
+    INIT_CLASS_ENTRY(memcached_connect_pool_ce, "memcachedProxy", memcached_connect_pool_methods);
+    memcached_connect_pool_class_entry_ptr = zend_register_internal_class(&memcached_connect_pool_ce TSRMLS_CC);
+    zend_register_class_alias("memcached_connect_pool", pdo_connect_pool_class_entry_ptr);
 
     //zend_class_entry *pdo_dbstmt_ce = cp_zend_fetch_class("PDOStatement", ZEND_FETCH_CLASS_AUTO);
 
@@ -917,6 +932,17 @@ static void redis_dispatch(zval * args)
     }
 }
 
+static void memcached_dispatch(zval *args)
+{
+    zval *ret_value;
+    CP_MAKE_STD_ZVAL(ret_value);
+    CP_ZVAL_STRING(ret_value, "ok", 0);
+    CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
+
+    if (ret_value)
+        cp_zval_ptr_dtor(&ret_value);
+}
+
 int worker_onReceive(zval * user_value)
 {
     zval *type;
@@ -929,6 +955,10 @@ int worker_onReceive(zval * user_value)
         else if (strcmp(Z_STRVAL_P(type), "redis") == 0)
         {
             redis_dispatch(user_value);
+        }
+        else if (strcmp(Z_STRVAL_P(type), "memcached") == 0)
+        {
+            memcached_dispatch(user_value);
         }
         else
         {

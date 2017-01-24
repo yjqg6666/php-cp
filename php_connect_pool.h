@@ -166,6 +166,7 @@ extern int le_cli_connect_pool;
 extern zend_class_entry *redis_connect_pool_class_entry_ptr;
 extern zend_class_entry *pdo_connect_pool_class_entry_ptr;
 extern zend_class_entry *pdo_connect_pool_PDOStatement_class_entry_ptr;
+extern zend_class_entry *memcached_connect_pool_class_entry_ptr;
 
 PHP_MINIT_FUNCTION(connect_pool);
 PHP_MSHUTDOWN_FUNCTION(connect_pool);
