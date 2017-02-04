@@ -1,0 +1,110 @@
+#!/bin/sh
+#
+# pool-server       Startup script for pool-server
+#
+# chkconfig: - 85 15
+# processname: pool-server
+# config: /etc/pool.ini
+# pidfile: /var/run/php_connection_pool.pid
+# description: php-cp is an PHP PDO&Redis connection server
+#
+### BEGIN INIT INFO
+# Provides: pool-server
+# Required-Start: $local_fs $remote_fs $network
+# Required-Stop: $local_fs $remote_fs $network
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: start and stop php connection pool service
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+POOL_SERVER=/usr/local/bin/pool_server
+prog=`/bin/basename $POOL_SERVER`
+pidfile=/var/run/php_connection_pool.pid
+RETVAL=0
+
+start() {
+  echo -n $"Starting $prog: "
+  $POOL_SERVER start
+  RETVAL=$?
+  if [ $RETVAL = 0 ] ; then
+    echo_success
+  else
+    echo_failure
+  fi
+  echo
+  return $RETVAL
+}
+
+stop() {
+  echo -n $"Stopping $prog: "
+  php $POOL_SERVER stop
+  RETVAL=$?
+  if [ $RETVAL = 0 ] ; then
+    echo_success
+  else
+    echo_failure
+  fi
+  echo
+  return $RETVAL
+}
+
+worker_status() {
+  $POOL_SERVER status
+  RETVAL=$?
+  if [ $RETVAL = 0 ] ; then
+    echo_success
+  else
+    echo_failure
+  fi
+  echo
+  return $RETVAL
+}
+
+reload() {
+  echo -n $"Reloading $prog: "
+  $POOL_SERVER reload
+  RETVAL=$?
+  if [ $RETVAL = 0 ] ; then
+    echo_success
+  else
+    echo_failure
+  fi
+  echo
+  return $RETVAL
+}
+
+rh_status() {
+  status -p ${pidfile} ${prog}
+}
+
+# See how we were called.
+case "$1" in
+  start)
+  rh_status >/dev/null 2>&1 && exit 0
+  start
+  ;;
+  stop)
+  stop
+  ;;
+  status)
+  rh_status
+  RETVAL=$?
+  [ $RETVAL = 0 ] && worker_status
+  ;;
+  restart)
+  stop
+  sleep 1
+  start
+  ;;
+  force-reload|reload)
+  reload
+  ;;
+  *)
+  echo $"Usage: $prog {start|stop|restart|reload|status|force-reload}"
+  RETVAL=2
+esac
+
+exit $RETVAL

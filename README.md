@@ -9,16 +9,12 @@
 - linux 2.6+
 - pdo and redis extension install
 
-## 安装
-
-+ `phpize && ./configure && make install`
-+ `echo "extension=xx/connect_pool.so" >> php.ini`
 
 ## 使用Docker安装
 
 可以使用Docker编译，需要在项目的根目录下运行:
 
-1. 根据自己的配置，复制 `php.ini.example` 文件为 `php.ini` 文件，修改 `pool.ini` 文件
+1. 根据自己的配置，复制 `pool.ini.example` 文件为 `pool.ini` 文件，修改 `pool.ini` 文件
 2. `docker build -t php-cp .`
 
 
@@ -51,12 +47,22 @@ pdoProxy和原生Pdo不一样的一点是 默认pdo是静默模式 不抛异常 
 - thinkphp 请参考 http://git.oschina.net/xavier007/THINKPHP_phpcp_driver
 - discuz 请参考 https://github.com/xluohome/php-cp-for-discuz
 
-## 使用
-* 将项目中的pool.ini文件mv到/etc/pool.ini,并根据需求修改配置文件
+## 安装使用
+* 安装扩展 安装步骤跟其它PHP扩展无差别
+
 ```
-$ mv ./pool.ini.example /etc/pool.ini
-$ chmod +x ./pool_server //pool_server为php脚本 可自行修改
-$ mv pool_server /usr/local/bin/
+$ phpize && ./configure && make && make install //如果报phpize命令找不到请安装php-devel包
+$ echo "extension=connect_pool.so" >> php.ini
+//如果PHP启用了目录配置 上一步骤可以换为下面的方式 配置目录可以通过 php --info|grep 'Scan'获取
+$ echo "extension=connect_pool.so" > /etc/php.d/20-connection_pool.ini
+```
+
+* 初始化配置(一次性)
+```
+$ cp ./pool.ini.example /etc/pool.ini //根据需求修改配置内容
+$ mkdir -m 755 /var/log/php-connection-pool //创建日志目录 目录文件夹不存在或没权限会导致日志写不起
+$ chmod +x ./pool_server //x权限git已经设置 为稳妥再设置一次 pool_server为php脚本 可自行修改
+$ cp ./pool_server /usr/local/bin/pool_server
 ```
 
 * 日常运维使用
