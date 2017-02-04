@@ -61,9 +61,8 @@ $ echo "extension=connect_pool.so" > /etc/php.d/20-connection_pool.ini
 ```
 $ cp ./pool.ini.example /etc/pool.ini //根据需求修改配置内容
 $ mkdir -m 755 /var/log/php-connection-pool //创建日志目录 目录文件夹不存在或没权限会导致日志写不起
-$ chmod +x ./pool_server ./initd-php-connection-pool  //x权限git已经设置 为稳妥再设置一次 pool_server为php脚本 可自行修改
+$ chmod +x ./pool_server //x权限git已经设置 为稳妥再设置一次 pool_server为php脚本 可自行修改
 $ cp ./pool_server /usr/local/bin/pool_server
-$ cp ./initd-php-connection-pool /etc/init.d/pool-server
 ```
 
 * 日常运维使用
@@ -72,8 +71,6 @@ $ pool_server start //启动服务 如果配置文件的daemonize开启则后台
 $ pool_server stop //停止服务
 $ pool_server restart //重启服务
 $ pool_server status //查看服务状态
-//或者使用
-$ /etc/init.d/pool-server {start|stop|restart|status}
 ```
 
 * 日常开发使用  
