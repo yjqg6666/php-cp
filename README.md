@@ -62,6 +62,7 @@ $ echo "extension=connect_pool.so" > /etc/php.d/20-connection_pool.ini
 $ cp ./pool.ini.example /etc/pool.ini //根据需求修改配置内容
 $ mkdir -m 755 /var/log/php-connection-pool //创建日志目录 目录文件夹不存在或没权限会导致日志写不起
 $ chmod +x ./pool_server //x权限git已经设置 为稳妥再设置一次 pool_server为php脚本 可自行修改
+$ [ -f /bin/env ] || ln -s /usr/bin/env /bin/env  //deb系的系统(如debian、ubuntu)env的路径为/usr/bin/env做软链接兼容处理
 $ cp ./pool_server /usr/local/bin/pool_server
 ```
 
