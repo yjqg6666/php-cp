@@ -1,4 +1,4 @@
-## php-cp(php-connect-pool),redis和pdo的本地代理 [![Build Status](https://secure.travis-ci.org/swoole/php-cp.svg?branch=master)](http://travis-ci.org/swoole/php-cp)
+## php-cp(php-connect-pool),redis和pdo的本地代理 [![Build Status](https://secure.travis-ci.org/yjqg6666/php-cp.svg?branch=master)](http://travis-ci.org/yjqg6666/php-cp)
 
 [中文简介] http://blog.sina.com.cn/s/blog_9eaa0f400102v9fd.html
 
