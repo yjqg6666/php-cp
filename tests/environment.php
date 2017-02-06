@@ -9,4 +9,7 @@ if (!stristr(PHP_OS, "Linux")) {
 if (extension_loaded("connect_pool") === false) {
     $php_test_exit(2, "Skip this test, connection pool extension NOT loaded");
 }
+if (extension_loaded("redis") === false) {
+    $php_test_exit(2, "Skip this test, redis extension NOT loaded");
+}
 
