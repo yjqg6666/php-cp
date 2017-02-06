@@ -36,12 +36,18 @@ matrix:
           env:
               - PHP_VERSION_MAJOR: "5.3"
               - PHP_INSTALL_VERSION: "5.3.29"
+
+services:
+    - mysql
+    - redis-server
+
 addons:
     apt:
         packages: build-essential
 
 before_install:
     # build PHP without ZTS
+    - netstat -tlnp
     - export CP_PATH=`pwd`
     - sudo apt-get install -qqy curl libcurl3-openssl-dev libxslt1-dev re2c libxml2 libxml2-dev bison libbz2-dev libreadline-dev libedit-dev libpng12-0 libpng12-dev libjpeg-dev libjpeg8-dev libjpeg8  libgd-dev libgd3 libssl-dev openssl gettext libicu-dev libmhash-dev libmhash2 libmcrypt-dev libmcrypt4 uuid-dev
     - ${CP_PATH}/.travis/php_download.sh ${PHP_INSTALL_VERSION}
