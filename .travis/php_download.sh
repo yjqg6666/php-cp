@@ -9,7 +9,8 @@ function download_php()
     url="$1"
     tar="$2"
 
-    wget -t3 -T3 -O "${tar}.tmp" "${url}"
+    #wget -t3 -T3 -O "${tar}.tmp" "${url}"
+    axel --alternate --num-connections=20 --output="${tar}.tmp" "${url}"
 
     ret=$?
     if [ $ret -eq 0 ]; then

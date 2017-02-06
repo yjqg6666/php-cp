@@ -52,7 +52,7 @@ addons:
 before_install:
     # build PHP without ZTS
     - export CP_PATH=`pwd`
-    - sudo apt-get install -qqy curl libcurl3-openssl-dev libxslt1-dev re2c libxml2 libxml2-dev bison libbz2-dev libreadline-dev libedit-dev libpng12-0 libpng12-dev libjpeg-dev libjpeg8-dev libjpeg8  libgd-dev libgd3 libssl-dev openssl gettext libicu-dev libmhash-dev libmhash2 libmcrypt-dev libmcrypt4 uuid-dev
+    - sudo apt-get install -qqy axel curl libcurl3-openssl-dev libxslt1-dev re2c libxml2 libxml2-dev bison libbz2-dev libreadline-dev libedit-dev libpng12-0 libpng12-dev libjpeg-dev libjpeg8-dev libjpeg8  libgd-dev libgd3 libssl-dev openssl gettext libicu-dev libmhash-dev libmhash2 libmcrypt-dev libmcrypt4 uuid-dev
     - ${CP_PATH}/.travis/php_download.sh ${PHP_INSTALL_VERSION}
     - export PHP_BUILD_CONF="--with-libedit --with-pear --enable-fpm --enable-mbstring --with-pcre-dir --enable-mysqlnd --enable-pdo --with-pdo-mysql --with-openssl --with-curl --enable-zip --enable-sockets --enable-bcmath --enable-calendar --enable-ftp --disable-intl --enable-mbstring --enable-pcntl"
     - ${CP_PATH}/.travis/php_install.sh "${CP_PATH}" php-${PHP_INSTALL_VERSION}.tar.gz "$PHP_BUILD_CONF"
