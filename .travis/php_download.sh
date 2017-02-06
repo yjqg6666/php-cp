@@ -35,7 +35,8 @@ log_download "version: $version"
 
 # choose source
 tar_file="php-${version}.tar.gz"
-url="https://secure.php.net/get/${tar_file}/from/this/mirror"
+#url="https://secure.php.net/get/${tar_file}/from/this/mirror"
+url="https://php.net/distributions/${tar_file}"
 
 # download
 log_download "download from $url"
