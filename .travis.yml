@@ -2,37 +2,41 @@ sudo: required
 
 language: c
 
-compiler: gcc
-
 matrix:
     include:
         - os: linux
           dist: trusty
+          compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "7.1"
               - PHP_INSTALL_VERSION: "7.1.1"
         - os: linux
           dist: trusty
+          compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "7.0"
               - PHP_INSTALL_VERSION: "7.0.15"
         - os: linux
           dist: trusty
+          compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "5.6"
               - PHP_INSTALL_VERSION: "5.6.30"
         - os: linux
           dist: trusty
+          compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "5.5"
               - PHP_INSTALL_VERSION: "5.5.38"
         - os: linux
           dist: trusty
+          compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "5.4"
               - PHP_INSTALL_VERSION: "5.4.45"
         - os: linux
           dist: trusty
+          compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "5.3"
               - PHP_INSTALL_VERSION: "5.3.29"
