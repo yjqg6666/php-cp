@@ -39,10 +39,11 @@ function install_php()
 
     # prepare
     #param_general="--disable-all"
+    here_dir=$(dirname "$0")
     conf_dir="${prefix}/${buildname}/config"
     conf_ext_dir="${conf_dir}/conf.d"
     [ ! -d "$conf_ext_dir" ] && mkdir -p -m 755 "$conf_ext_dir"
-    cp "${prefix}/${buildname}/php.ini-production" "${conf_dir}/php.ini"
+    cp "${prefix}/${buildname}/php.ini-production" "${conf_dir}/php.ini" && ${here_dir}/php_update_ini.sh "${conf_dir}/php.ini"
 
     param_general="--with-config-file-scan-dir=${conf_dir} --sysconfdir=${conf_dir} --with-config-file-path=${conf_dir}/php.ini --with-config-file-scan-dir=${conf_ext_dir}"
     param_sapi="--enable-cli --disable-cgi"
