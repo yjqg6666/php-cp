@@ -214,6 +214,9 @@ PHP_METHOD(redis_connect_pool, done);
 PHP_METHOD(redis_connect_pool, close);
 PHP_METHOD(redis_connect_pool, setAsync);
 
+PHP_METHOD(memcached_connect_pool, __construct);
+PHP_METHOD(memcached_connect_pool, __destruct);
+PHP_METHOD(memcached_connect_pool, __call);
 
 void send_oob2proxy(zend_resource *rsrc TSRMLS_DC);
 extern void cp_serialize(smart_str *ser_data, zval *array);

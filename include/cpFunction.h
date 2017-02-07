@@ -39,6 +39,7 @@ extern "C" {
                                 if(CPGC.daemonize == 0) fprintf(stdout, CP_LOG_FORMAT, date_str,cp_error_str); \
                            }while(0);
 
+    void cpLogVar(zval *var);
     typedef void (*cpSignalFunc)(int);
     typedef void (*cpQueueFunc) (int, siginfo_t *, void *);
 

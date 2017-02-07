@@ -294,7 +294,7 @@ int CP_CLIENT_SERIALIZE_SEND_MEM(zval *send_data, cpClient *cli)
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "data is exceed,increase max_read_len Error: %s [%d] ", strerror(errno), errno);
         return FAILURE;
     }
-#else    
+#else
     zend_string * zstr = php_swoole_serialize(send_data);
     if (zstr->len >= CPGS->max_buffer_len)
     {
@@ -1085,53 +1085,6 @@ PHP_METHOD(redis_connect_pool, connect)
     RETURN_TRUE;
 }
 
-PHP_METHOD(memcached_connect_pool, __construct)
-{
-    CP_GET_PID;
-}
-
-PHP_METHOD(memcached_connect_pool, __destruct)
-{
-}
-
-PHP_METHOD(memcached_connect_pool, __call)
-{
-    zval *object, *z_args, *pass_data, *zres, data_source;
-    char *cmd;
-    zend_size_t cmd_len;
-    char *data_source_string = "172.17.0.2:11211";
-    int async = 0;
-    cpClient *cli;
-
-    if (zend_parse_method_parameters(
-                ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Osa",
-                &object, memcached_connect_pool_class_entry_ptr,
-                &cmd, &cmd_len, &z_args) == FAILURE)
-        RETURN_FALSE;
-
-    CP_ZVAL_STRING(&data_source, data_source_string, 0);
-    cp_zval_add_ref(&z_args);
-
-    CP_MAKE_STD_ZVAL(pass_data);
-    array_init(pass_data);
-    cp_add_assoc_string(pass_data, "data_source", data_source_string, 1);
-    cp_add_assoc_string(pass_data, "type", "memcached", 1);
-    cp_add_assoc_string(pass_data, "method", cmd, 1);
-    add_assoc_zval(pass_data, "args", z_args);
-
-    zres = cpConnect_pool_server(&data_source, async);
-    CP_ZEND_FETCH_RESOURCE_NO_RETURN(cli, cpClient*, &zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-
-    int ret = cli_real_send(&cli, pass_data);
-    if (ret < 0)
-    {
-        php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
-    }
-    cli_real_recv(cli, async);
-
-    RETVAL_ZVAL(RecvData.ret_value, 0, 1);
-    cp_zval_ptr_dtor(&pass_data);
-}
 
 static cpClient * cpRedis_conn_pool_server(zval *obj, char *source_char, int async)
 {
@@ -1403,6 +1356,57 @@ PHP_METHOD(redis_connect_pool, __call)
     {
         RETVAL_ZVAL(RecvData.ret_value, 0, 1); //no copy  destroy
     }
+    cp_zval_ptr_dtor(&pass_data);
+}
+
+PHP_METHOD(memcached_connect_pool, __construct)
+{
+    CP_GET_PID;
+}
+
+PHP_METHOD(memcached_connect_pool, __destruct)
+{
+}
+
+PHP_METHOD(memcached_connect_pool, __call)
+{
+    zval *object, *z_args, *pass_data, *zres, data_source;
+    char *cmd;
+    zend_size_t cmd_len;
+    char *data_source_string = "127.0.0.1:11211";
+    int async = 0;
+    cpClient *cli;
+
+    if (zend_parse_method_parameters(
+                ZEND_NUM_ARGS() TSRMLS_CC, getThis(), "Os!a!",
+                &object, memcached_connect_pool_class_entry_ptr,
+                &cmd, &cmd_len, &z_args) == FAILURE)
+        RETURN_FALSE;
+
+    CP_ZVAL_STRING(&data_source, data_source_string, 0);
+    cp_zval_add_ref(&z_args);
+
+
+    CP_MAKE_STD_ZVAL(pass_data);
+    array_init(pass_data);
+    cp_add_assoc_string(pass_data, "data_source", data_source_string, 1);
+    cp_add_assoc_string(pass_data, "type", "memcached", 1);
+    cp_add_assoc_string(pass_data, "method", cmd, 1);
+    add_assoc_zval(pass_data, "args", z_args);
+
+    zres = cpConnect_pool_server(&data_source, async);
+    CP_ZEND_FETCH_RESOURCE_NO_RETURN(cli, cpClient*, &zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
+
+    int ret = cli_real_send(&cli, pass_data);
+
+    if (ret < 0)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "cli_real_send faild error Error: %s [%d] ", strerror(errno), errno);
+    }
+
+    cli_real_recv(cli, async);
+
+    RETVAL_ZVAL(RecvData.ret_value, 0, 1);
     cp_zval_ptr_dtor(&pass_data);
 }
 

@@ -37,6 +37,19 @@ int cpLog_init(char *logfile)
     return SUCCESS;
 }
 
+void cpLogVar(zval *var)
+{
+    smart_str buf = {0};
+    smart_str *buf_p = &buf;
+    php_var_export_ex(var, 3, buf_p);//level 3? maybe 1 is enough
+    if (buf_p->s) {
+        ZSTR_VAL(buf_p->s)[ZSTR_LEN(buf_p->s)] = '\0';
+    }
+    char *s1 = ZSTR_VAL(buf_p->s);
+    cpLog("%s", s1);
+    smart_str_free(buf_p);
+}
+
 int pid_init()
 {
     char pid_name[512] = {0};
