@@ -34,4 +34,5 @@ ${CP_PATH}/pool_server start &&
 
 netstat -tlnp |grep 6253 &&
 ${CP_PATH}/pool_server status &&
-env TEST_PHP_EXECUTABLE=$PHP_BIN $PHP_BIN -c "${PHP_PATH}/config/php.ini" "${PHP_PATH}/run-tests.php" --show-diff "${CP_PATH}/tests" |tee /tmp/php_cp_test.result && fail_num=$(grep -o -E "Tests\s+failed\s*:\s*[0-9]{1,}\s*\(" /tmp/php_cp_test.result |grep -o -E "[0-9]{1,}" -) && fail_num=$((fail_num+0)) && echo $fail_num && [ $fail_num -eq 0 ]
+env TEST_PHP_EXECUTABLE=$PHP_BIN $PHP_BIN "${PHP_PATH}/run-tests.php" -c "${PHP_PATH}/config/php.ini" --show-diff "${CP_PATH}/tests" |tee /tmp/php_cp_test.result && fail_num=$(grep -o -E "Tests\s+failed\s*:\s*[0-9]{1,}\s*\(" /tmp/php_cp_test.result |grep -o -E "[0-9]{1,}" -) && fail_num=$((fail_num+0)) && echo $fail_num && [ $fail_num -eq 0 ]
+echo $?
