@@ -13,4 +13,3 @@ if (extension_loaded("connect_pool") === false) {
 if (extension_loaded("redis") === false) {
     $php_test_exit(2, "Skip this test, redis extension NOT loaded");
 }
-
