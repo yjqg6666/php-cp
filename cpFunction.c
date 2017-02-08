@@ -43,10 +43,10 @@ void cpLogVar(zval *var)
     smart_str *buf_p = &buf;
     php_var_export_ex(var, 3, buf_p);//level 3? maybe 1 is enough
 #if PHP_MAJOR_VERSION < 7
-    if (buf_p->c) {
-        ZSTR_VAL(buf_p->c)[ZSTR_LEN(buf_p->c)] = '\0';
+    if ((buf_p)->c) {                                                                                                   \
+        (buf_p)->c[(buf_p)->len] = '\0';                                                                        \
     }
-    char *s1 = ZSTR_VAL(buf_p->c);
+    char *s1 = buf_p->c;
 #else
     if (buf_p->s) {
         ZSTR_VAL(buf_p->s)[ZSTR_LEN(buf_p->s)] = '\0';
