@@ -39,7 +39,7 @@ try {
 --EXPECTF--
 bool(true)
 bool(true)
-string(%d) "%d"
+int(%d)
 
 --CLEAN--
 <?php
