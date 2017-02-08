@@ -10,36 +10,42 @@ matrix:
           env:
               - PHP_VERSION_MAJOR: "7.1"
               - PHP_INSTALL_VERSION: "7.1.1"
+              - MEMCACHED_VERSION_INSTALL: "v3.0.1"
         - os: linux
           dist: trusty
           compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "7.0"
               - PHP_INSTALL_VERSION: "7.0.15"
+              - MEMCACHED_VERSION_INSTALL: "v3.0.1"
         - os: linux
           dist: trusty
           compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "5.6"
               - PHP_INSTALL_VERSION: "5.6.30"
+              - MEMCACHED_VERSION_INSTALL: "2.2.0"
         - os: linux
           dist: trusty
           compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "5.5"
               - PHP_INSTALL_VERSION: "5.5.38"
+              - MEMCACHED_VERSION_INSTALL: "2.2.0"
         - os: linux
           dist: trusty
           compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "5.4"
               - PHP_INSTALL_VERSION: "5.4.45"
+              - MEMCACHED_VERSION_INSTALL: "2.2.0"
         - os: linux
           dist: trusty
           compiler: gcc
           env:
               - PHP_VERSION_MAJOR: "5.3"
               - PHP_INSTALL_VERSION: "5.3.29"
+              - MEMCACHED_VERSION_INSTALL: "2.2.0"
 
 services:
     - mysql
@@ -63,7 +69,6 @@ before_install:
     - export PATH="${PHP_BIN_DIR}:${PATH}"
     - export PHP_BIN=${PHP_BIN_DIR}/php
     - export REDIS_VERSION_INSTALL=3.1.1
-    - export MEMCACHED_VERSION_INSTALL=2.2.0
 
 install:
     - sudo mkdir -m 777 /var/log/php-connection-pool

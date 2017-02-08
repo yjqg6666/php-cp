@@ -20,7 +20,7 @@ try {
     $db->setOption(Memcached::OPT_SEND_TIMEOUT, 3000);
     $db->setOption(Memcached::OPT_TCP_NODELAY, true);
     $db->setOption(Memcached::OPT_PREFIX_KEY, "phpcp_");
-    if (!count($mc->getServerList())) {
+    if (!count($db->getServerList())) {
         $db->addServers(array(
             array('localhost',11211)
         ));
