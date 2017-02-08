@@ -42,7 +42,7 @@ function install_ext()
 }
 
 # main
-if [ $# -ne 2 ]; then
+if [ $# -ne 2 and $# -ne 3 ]; then
     echo "usage: `basename $0` <extension-path> <php-path>"
     exit 1
 fi
