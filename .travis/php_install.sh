@@ -56,7 +56,7 @@ function install_php()
 
     log_install "[$buildname] make"
     # NOT DO a meaningless "make clean"! it's just extracted
-    make --quiet && \
+    make --quiet --debug=basic 1>/dev/null && \
         make install
     ret=$?
 
