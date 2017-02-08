@@ -10,20 +10,22 @@ function install_ext()
     php="$php_path/bin/php"
     phpize="$php_path/bin/phpize"
     phpcfg="$php_path/bin/php-config"
-    if [ ! -f $phpcfg ]; then
+    if [ ! -f "$phpcfg" ]; then
         log_ext "invalid PHP path $php_path"
         return 1
     fi
 
     # change to extension path
-    cd $1
+    cd "${1}"
+    configure_params="${3}"
+
 
     log_ext "ext_path: ${1}"
     log_ext "php_path: ${php_path}"
-    log_ext "current_path: `pwd`"
+    log_ext "configure_param: ${php_path}"
 
     # configure, make
-    $phpize && ./configure --silent --with-php-config=$phpcfg && make install
+    ${phpize} && ./configure --silent --with-php-config=${phpcfg} "${configure_params}" && make install
     ret=$?
 
     if [ $ret -eq 0 ]; then
@@ -56,5 +58,7 @@ if [ ! -d "$php_path" ]; then
 fi
 log_ext "php_path: $php_path"
 
+configure_param="$3"
+
 # build
-install_ext $ext_path $php_path
+install_ext "$ext_path" "$php_path" "$configure_param"
