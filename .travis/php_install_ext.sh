@@ -25,7 +25,10 @@ function install_ext()
     log_ext "configure_param: ${php_path}"
 
     # configure, make
-    ${phpize} && ./configure --silent --with-php-config=${phpcfg} "${configure_params}" && make install
+    ${phpize}
+        && ./configure --silent --with-php-config=${phpcfg} "${configure_params}"
+        && make --quiet --debug=basic 1>/dev/null
+        && make install
     ret=$?
 
     if [ $ret -eq 0 ]; then
