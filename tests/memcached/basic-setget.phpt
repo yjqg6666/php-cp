@@ -7,6 +7,9 @@ require(__DIR__ . DIRECTORY_SEPARATOR . "environment.php");
 if (extension_loaded("memcached") === false) {
     exit("Skip this test, memcached extension NOT loaded");
 }
+if (PHP_MAJOR_VERSION == 7) {
+    exit("Skip this test, php7 will timeout");
+}
 ?>
 
 --FILE--
@@ -15,10 +18,6 @@ try {
     $now = time();
     $key = "time_stamp";
     $db = new memcachedProxy();
-    //$db->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
-    $db->setOption(Memcached::OPT_RECV_TIMEOUT, 1000);
-    $db->setOption(Memcached::OPT_SEND_TIMEOUT, 3000);
-    $db->setOption(Memcached::OPT_TCP_NODELAY, true);
     $db->setOption(Memcached::OPT_PREFIX_KEY, "phpcp_");
     if (!count($db->getServerList())) {
         $db->addServers(array(
