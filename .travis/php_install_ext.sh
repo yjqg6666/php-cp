@@ -23,7 +23,7 @@ function install_ext()
     log_ext "current_path: `pwd`"
 
     # configure, make
-    $phpize && ./configure --with-php-config=$phpcfg && make install
+    $phpize && ./configure --silent --with-php-config=$phpcfg && make install
     ret=$?
 
     if [ $ret -eq 0 ]; then

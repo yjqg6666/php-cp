@@ -72,8 +72,8 @@ install:
     - ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}" "${PHP_PATH}"
     - if [ ! -f /bin/env ];then sudo ln -s /usr/bin/env /bin/env; fi
     - echo 'extension = connect_pool.so' > ${PHP_PATH}/config/conf.d/connect_pool.ini
-    - git clone -b ${REDIS_VERSION_INSTALL} https://github.com/phpredis/phpredis.git && ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}/phpredis" "${PHP_PATH}" && echo 'extension = redis.so' > ${PHP_PATH}/config/conf.d/redis.ini
-    - git clone -b ${MEMCACHED_VERSION_INSTALL} https://github.com/php-memcached-dev/php-memcached.git && ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}/php-memcached" "${PHP_PATH}" && echo 'extension = memcached.so' > ${PHP_PATH}/config/conf.d/memcached.ini
+    - git clone --quiet -b ${REDIS_VERSION_INSTALL} https://github.com/phpredis/phpredis.git && ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}/phpredis" "${PHP_PATH}" && echo 'extension = redis.so' > ${PHP_PATH}/config/conf.d/redis.ini
+    - git clone --quiet -b ${MEMCACHED_VERSION_INSTALL} https://github.com/php-memcached-dev/php-memcached.git && ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}/php-memcached" "${PHP_PATH}" && echo 'extension = memcached.so' > ${PHP_PATH}/config/conf.d/memcached.ini
 
 before_script:
     - $PHP_BIN -m
