@@ -3,7 +3,7 @@ Testing php-cp redis set&get
 
 --SKIPIF--
 <?php
-require(__DIR__ . DIRECTORY_SEPARATOR . "environment.php");
+require(dirname(__DIR__) . DIRECTORY_SEPARATOR . "environment.php");
 ?>
 
 --FILE--

@@ -3,12 +3,12 @@ Testing php-cp memcached set&get
 
 --SKIPIF--
 <?php
-require(__DIR__ . DIRECTORY_SEPARATOR . "environment.php");
-if (extension_loaded("memcached") === false) {
-    exit("Skip this test, memcached extension NOT loaded");
-}
 if (PHP_MAJOR_VERSION == 7) {
     exit("Skip this test, php7 will timeout");
+}
+require(dirname(__DIR__) . DIRECTORY_SEPARATOR . "environment.php");
+if (extension_loaded("memcached") === false) {
+    exit("Skip this test, memcached extension NOT loaded");
 }
 ?>
 
@@ -39,8 +39,3 @@ try {
 bool(true)
 bool(true)
 int(%d)
-
---CLEAN--
-<?php
-?>
-
