@@ -25,9 +25,9 @@ function install_ext()
     log_ext "configure_param: ${php_path}"
 
     # configure, make
-    ${phpize}
-        && ./configure --silent --with-php-config=${phpcfg} "${configure_params}"
-        && make --quiet --debug=basic 1>/dev/null
+    ${phpize} \
+        && ./configure --silent --with-php-config=${phpcfg} "${configure_params}" \
+        && make --quiet --debug=basic 1>/dev/null \
         && make install
     ret=$?
 
@@ -38,7 +38,7 @@ function install_ext()
     fi
     cd "${CP_PATH}"
 
-    return $ret
+    return ${ret}
 }
 
 # main
