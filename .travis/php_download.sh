@@ -9,7 +9,8 @@ function download_php()
     url="$1"
     tar="$2"
 
-    wget -t3 -T3 -O "${tar}.tmp" "${url}"
+    #wget -t3 -T3 -O "${tar}.tmp" "${url}"
+    axel --alternate --num-connections=20 --output="${tar}.tmp" "${url}"
 
     ret=$?
     if [ $ret -eq 0 ]; then
@@ -34,7 +35,8 @@ log_download "version: $version"
 
 # choose source
 tar_file="php-${version}.tar.gz"
-url="https://secure.php.net/get/${tar_file}/from/this/mirror"
+#url="https://secure.php.net/get/${tar_file}/from/this/mirror"
+url="https://php.net/distributions/${tar_file}"
 
 # download
 log_download "download from $url"

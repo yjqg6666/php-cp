@@ -8,7 +8,6 @@ require(__DIR__ . DIRECTORY_SEPARATOR . "environment.php");
 
 --FILE--
 <?php
-$s = '123';
 var_dump(time());
 ?>
 
