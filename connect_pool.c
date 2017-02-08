@@ -27,6 +27,7 @@
 static zval* pdo_stmt = NULL;
 extern zval* pdo_object;
 extern zval* redis_object;
+extern zval* memcached_object;
 
 cpServerG ConProxyG;
 cpServerGS *ConProxyGS = NULL;
@@ -40,6 +41,8 @@ static void pdo_dispatch(zval *args);
 static void pdo_proxy_pdo(zval *args);
 static void pdo_proxy_stmt(zval *args);
 static void cp_add_fail_into_mem(zval *conf, zval *data_source);
+
+void cpLogVar(zval *var);
 
 #define CP_VERSION "1.5.0"
 
@@ -182,6 +185,13 @@ const zend_function_entry redis_connect_pool_methods[] = {
     PHP_FE_END
 };
 
+const zend_function_entry memcached_connect_pool_methods[] = {
+    PHP_ME(memcached_connect_pool, __construct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_CTOR)
+    PHP_ME(memcached_connect_pool, __destruct, NULL, ZEND_ACC_PUBLIC | ZEND_ACC_DTOR)
+    PHP_ME(memcached_connect_pool, __call, __call_args, ZEND_ACC_PUBLIC)
+    PHP_FE_END
+};
+
 int le_cp_server;
 int le_cli_connect_pool;
 
@@ -193,6 +203,9 @@ zend_class_entry *redis_connect_pool_class_entry_ptr;
 
 zend_class_entry pdo_connect_pool_PDOStatement_ce;
 zend_class_entry *pdo_connect_pool_PDOStatement_class_entry_ptr;
+
+zend_class_entry memcached_connect_pool_ce;
+zend_class_entry *memcached_connect_pool_class_entry_ptr;
 
 zend_module_entry connect_pool_module_entry = {
 #if ZEND_MODULE_API_NO >= 20050922
@@ -231,6 +244,10 @@ PHP_MINIT_FUNCTION(connect_pool)
     zend_register_class_alias("redis_connect_pool", pdo_connect_pool_class_entry_ptr);
 
     INIT_CLASS_ENTRY(pdo_connect_pool_PDOStatement_ce, "pdo_connect_pool_PDOStatement", pdo_connect_pool_PDOStatement_methods);
+
+    INIT_CLASS_ENTRY(memcached_connect_pool_ce, "memcachedProxy", memcached_connect_pool_methods);
+    memcached_connect_pool_class_entry_ptr = zend_register_internal_class(&memcached_connect_pool_ce TSRMLS_CC);
+    zend_register_class_alias("memcached_connect_pool", memcached_connect_pool_class_entry_ptr);
 
     //zend_class_entry *pdo_dbstmt_ce = cp_zend_fetch_class("PDOStatement", ZEND_FETCH_CLASS_AUTO);
 
@@ -917,6 +934,76 @@ static void redis_dispatch(zval * args)
     }
 }
 
+static void memcached_dispatch(zval *args)
+{
+    if (!memcached_object)
+    {
+        zval *new_obj;
+#if PHP_MAJOR_VERSION < 7
+        CP_MAKE_STD_ZVAL(new_obj);
+#else
+        new_obj = ecalloc(sizeof (zval), 1);
+#endif
+        zend_class_entry *memcached_ce = NULL;
+
+        zval memcached_name, fun_name, *ret_mem_obj;
+        CP_ZVAL_STRING(&memcached_name, "memcached", 0);
+        if (cp_zend_hash_find_ptr(EG(class_table), &memcached_name, (void **) &memcached_ce) == FAILURE)
+        {
+            CP_INTERNAL_ERROR_SEND_RETURN("memcached extension is not install");
+        }
+        object_init_ex(new_obj, memcached_ce);
+        CP_ZVAL_STRING(&fun_name, "__construct", 0);
+        cp_call_user_function_ex(NULL, &new_obj, &fun_name, &ret_mem_obj, 0, NULL, 0, NULL TSRMLS_CC);
+
+        if (EG(exception))
+        {
+            CP_DEL_OBJ(new_obj);
+            CP_SEND_EXCEPTION_RETURN;
+        }
+
+        //maybe need auth
+        memcached_object = new_obj;
+    }
+
+    zval *method;
+    if (cp_zend_hash_find(Z_ARRVAL_P(args), ZEND_STRS("method"), (void **) &method) == FAILURE)
+    {
+        CP_INTERNAL_ERROR_SEND("memcached no method error!");
+        return;
+    }
+
+    zval * ret_value = NULL;
+    if (cp_internal_call_user_function(memcached_object, method, &ret_value, args) == FAILURE)
+    {
+        CP_INTERNAL_ERROR_SEND("call memcached method error!");
+    }
+    else
+    {
+        if (EG(exception))
+        {
+            zval *str;
+            CP_SEND_EXCEPTION_ARGS(&str);
+            CP_DEL_OBJ(memcached_object);
+            cp_zval_ptr_dtor(&str);
+        }
+        else
+        {
+            if (Z_TYPE_P(ret_value) == IS_OBJECT)
+            {
+                CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_STMT_OBJ);
+            }
+            else
+            {
+                CP_INTERNAL_SERIALIZE_SEND_MEM(ret_value, CP_SIGEVENT_TURE);
+            }
+        }
+    }
+
+    if (ret_value)
+        cp_zval_ptr_dtor(&ret_value);
+}
+
 int worker_onReceive(zval * user_value)
 {
     zval *type;
@@ -929,6 +1016,10 @@ int worker_onReceive(zval * user_value)
         else if (strcmp(Z_STRVAL_P(type), "redis") == 0)
         {
             redis_dispatch(user_value);
+        }
+        else if (strcmp(Z_STRVAL_P(type), "memcached") == 0)
+        {
+            memcached_dispatch(user_value);
         }
         else
         {

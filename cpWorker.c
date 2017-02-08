@@ -19,6 +19,7 @@
 #include <sys/wait.h>
 zval *pdo_object = NULL;
 zval *redis_object = NULL;
+zval *memcached_object = NULL;
 
 static void cpWorker_do_stop()
 {

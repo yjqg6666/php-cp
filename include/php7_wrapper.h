@@ -235,7 +235,7 @@ static CPINLINE int cp_add_assoc_stringl_ex(zval *arg, const char *key, size_t k
 #define cp_zval_add_ref(p)   Z_TRY_ADDREF_P(*p)
 #define cp_zval_ptr_dtor(p)  zval_ptr_dtor(*p)
 
-static CPINLINE int cp_call_user_function_ex(HashTable *function_table, zval** object_pp, zval *function_name, zval **retval_ptr_ptr, uint32_t param_count, zval ***params, int no_separation, HashTable* ymbol_table) {
+static CPINLINE int cp_call_user_function_ex(HashTable *function_table, zval** object_pp, zval *function_name, zval **retval_ptr_ptr, uint32_t param_count, zval ***params, int no_separation, HashTable* symbol_table) {
     zval real_params[20];
     int i = 0, ret;
     for (; i < param_count; i++) {
