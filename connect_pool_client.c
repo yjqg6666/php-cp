@@ -921,6 +921,10 @@ PHP_METHOD(pdo_connect_pool, __call)
         object_init_ex(return_value, pdo_connect_pool_PDOStatement_class_entry_ptr);
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("cli"), zres TSRMLS_CC);
         zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("data_source"), source_zval TSRMLS_CC); //标示这个连接的真实目标
+        zval *query_string;
+        if (cp_zend_hash_index_find(Z_ARRVAL_P(z_args), 0, (void**) &query_string) == SUCCESS) {
+            zend_update_property(pdo_connect_pool_PDOStatement_class_entry_ptr, return_value, ZEND_STRL("queryString"), query_string TSRMLS_CC);
+        }
         cp_zval_ptr_dtor(&RecvData.ret_value);
     }
     else if (RecvData.type == CP_SIGEVENT_EXCEPTION)
