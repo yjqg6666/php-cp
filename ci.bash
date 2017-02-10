@@ -15,6 +15,7 @@ export PHP_BIN_DIR=${PHP_PATH}/bin &&
 export PATH="${PHP_BIN_DIR}:${PATH}" &&
 export PHP_BIN=${PHP_BIN_DIR}/php &&
 export REDIS_VERSION_INSTALL=3.1.1 &&
+export MEMCACHED_VERSION_INSTALL=2.2.0 &&
 
 sudo mkdir -m 777 /var/log/php-connection-pool &&
 chmod +x ${CP_PATH}/pool_server ${CP_PATH}/initd-php-connection-pool &&
@@ -24,6 +25,7 @@ ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}" "${PHP_PATH}" &&
 if [ ! -f /bin/env ];then sudo ln -s /usr/bin/env /bin/env; fi &&
 echo 'extension = connect_pool.so' > ${PHP_PATH}/config/conf.d/connect_pool.ini &&
 git clone -b ${REDIS_VERSION_INSTALL} https://github.com/phpredis/phpredis.git && ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}/phpredis" "${PHP_PATH}" && echo 'extension = redis.so' > ${PHP_PATH}/config/conf.d/redis.ini &&
+git clone --quiet -b ${MEMCACHED_VERSION_INSTALL} https://github.com/php-memcached-dev/php-memcached.git && ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}/php-memcached" "${PHP_PATH}" "--disable-memcached-sasl" && echo 'extension = memcached.so' > ${PHP_PATH}/config/conf.d/memcached.ini
 
 $PHP_BIN -m &&
 $PHP_BIN -m | grep -s connect_pool &&

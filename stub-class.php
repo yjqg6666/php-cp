@@ -141,7 +141,7 @@ if (class_exists("PDO")):
 endif;
 
 
-if (class_exists("PDO")):
+if (class_exists("Redis")):
     class redisProxy extends Redis
     {
         /**
@@ -194,5 +194,15 @@ if (class_exists("PDO")):
         {
             return true;
         }
+    }
+endif;
+
+
+if (class_exists("Memcached")):
+    /**
+     * Class memcachedProxy
+     */
+    class memcachedProxy extends Memcached
+    {
     }
 endif;
