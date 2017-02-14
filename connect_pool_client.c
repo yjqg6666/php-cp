@@ -550,7 +550,7 @@ int cp_system_random(int min, int max)
 
 //create the pass args that pass to mysql
 
-static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, char* cur_type, zval** pass_data)
+static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, char* cur_type, zval** ret_data_source, zval** pass_data)
 {
     zval *data_source, *username, *pwd, *options, *zval_conf, *real_data_srouce_arr = NULL;
     zval_conf = cp_zend_read_property(pdo_connect_pool_class_entry_ptr, object, ZEND_STRL("config"), 0 TSRMLS_DC);
@@ -589,11 +589,14 @@ static CPINLINE zval* create_pass_data(char* cmd, zval* z_args, zval* object, ch
     cp_zend_hash_find(Z_ARRVAL_P(real_data_srouce_arr), ZEND_STRS("username"), (void **) &username);
     cp_zend_hash_find(Z_ARRVAL_P(real_data_srouce_arr), ZEND_STRS("pwd"), (void **) &pwd);
 
+    //CP_MAKE_STD_ZVAL(pass_data);
+    //array_init(pass_data);
+
     cp_add_assoc_string(*pass_data, "type", "pdo", 1);
     cp_add_assoc_string(*pass_data, "method_type", "connect", 1);
     cp_add_assoc_string(*pass_data, "method", cmd, 1);
     cp_add_assoc_string(*pass_data, "data_source", Z_STRVAL_P(data_source), 1);
-    //*ret_data_source = data_source;
+    *ret_data_source = data_source;
     cp_add_assoc_string(*pass_data, "username", Z_STRVAL_P(username), 1);
     cp_add_assoc_string(*pass_data, "password", Z_STRVAL_P(pwd), 1);
     cp_zval_add_ref(&z_args);
@@ -825,11 +828,22 @@ PHP_METHOD(pdo_connect_pool, __call)
         check_need_exchange(getThis(), cur_type);
     }
 
+<<<<<<< HEAD
     CP_MAKE_STD_ZVAL(pass_data);
     array_init(pass_data);
+=======
+    /*
+>>>>>>> merge cp master
     pass_data = create_pass_data(cmd, z_args, object, cur_type, &pass_data);
     cp_zend_hash_find(Z_ARRVAL_P(pass_data), ZEND_STRS("data_source"), (void **) &source_zval);
 
+<<<<<<< HEAD
+=======
+    CP_MAKE_STD_ZVAL(pass_data);
+    array_init(pass_data);
+    create_pass_data(cmd, z_args, object, cur_type, &source_zval, &pass_data);
+
+>>>>>>> merge cp master
     cpClient *cli;
     if (cp_zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
     {
@@ -846,8 +860,28 @@ PHP_METHOD(pdo_connect_pool, __call)
 // #define CP_ZEND_FETCH_RESOURCE_NO_RETURN(rsrc, rsrc_type, passed_id, default_id, resource_type_name, resource_type)  \
 // (rsrc = (rsrc_type) zend_fetch_resource(Z_RES_P(*passed_id), resource_type_name, resource_type))
     }
+<<<<<<< HEAD
 
     //int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
+=======
+    */
+
+        zres = cpConnect_pool_server(source_zval, async);
+        zend_update_property_string(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), Z_STRVAL_P(source_zval) TSRMLS_CC);
+        zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), zres TSRMLS_CC);
+        CP_ZEND_FETCH_RESOURCE_NO_RETURN(cli, cpClient*, &zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
+        if (async)
+        {
+            cli->async = async;
+            cli->dummy_source_index = dummy_source_index - 1;
+        }
+    }
+    if (async && cli->querying)
+    {
+        php_error_docref(NULL TSRMLS_CC, E_ERROR, "the obj is async querying now, you can not execute async function again");
+    }
+//// swoole/master
+>>>>>>> merge cp master
     int ret = cli_real_send(&cli, pass_data);
     if (ret < 0)
     {

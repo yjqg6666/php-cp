@@ -125,6 +125,7 @@ int cpNetRead(int fd, void *buf, int len) {
         {
             return 0;
         }
+<<<<<<< HEAD
 
         if (n < 0) {
             cpLog("cpNetRead fd:[%d] recv [%d] Error:%s error %d \n",fd, n, strerror(errno), errno);
@@ -132,6 +133,8 @@ int cpNetRead(int fd, void *buf, int len) {
 //                else {
 //                    cpLog("worker recive error %d,len %d,%d\n", errno, n,fd);
 //                }
+=======
+>>>>>>> merge cp master
     } while ((n < 0 && errno == EINTR) || n > 0);
     return total;
 }
