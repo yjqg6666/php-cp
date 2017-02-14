@@ -93,7 +93,7 @@ void cpKillClient()
 static void cpServer_init_lock()
 {
     int i = 0;
-    for (; i <= CP_GROUP_NUM; i++)
+    for (; i < CP_GROUP_NUM; i++)
     {
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
@@ -197,7 +197,6 @@ void cpServer_init(zval *conf, char *ini_file)
     CPGS->default_max = CP_DEF_MAX_NUM;
 
     cpServer_init_lock();
-
 }
 
 int cpServer_create()
@@ -312,6 +311,7 @@ int cpServer_start()
     return SUCCESS;
 }
 
+//  只有主进程 接收客户端的连接
 static int cpServer_master_onAccept(int fd)
 {
     struct sockaddr_in client_addr;
@@ -322,6 +322,8 @@ static int cpServer_master_onAccept(int fd)
     {
         //accept得到连接套接字
         conn_fd = accept(fd, (struct sockaddr *) &client_addr, &client_addrlen);
+        cpLog("client_fd is [%d] fd [%d] \n", conn_fd, fd);
+
         if (conn_fd < 0)
         {
             switch (errno)
@@ -346,15 +348,16 @@ static int cpServer_master_onAccept(int fd)
         int flag = 1;
         setsockopt(conn_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof (flag));
 #if (defined SO_KEEPALIVE) && (defined TCP_KEEPIDLE)  
-        int keepalive = 1;
-        int keep_idle = CP_TCP_KEEPCOUNT;
-        int keep_interval = CP_TCP_KEEPIDLE;
-        int keep_count = CP_TCP_KEEPINTERVAL;
-
-        setsockopt(conn_fd, SOL_SOCKET, SO_KEEPALIVE, (void *) &keepalive, sizeof (keepalive));
-        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPIDLE, (void*) &keep_idle, sizeof (keep_idle));
-        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPINTVL, (void *) &keep_interval, sizeof (keep_interval));
-        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPCNT, (void *) &keep_count, sizeof (keep_count));
+        cpLog("===== if \n");
+//        int keepalive = 1;
+//        int keep_idle = CP_TCP_KEEPCOUNT;
+//        int keep_interval = CP_TCP_KEEPIDLE;
+//        int keep_count = CP_TCP_KEEPINTERVAL;
+//
+//        setsockopt(conn_fd, SOL_SOCKET, SO_KEEPALIVE, (void *) &keepalive, sizeof (keepalive));
+//        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPIDLE, (void*) &keep_idle, sizeof (keep_idle));
+//        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPINTVL, (void *) &keep_interval, sizeof (keep_interval));
+//        setsockopt(conn_fd, IPPROTO_TCP, TCP_KEEPCNT, (void *) &keep_count, sizeof (keep_count));
 #endif
 
         if (CPGC.reactor_num > 1)
@@ -376,9 +379,12 @@ static int cpServer_master_onAccept(int fd)
         cpConnection *conn = &(CPGS->conlist[conn_fd]);
         if (conn)
         {//不能在add后做,线程安全,防止添加到reactor后马上就读到数据,这时候下面new_connect还没执行。
+            cpLog("===== if conn\n");
             conn->release = CP_FD_RELEASED;
         }
-        if (cpReactor_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, CP_EVENT_READ | CP_EVENT_WRITE) < 0)
+        cpLog("before add conn_fd [%d] \n", conn_fd);
+        //if (cpReactor_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, CP_EVENT_READ | CP_EVENT_WRITE) < 0)
+        if (cpReactor_add(CPGS->reactor_threads[c_pti].epfd, conn_fd, CP_EVENT_READ) < 0)
         {
             cpLog("[Master]add event fail Errno=%d|FD=%d", errno, conn_fd);
             close(conn_fd);
@@ -386,6 +392,7 @@ static int cpServer_master_onAccept(int fd)
         }
         else
         {
+            cpLog("cpReactor_add ")
             CPGS->reactor_threads[c_pti].event_num++;
             conn->fd = conn_fd;
             conn->pth_id = c_pti;
@@ -483,10 +490,12 @@ static int cpReactor_client_release(int fd)
 
 static int cpReactor_client_close(int fd)
 {//长连接 相当于mshutdown
+    printf("cpReactor_client_release fd [%d] \n", fd);
     cpReactor_client_release(fd);
     cpConnection *conn = &(CPGS->conlist[fd]);
     conn->fpm_pid = 0;
     //关闭连接
+    printf("cpReactor_del epfd [%d] fd [%d]\n", CPGS->reactor_threads[conn->pth_id].epfd, fd);
     cpReactor_del(CPGS->reactor_threads[conn->pth_id].epfd, fd);
     (CPGS->reactor_threads[conn->pth_id].event_num <= 0) ? CPGS->reactor_threads[conn->pth_id].event_num = 0 : CPGS->reactor_threads[conn->pth_id].event_num--;
     CPGS->connect_count--;
@@ -498,11 +507,16 @@ static int cpReactor_client_receive(int fd)
 {
     int event_size = sizeof (cpTcpEvent), n, ret = -1;
     char data[event_size];
+    int tid = pthread_self();
     //非ET模式会持续通知
+    cpLog("thread id:[%d]   server before cpNetRead fd:[%d] data:[%s] length:[%d] \n", tid, fd, data, event_size);
     n = cpNetRead(fd, data, event_size);
+    cpLog("server after cpNetRead n:[%d] \n", n);
+
     if (n > 0)
     {
         cpTcpEvent *event = (cpTcpEvent*) data;
+        //cpLog("event type:[%d] \n", event->type);
         switch (event->type)
         {
             case CP_TCPEVENT_ADD:
@@ -561,13 +575,17 @@ int static cpReactor_thread_loop(int *id)
     swSingalNone();
 
 
+
+    // 读写线程的 fd   accept到客户端fd后 add 客户端fd
+    int epfd = cpReactor_create();
+    cpLog("read/write fd is %d  id %d \n", epfd, *id);
+    CPGS->reactor_threads[*id].epfd = epfd;
+
     epoll_wait_handle handles[CP_MAX_EVENT];
     handles[CP_EVENT_READ] = cpReactor_client_receive;
 //    handles[EPOLLPRI] = cpReactor_client_release;
     handles[EPOLL_CLOSE] = cpReactor_client_close;
 
-    int epfd = cpReactor_create(); //这个参数没用
-    CPGS->reactor_threads[*id].epfd = epfd;
     cpReactor_wait(handles, &timeo, epfd);
 
     free(id);
@@ -578,7 +596,9 @@ int static cpReactor_thread_loop(int *id)
 int static cpReactor_start(int sock)
 {
     int i;
-    int accept_epfd = epoll_create(); //这个参数没用
+    int accept_epfd = cpReactor_create();
+    cpLog("serverfd is %d sock [%d] \n", accept_epfd, sock);
+
     if (cpReactor_add(accept_epfd, sock, CP_EVENT_READ) < 0)
     {
         return FAILURE;
@@ -603,10 +623,11 @@ int static cpReactor_start(int sock)
         CPGS->reactor_threads[i].thread_id = pidt;
     }
     epoll_wait_handle handles[CP_MAX_EVENT];
-    handles[CP_EVENT_READ] = cpServer_master_onAccept;
+//    handles[CP_EVENT_READ] = cpServer_master_onAccept;
 
-    //    usleep(50000);
-    sleep(1);
+    handles[CP_EVENT_READ] = cpServer_master_onAccept;
+    usleep(50000);
+    //sleep(1);
     cpLog("start  success");
     return cpReactor_wait(handles, &timeo, accept_epfd);
 }
