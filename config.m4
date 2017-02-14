@@ -47,6 +47,7 @@ AC_TRY_COMPILE([#include "$phpincludedir/main/php_config.h"], [
                     cpFunction.c \
                     cpMemory.c \
                     cpNetWork.c \
+                    cpReactorBase.c \
                     cpClientNet.c \
                     cpPingWorker.c \
                     msgpack/msgpack.c \
