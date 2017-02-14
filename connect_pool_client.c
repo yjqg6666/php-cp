@@ -64,8 +64,7 @@ static void* connect_pool_perisent(zval* zres, zval* data_source)
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "pdo_connect_pool: create sock fail. Error: %s [%d]", strerror(errno), errno);
     }
 
-    ret = cpClient_connect(cli, "127.0.0.1", 6253, (float) 100, 0); //所有的操作100s超时
-
+    ret = cpClient_connect(cli, "127.0.0.1", 6253, (float) 100); //所有的操作100s超时
     if (ret < 0)
     {
         pefree(cli, 1);
@@ -828,22 +827,15 @@ PHP_METHOD(pdo_connect_pool, __call)
         check_need_exchange(getThis(), cur_type);
     }
 
-<<<<<<< HEAD
-    CP_MAKE_STD_ZVAL(pass_data);
-    array_init(pass_data);
-=======
     /*
->>>>>>> merge cp master
     pass_data = create_pass_data(cmd, z_args, object, cur_type, &pass_data);
     cp_zend_hash_find(Z_ARRVAL_P(pass_data), ZEND_STRS("data_source"), (void **) &source_zval);
+    */
 
-<<<<<<< HEAD
-=======
     CP_MAKE_STD_ZVAL(pass_data);
     array_init(pass_data);
     create_pass_data(cmd, z_args, object, cur_type, &source_zval, &pass_data);
 
->>>>>>> merge cp master
     cpClient *cli;
     if (cp_zend_hash_find(Z_OBJPROP_P(getThis()), ZEND_STRS("cli"), (void **) &zres) == SUCCESS)
     {
@@ -851,19 +843,12 @@ PHP_METHOD(pdo_connect_pool, __call)
     }
     else
     {
+    /*
         zres = cpConnect_pool_server(source_zval);
-
-
         zend_update_property_string(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("data_source"), Z_STRVAL_P(source_zval) TSRMLS_CC);
         zend_update_property(pdo_connect_pool_class_entry_ptr, getThis(), ZEND_STRL("cli"), zres TSRMLS_CC);
         CP_ZEND_FETCH_RESOURCE_NO_RETURN(cli, cpClient*, (zval**) &zres, -1, CP_RES_CLIENT_NAME, le_cli_connect_pool);
-// #define CP_ZEND_FETCH_RESOURCE_NO_RETURN(rsrc, rsrc_type, passed_id, default_id, resource_type_name, resource_type)  \
-// (rsrc = (rsrc_type) zend_fetch_resource(Z_RES_P(*passed_id), resource_type_name, resource_type))
     }
-<<<<<<< HEAD
-
-    //int ret = cli_real_send(&cli, pass_data, getThis(), pdo_connect_pool_class_entry_ptr);
-=======
     */
 
         zres = cpConnect_pool_server(source_zval, async);
@@ -881,7 +866,6 @@ PHP_METHOD(pdo_connect_pool, __call)
         php_error_docref(NULL TSRMLS_CC, E_ERROR, "the obj is async querying now, you can not execute async function again");
     }
 //// swoole/master
->>>>>>> merge cp master
     int ret = cli_real_send(&cli, pass_data);
     if (ret < 0)
     {

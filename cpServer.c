@@ -663,8 +663,7 @@ int static cpListen()
         cpLog("Listen fail.port=%d. Error: %s [%d]", CPGC.port, strerror(errno), errno);
         return FAILURE;
     }
-    cpSetNonBlock(sock);
-    // cpSetIsBlock(sock, 0);
+    cpSetIsBlock(sock, 0);
 
     if (sock < 0)
     {
