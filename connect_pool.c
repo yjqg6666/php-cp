@@ -47,12 +47,12 @@ static void cp_add_fail_into_mem(zval *conf, zval *data_source);
 
 #define CP_INTERNAL_ERROR_SEND(send_data)\
                                 ({         \
-                                CP_INTERNAL_SEND_ROW(send_data,CP_SIGEVENT_EXCEPTION)\
+                                CP_INTERNAL_SEND_RAW(send_data,CP_SIGEVENT_EXCEPTION)\
                                  })
 
 #define CP_INTERNAL_NORMAL_SEND(send_data)\
                                 ({         \
-                                 CP_INTERNAL_SEND_ROW(send_data,CP_SIGEVENT_TURE)\
+                                 CP_INTERNAL_SEND_RAW(send_data,CP_SIGEVENT_TURE)\
                                  })
 #define CP_SEND_EXCEPTION do{zval *str;CP_SEND_EXCEPTION_ARGS(&str);cp_zval_ptr_dtor(&str);}while(0);
 #define CP_INTERNAL_NORMAL_SEND_RETURN(send_data)({CP_INTERNAL_NORMAL_SEND(send_data);return CP_TRUE;})

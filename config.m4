@@ -29,6 +29,7 @@ AC_TRY_COMPILE([#include "$phpincludedir/main/php_version.h"], [
 
 AC_CHECK_LIB(c, kqueue, AC_DEFINE(HAVE_KQUEUE, 1, [have kqueue]))
 AC_CHECK_LIB(c, epoll_create, AC_DEFINE(HAVE_EPOLL, 1, [have epoll]))
+AC_CHECK_LIB(c, clock_gettime, AC_DEFINE(HAVE_CLOCK_GETTIME, 1, [have time]))
 
 AC_MSG_CHECKING(ZTS)
 AC_TRY_COMPILE([#include "$phpincludedir/main/php_config.h"], [

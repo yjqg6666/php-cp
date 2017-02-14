@@ -4,6 +4,9 @@
 /* Whether to build connect_pool as dynamic module */
 #define COMPILE_DL_CONNECT_POOL 1
 
+/* have time */
+#define HAVE_CLOCK_GETTIME 1
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #define HAVE_DLFCN_H 1
 
