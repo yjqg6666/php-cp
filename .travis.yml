@@ -10,6 +10,18 @@ matrix:
         - os: osx
           env:
               - PHP_VERSION_MAJOR: "70"
+        - os: osx
+          env:
+              - PHP_VERSION_MAJOR: "56"
+        - os: osx
+          env:
+              - PHP_VERSION_MAJOR: "55"
+        - os: osx
+          env:
+              - PHP_VERSION_MAJOR: "54"
+        - os: osx
+          env:
+              - PHP_VERSION_MAJOR: "53"
 
 services:
     - mysql
