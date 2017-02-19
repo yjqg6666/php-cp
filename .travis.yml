@@ -6,11 +6,11 @@ matrix:
     include:
         - os: osx
           env:
-              - PHP_VERSION_MAJOR: "7.1"
+              - PHP_VERSION_MAJOR: "71"
               - PHP_INSTALL_VERSION: "7.1.1"
         - os: osx
           env:
-              - PHP_VERSION_MAJOR: "7.0"
+              - PHP_VERSION_MAJOR: "70"
               - PHP_INSTALL_VERSION: "7.0.15"
 
 services:
@@ -18,17 +18,16 @@ services:
     - redis-server
 
 before_install:
-    # build PHP without ZTS
     - export CP_PATH=`pwd`
-    - php --info
-    #- sudo apt-get install -qqy axel curl libcurl3-openssl-dev libxslt1-dev re2c libxml2 libxml2-dev bison libbz2-dev libreadline-dev libedit-dev libpng12-0 libpng12-dev libjpeg-dev libjpeg8-dev libjpeg8  libgd-dev libgd3 libssl-dev openssl gettext libicu-dev libmhash-dev libmhash2 libmcrypt-dev libmcrypt4 uuid-dev
-    #- ${CP_PATH}/.travis/php_download.sh ${PHP_INSTALL_VERSION}
+    - brew update
+    - brew tap homebrew/dupes && brew tap homebrew/versions && brew tap homebrew/homebrew-php
+    - brew install php${PHP_INSTALL_VERSION} --with-pear
     - export PHP_BUILD_CONF="--with-libedit --with-pear --enable-fpm --enable-mbstring --with-pcre-dir --enable-mysqlnd --enable-pdo --with-pdo-mysql --with-openssl --with-curl --enable-zip --enable-sockets --enable-bcmath --enable-calendar --enable-ftp --disable-intl --enable-mbstring --enable-pcntl"
-    #- ${CP_PATH}/.travis/php_install.sh "${CP_PATH}" php-${PHP_INSTALL_VERSION}.tar.gz "$PHP_BUILD_CONF"
-    - export PHP_PATH=${CP_PATH}/php-${PHP_INSTALL_VERSION}
-    - export PHP_BIN_DIR=${PHP_PATH}/bin
+    - export PHP_PATH=$(brew --prefix php${PHP_INSTALL_VERSION})
+    - export PHP_BIN_DIR= $(brew --prefix php${PHP_INSTALL_VERSION})/bin
     - export PATH="${PHP_BIN_DIR}:${PATH}"
     - export PHP_BIN=${PHP_BIN_DIR}/php
+    - export PHP_CONF_DIR=$(${PHP_BIN} --ini|grep 'Scan'|cut -d":" -f2|tr -d " ")
     - export REDIS_VERSION_INSTALL=3.1.1
 
 install:
@@ -36,12 +35,12 @@ install:
     - chmod +x ${CP_PATH}/pool_server ${CP_PATH}/initd-php-connection-pool
     - sudo cp ${CP_PATH}/pool_server /usr/local/bin/pool_server
     - sudo cp ${CP_PATH}/config.ini.example /etc/pool.ini
-    #- ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}" "${PHP_PATH}"
-    #- echo 'extension = connect_pool.so' > ${PHP_PATH}/config/conf.d/connect_pool.ini
-    #- git clone -b ${REDIS_VERSION_INSTALL} https://github.com/phpredis/phpredis.git && ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}/phpredis" "${PHP_PATH}" && echo 'extension = redis.so' > ${PHP_PATH}/config/conf.d/redis.ini
+    - ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}" "${PHP_PATH}"
+    - echo 'extension = connect_pool.so' > ${PHP_CONF_DIR}/connect_pool.ini
+    - git clone -b ${REDIS_VERSION_INSTALL} https://github.com/phpredis/phpredis.git && ${CP_PATH}/.travis/php_install_ext.sh "${CP_PATH}/phpredis" "${PHP_PATH}" && echo 'extension = redis.so' > ${PHP_CONF_DIR}/redis.ini
 
 before_script:
-    #- $PHP_BIN -m
+    - $PHP_BIN -m
     #- $PHP_BIN -m | grep -s connect_pool
     #- $PHP_BIN -m | grep -s redis
     #- sudo touch /var/run/php_connection_pool.pid && sudo chmod 777 /var/run/php_connection_pool.pid
