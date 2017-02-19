@@ -7,11 +7,9 @@ matrix:
         - os: osx
           env:
               - PHP_VERSION_MAJOR: "71"
-              - PHP_INSTALL_VERSION: "7.1.1"
         - os: osx
           env:
               - PHP_VERSION_MAJOR: "70"
-              - PHP_INSTALL_VERSION: "7.0.15"
 
 services:
     - mysql
@@ -23,8 +21,8 @@ before_install:
     - brew tap homebrew/dupes 1>/dev/null && brew tap homebrew/versions 1>/dev/null && brew tap homebrew/homebrew-php 1>/dev/null
     - brew install homebrew/php/php${PHP_INSTALL_VERSION} --with-pear
     #- export PHP_BUILD_CONF="--with-libedit --with-pear --enable-fpm --enable-mbstring --with-pcre-dir --enable-mysqlnd --enable-pdo --with-pdo-mysql --with-openssl --with-curl --enable-zip --enable-sockets --enable-bcmath --enable-calendar --enable-ftp --disable-intl --enable-mbstring --enable-pcntl"
-    - export PHP_PATH=$(brew --prefix php${PHP_INSTALL_VERSION})
-    - export PHP_BIN_DIR= $(brew --prefix php${PHP_INSTALL_VERSION})/bin
+    - export PHP_PATH=$(brew --prefix php${PHP_VERSION_MAJOR})
+    - export PHP_BIN_DIR= $(brew --prefix php${PHP_VERSION_MAJOR})/bin
     - export PATH="${PHP_BIN_DIR}:${PATH}"
     - export PHP_BIN=${PHP_BIN_DIR}/php
     - export PHP_CONF_DIR=$(${PHP_BIN} --ini|grep 'Scan'|cut -d":" -f2|tr -d " ")
