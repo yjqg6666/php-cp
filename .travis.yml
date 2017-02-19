@@ -22,7 +22,7 @@ before_install:
     - brew install homebrew/php/php${PHP_VERSION_MAJOR} --with-pear
     #- export PHP_BUILD_CONF="--with-libedit --with-pear --enable-fpm --enable-mbstring --with-pcre-dir --enable-mysqlnd --enable-pdo --with-pdo-mysql --with-openssl --with-curl --enable-zip --enable-sockets --enable-bcmath --enable-calendar --enable-ftp --disable-intl --enable-mbstring --enable-pcntl"
     - export PHP_PATH=$(brew --prefix php${PHP_VERSION_MAJOR})
-    - export PHP_BIN_DIR= $(brew --prefix php${PHP_VERSION_MAJOR})/bin
+    - export PHP_BIN_DIR=$(brew --prefix php${PHP_VERSION_MAJOR})/bin
     - export PATH="${PHP_BIN_DIR}:${PATH}"
     - export PHP_BIN=${PHP_BIN_DIR}/php
     - export PHP_CONF_DIR=$(${PHP_BIN} --ini|grep 'Scan'|cut -d":" -f2|tr -d " ")
