@@ -107,6 +107,6 @@ notifications:
     email:
         recipients:
             - jinking.this@gmail.com
-            #- 83212019@qq.com
+            - 393323503@qq.com
         on_success: change
         on_failure: always
