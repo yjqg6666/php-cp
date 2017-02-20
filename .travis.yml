@@ -5,21 +5,27 @@ language: c
 matrix:
     include:
         - os: osx
+          osx_image: xcode8.2
           env:
               - PHP_VERSION_MAJOR: "71"
         - os: osx
+          osx_image: xcode8.2
           env:
               - PHP_VERSION_MAJOR: "70"
         - os: osx
+          osx_image: xcode8.2
           env:
               - PHP_VERSION_MAJOR: "56"
         - os: osx
+          osx_image: xcode8.2
           env:
               - PHP_VERSION_MAJOR: "55"
         - os: osx
+          osx_image: xcode8.2
           env:
               - PHP_VERSION_MAJOR: "54"
         - os: osx
+          osx_image: xcode8.2
           env:
               - PHP_VERSION_MAJOR: "53"
 
