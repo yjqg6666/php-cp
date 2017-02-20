@@ -20,7 +20,7 @@ if (empty($argv[1])) {
 $cmd = $argv[1];
 
 if (is_readable($config_file) === false) {
-    echo "Can NOT read config file, 请复制pool.ini.example到{$config_file}路径下" . PHP_EOL;
+    echo "Can NOT read config file, 请复制config.ini.example到{$config_file}路径下" . PHP_EOL;
     exit($exit_code_general);
 }
 if (parse_ini_file($config_file, true) === false) { //for stop && reload && test ini

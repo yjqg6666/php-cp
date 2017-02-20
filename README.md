@@ -15,7 +15,7 @@
 
 可以使用Docker编译，需要在项目的根目录下运行:
 
-1. 根据自己的配置，复制 `pool.ini.example` 文件为 `pool.ini` 文件，修改 `pool.ini` 文件
+1. 根据自己的配置，复制 `config.ini.example` 文件为 `pool.ini` 文件，修改 `pool.ini` 文件
 2. `docker build -t php-cp .`
 
 
@@ -60,7 +60,7 @@ $ echo "extension=connect_pool.so" > /etc/php.d/20-connection_pool.ini
 
 * 初始化配置(一次性)
 ```
-$ cp ./pool.ini.example /etc/pool.ini //根据需求修改配置内容
+$ cp ./config.ini.example /etc/pool.ini //根据需求修改配置内容
 $ mkdir -m 755 /var/log/php-connection-pool //创建日志目录 目录文件夹不存在或没权限会导致日志写不起
 $ chmod +x ./pool_server //x权限git已经设置 为稳妥再设置一次 pool_server为php脚本 可自行修改
 $ [ -f /bin/env ] || sudo ln -s /usr/bin/env /bin/env  //deb系的系统(如debian、ubuntu)env的路径为/usr/bin/env做软链接兼容处理
