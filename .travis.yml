@@ -43,7 +43,7 @@ before_install:
 install:
     - sudo mkdir -m 777 /var/log/php-connection-pool
     - echo "${PHP_CONF_DIR}"
-    - [ ! -d "${PHP_CONF_DIR}" ] && sudo mkdir -m 777 "${PHP_CONF_DIR}"
+    - if [ ! -d "${PHP_CONF_DIR}" ]; then sudo mkdir -m 777 "${PHP_CONF_DIR}"; fi
     - chmod +x ${CP_PATH}/pool_server
     - sudo cp ${CP_PATH}/pool_server /usr/local/bin/pool_server
     - sudo cp ${CP_PATH}/config.ini.example /etc/pool.ini
